@@ -1,0 +1,33 @@
+<mat-card-actions align="end"
+    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+
+    <div style="display: flex; gap: 4px;">
+        <button mat-icon-button type="button" aria-label="Home">
+            <span class="material-symbols-outlined">home</span>
+        </button>
+        <button mat-icon-button type="button" aria-label="Suche">
+            <span class="material-symbols-outlined">search</span>
+        </button>
+        <button mat-icon-button type="button" aria-label="Einstellungen">
+            <span class="material-symbols-outlined">settings</span>
+        </button>
+        <button mat-icon-button type="button" aria-label="Profil">
+            <span class="material-symbols-outlined">person</span>
+        </button>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+        <button mat-button type="button">
+            {{ 'auth.cancel' | translate }}
+        </button>
+
+        <button mat-raised-button color="primary" type="button">
+            {{ 'auth.signIn' | translate }}
+        </button>
+
+        <button mat-raised-button color="primary" type="button" (click)="testFirestore()">
+            Firestore testen
+        </button>
+    </div>
+
+</mat-card-actions>

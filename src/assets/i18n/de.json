@@ -1,0 +1,37 @@
+{
+    "board": {
+        "title": "Mein Board",
+        "createTask": "Task erstellen"
+    },
+    "auth": {
+        "email": "E-Mail",
+        "password": "Passwort",
+        "cancel": "Abbrechen",
+        "signIn": "Anmelden"
+    },
+    "task": {
+        "todo": "Zu erledigen",
+        "inProgress": "In Bearbeitung",
+        "awaitingFeedback": "Rückmeldung ausstehend",
+        "done": "Erledigt",
+        "low": "Niedrig",
+        "medium": "Mittel",
+        "urgent": "Dringend",
+        "categoryLoadError": "Kategorien konnten nicht geladen werden.",
+        "taskLoadError": "Tasks konnten nicht aus der Datenbank geladen werden.",
+        "categoryCreated": "Kategorie erstellt.",
+        "categoryCreateError": "Kategorie konnte nicht erstellt werden.",
+        "taskCreated": "Task erfolgreich erstellt.",
+        "taskCreateError": "Task konnte nicht erstellt werden.",
+        "taskNotFound": "Task nicht gefunden.",
+        "taskUpdateError": "Task konnte nicht aktualisiert werden.",
+        "taskStatusUpdated": "Task-Status aktualisiert.",
+        "cannotMoveIncompleteSubtasks": "Task kann nicht verschoben werden: Bitte zuerst alle Subtasks abschließen.",
+        "taskDeleted": "Task erfolgreich gelöscht.",
+        "taskDeleteError": "Task konnte nicht gelöscht werden."
+    },
+    "guard": {
+        "loadUserDataError": "Deine Daten konnten nicht geladen werden. Bitte überprüfe deine Verbindung und versuche es erneut.",
+        "noPermission": "Du hast keine Berechtigung, auf diese Seite zuzugreifen."
+    }
+}
