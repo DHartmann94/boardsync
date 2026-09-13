@@ -1,13 +1,28 @@
 {
-    "board": {
-        "title": "My Board",
-        "createTask": "Create Task"
+    "general": {
+        "imprint": "Legal Notice",
+        "privacy": "Privacy Policy"
     },
-    "auth": {
-        "email": "E-Mail",
-        "password": "Passwort",
-        "cancel": "Abbrechen",
-        "signIn": "Anmelden"
+    "signIn": {
+        "title": "Log In",
+        "newToBoardSync": "New to BoardSync?",
+        "register": "Create account",
+        "subtitle": "We recommend using the email address you use at work.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "example@email.com",
+        "passwordLabel": "Password",
+        "forgotPassword": "Forgot password?",
+        "or": "OR",
+        "googleLogin": "Sign in with Google",
+        "submit": "Log In",
+        "guestLogin": "Guest Log-In",
+        "errors": {
+            "emailRequired": "Please enter your email address.",
+            "emailPattern": "Please enter a valid email address.",
+            "emailNotVerified": "Please confirm your email address.",
+            "passwordRequired": "Please enter your password.",
+            "userNotFound": "Email or password is incorrect."
+        }
     },
     "task": {
         "todo": "To Do",

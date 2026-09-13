@@ -1,13 +1,29 @@
 {
-    "board": {
-        "title": "Mein Board",
-        "createTask": "Task erstellen"
+    "general": {
+        "imprint": "Impressum",
+        "privacy": "Datenschutz",
+        "back": "Zurück"
     },
-    "auth": {
-        "email": "E-Mail",
-        "password": "Passwort",
-        "cancel": "Abbrechen",
-        "signIn": "Anmelden"
+    "signIn": {
+        "title": "Anmelden",
+        "newToBoardSync": "Neu bei BoardSync?",
+        "register": "Konto erstellen",
+        "subtitle": "Wir empfehlen Ihnen, die E-Mail-Adresse zu verwenden, die Sie bei der Arbeit nutzen.",
+        "emailLabel": "E-Mail",
+        "emailPlaceholder": "beispiel@email.de",
+        "passwordLabel": "Passwort",
+        "forgotPassword": "Passwort vergessen?",
+        "or": "ODER",
+        "googleLogin": "Anmelden mit Google",
+        "submit": "Anmelden",
+        "guestLogin": "Gast-Login",
+        "errors": {
+            "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+            "emailPattern": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+            "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail.",
+            "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
+            "userNotFound": "E-Mail oder Passwort ist falsch."
+        }
     },
     "task": {
         "todo": "Zu erledigen",
@@ -33,5 +49,9 @@
     "guard": {
         "loadUserDataError": "Deine Daten konnten nicht geladen werden. Bitte überprüfe deine Verbindung und versuche es erneut.",
         "noPermission": "Du hast keine Berechtigung, auf diese Seite zuzugreifen."
+    },
+    "404": {
+        "notFound": "Seite nicht gefunden",
+        "oops": "Hoppla! Die von dir aufgerufene Seite existiert leider nicht oder wurde verschoben."
     }
 }

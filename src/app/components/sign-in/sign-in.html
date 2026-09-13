@@ -1,33 +1,106 @@
-<mat-card-actions align="end"
-    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+<section>
+    <!-- Header -->
+    <app-header-public>
+        <div class="header-link-container">
+            <span>{{ 'signIn.newToBoardSync' | translate }}</span>
+            <a routerLink="/sign-up" mat-flat-button class="btn-dark">
+                {{ 'signIn.register' | translate }}
+            </a>
+        </div>
+    </app-header-public>
 
-    <div style="display: flex; gap: 4px;">
-        <button mat-icon-button type="button" aria-label="Home">
-            <span class="material-symbols-outlined">home</span>
-        </button>
-        <button mat-icon-button type="button" aria-label="Suche">
-            <span class="material-symbols-outlined">search</span>
-        </button>
-        <button mat-icon-button type="button" aria-label="Einstellungen">
-            <span class="material-symbols-outlined">settings</span>
-        </button>
-        <button mat-icon-button type="button" aria-label="Profil">
-            <span class="material-symbols-outlined">person</span>
-        </button>
+    <!-- Login Card -->
+    <mat-card>
+        <mat-card-header>
+            <h1 class="card-title">{{ 'signIn.title' | translate }}</h1>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="title-underline"></div>
+
+            <p class="subtitle">
+                {{ 'signIn.subtitle' | translate }}
+            </p>
+
+            <form [formGroup]="signInForm" (ngSubmit)="signIn()">
+                <!-- Email -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signIn.emailLabel' | translate }}</mat-label>
+                    <input id="email" matInput type="email" formControlName="email"
+                        [placeholder]="'signIn.emailPlaceholder' | translate" autocomplete="email"
+                        [attr.aria-label]="'signIn.emailLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">mail</mat-icon>
+                    @if (signInForm.controls.email.hasError('required')) {
+                    <mat-error>{{ 'signIn.errors.emailRequired' | translate }}</mat-error>
+                    } @else if (signInForm.controls.email.hasError('pattern')) {
+                    <mat-error>{{ 'signIn.errors.emailPattern' | translate }}</mat-error>
+                    } @else if (signInForm.controls.email.hasError('emailNotVerify')) {
+                    <mat-error>{{ 'signIn.errors.emailNotVerified' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Password -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signIn.passwordLabel' | translate }}</mat-label>
+                    <input id="password" matInput type="password" formControlName="password"
+                        [placeholder]="'signIn.passwordLabel' | translate" autocomplete="current-password"
+                        [attr.aria-label]="'signIn.passwordLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">lock</mat-icon>
+                    @if (signInForm.controls.password.hasError('required')) {
+                    <mat-error>{{ 'signIn.errors.passwordRequired' | translate }}</mat-error>
+                    } @else if (signInForm.controls.password.hasError('userNotFound')) {
+                    <mat-error>{{ 'signIn.errors.userNotFound' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <div class="forgot-password-wrapper">
+                    <a routerLink="/reset-password" class="forgot-password">
+                        {{ 'signIn.forgotPassword' | translate }}
+                    </a>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="or-divider">
+                    <span class="line"></span>
+                    <span class="text">{{ 'signIn.or' | translate }}</span>
+                    <span class="line"></span>
+                </div>
+
+                <!-- Google Button -->
+                <button type="button" class="btn-bright btn-google" matRipple
+                    (click)="authentication.signInWithGoogle()">
+                    <img src="./assets/img/icons/google.svg" alt="Google Logo" />
+                    <span>{{ 'signIn.googleLogin' | translate }}</span>
+                </button>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button mat-flat-button type="submit" [disabled]="isSignIn()" class="btn-dark">
+                        {{ 'signIn.submit' | translate }}
+                    </button>
+                    <button mat-stroked-button type="button" class="btn-bright" (click)="signInGuest()">
+                        {{ 'signIn.guestLogin' | translate }}
+                    </button>
+                </div>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Mobile Header Link -->
+    <div class="mobile-header-link">
+        <span>{{ 'signIn.newToBoardSync' | translate }}</span>
+        <a routerLink="/sign-up" mat-flat-button class="btn-dark">
+            {{ 'signIn.register' | translate }}
+        </a>
     </div>
 
-    <div style="display: flex; gap: 8px;">
-        <button mat-button type="button">
-            {{ 'auth.cancel' | translate }}
-        </button>
+    <!-- Footer -->
+    <app-footer-public></app-footer-public>
 
-        <button mat-raised-button color="primary" type="button">
-            {{ 'auth.signIn' | translate }}
-        </button>
-
-        <button mat-raised-button color="primary" type="button" (click)="testFirestore()">
-            Firestore testen
-        </button>
+    <!-- Loader -->
+    @if (isSignIn()) {
+    <div class="loading-overlay">
+        <mat-spinner diameter="40" />
     </div>
-
-</mat-card-actions>
+    }
+</section>

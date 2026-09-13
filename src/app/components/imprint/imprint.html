@@ -1,0 +1,50 @@
+<section>
+    <!-- Header -->
+    <app-header-public></app-header-public>
+
+    <!-- Imprint Card -->
+    <mat-card>
+        <mat-card-header>
+
+            <button mat-button class="go-back-button" (click)="navigateBack()">
+                <mat-icon matSuffix class="material-symbols-outlined">arrow_back</mat-icon>
+            </button>
+
+            <div>
+                <mat-card-title>Impressum</mat-card-title>
+                <mat-card-subtitle>Angaben gemäß § 5 TMG</mat-card-subtitle>
+            </div>
+        </mat-card-header>
+
+        <div class="title-underline"></div>
+
+        <mat-card-content>
+            <div>
+                <p>
+                    Daniel Hartmann<br />
+                    Hornstraße 14<br />
+                    54294 Trier
+                </p>
+            </div>
+
+            <div>
+                <p><strong>Vertreten durch:</strong></p>
+                <p>
+                    Lukas Baden<br />
+                    Daniel Hartmann
+                </p>
+            </div>
+
+            <div>
+                <p><strong>Kontakt:</strong></p>
+                <p>
+                    Telefon: <a href="tel:+4915100000000">0049151/000000000</a><br />
+                    E-Mail: <a href="mailto:contact@boardsync.dev">contact@boardsync.dev</a>
+                </p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Footer -->
+    <app-footer-public></app-footer-public>
+</section>

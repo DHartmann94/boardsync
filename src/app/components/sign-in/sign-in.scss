@@ -1,0 +1,184 @@
+section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/*------ Header ------*/
+.header-link-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1rem;
+    color: var(--black);
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+}
+
+.mobile-header-link {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    color: var(--black);
+
+    @media (max-width: 768px) {
+        display: flex;
+    }
+}
+
+/*------ Login Card ------*/
+mat-card {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    margin: auto 0;
+}
+
+.card-title {
+    margin: 0;
+}
+
+.title-underline {
+    width: 100px;
+    height: 3px;
+    background-color: var(--light-blue);
+    border-radius: 2px;
+    margin: 8px auto 20px auto;
+}
+
+.subtitle {
+    color: var(--text-grey);
+    text-align: center;
+    margin: 0 0 28px 0;
+    line-height: 1.4;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* Password */
+.forgot-password-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0 12px 0;
+}
+
+.forgot-password {
+    color: var(--light-blue);
+    text-decoration: none;
+    font-size: 0.9rem;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+/* OR Divider */
+.or-divider {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 8px 0 16px 0;
+
+    .line {
+        flex: 1;
+        height: 1px;
+        background-color: var(--grey);
+    }
+
+    .text {
+        padding: 0 16px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--black);
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Google Button */
+.btn-google {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 16px;
+
+    img {
+        width: 22px;
+        height: 22px;
+    }
+
+    span {
+        color: var(--dark-grey);
+        font-weight: 600;
+        transition: color 100ms ease-in-out;
+    }
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--light-blue) 8%, transparent) !important;
+
+        span {
+            color: var(--light-blue);
+        }
+    }
+}
+
+/* Primary Action Buttons */
+.button-group {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+
+    .btn-dark,
+    .btn-bright {
+        flex-grow: 1;
+        width: 50%;
+    }
+
+    @media (max-width: 480px) {
+
+        .btn-dark,
+        .btn-bright {
+            width: 100%;
+        }
+
+        flex-direction: column;
+    }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}

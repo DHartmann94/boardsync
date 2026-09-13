@@ -1,0 +1,62 @@
+section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+mat-card {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    margin: auto 0;
+}
+
+.card-title {
+    margin: 0;
+}
+
+.not-found-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    h2 {
+        margin: 0 0 12px 0;
+    }
+}
+
+.title-underline {
+    width: 100px;
+    height: 3px;
+    background-color: var(--light-blue);
+    border-radius: 2px;
+    margin: 8px auto 20px auto;
+}
+
+.subtitle {
+    color: var(--text-grey);
+    text-align: center;
+    margin: 0 0 28px 0;
+    line-height: 1.4;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .btn-dark {
+        width: 100%;
+        max-width: 250px;
+    }
+}

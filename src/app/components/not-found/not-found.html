@@ -1,0 +1,26 @@
+<section>
+    <!-- Header -->
+    <app-header-public></app-header-public>
+
+    <!-- 404 Card -->
+    <mat-card>
+        <mat-card-header>
+            <h1 class="card-title">404</h1>
+        </mat-card-header>
+        <mat-card-content class="not-found-content">
+            <div class="title-underline"></div>
+
+            <h2>{{ '404.notFound' | translate }}</h2>
+            <p class="subtitle">{{ '404.oops' | translate }}</p>
+
+            <div class="button-group">
+                <button mat-flat-button class="btn-dark" (click)="navigateBack()">
+                    {{ 'general.back' | translate }}
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Footer -->
+    <app-footer-public></app-footer-public>
+</section>

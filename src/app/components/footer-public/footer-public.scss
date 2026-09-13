@@ -1,0 +1,26 @@
+:host {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    padding: 16px 0;
+
+    a {
+        color: var(--text-grey);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--light-blue);
+        }
+    }
+
+    span {
+        color: var(--text-grey);
+    }
+}
