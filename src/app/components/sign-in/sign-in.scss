@@ -15,7 +15,6 @@ section {
     align-items: center;
     gap: 16px;
     font-size: 1rem;
-    color: var(--black);
 
     @media (max-width: 768px) {
         display: none;
@@ -28,7 +27,6 @@ section {
     align-items: center;
     gap: 10px;
     margin: 20px 0;
-    color: var(--black);
 
     @media (max-width: 768px) {
         display: flex;

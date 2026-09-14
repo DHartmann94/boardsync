@@ -1,0 +1,27 @@
+@import "../../components/sign-in/sign-in";
+
+.centered-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+
+    .card-title {
+        margin: 0;
+        text-align: center;
+        flex-grow: 1;
+    }
+}
+
+.privacy-wrapper {
+    margin-bottom: 24px;
+
+    mat-error {
+        display: block;
+        font-size: 12px;
+        margin-top: 4px;
+        margin-left: 8px;
+    }
+}

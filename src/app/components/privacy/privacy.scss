@@ -18,21 +18,6 @@ section {
             display: flex;
             align-items: center;
             gap: 12px;
-
-            .go-back-button {
-                min-width: unset;
-                width: 40px;
-                height: 40px;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-
-                mat-icon {
-                    margin: 0;
-                }
-            }
         }
 
         .title-underline {

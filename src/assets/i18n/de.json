@@ -25,6 +25,30 @@
             "userNotFound": "E-Mail oder Passwort ist falsch."
         }
     },
+    "signUp": {
+        "title": "Konto erstellen",
+        "firstNameLabel": "Vorname",
+        "lastNameLabel": "Nachname",
+        "emailLabel": "E-Mail",
+        "emailPlaceholder": "beispiel@email.de",
+        "phoneLabel": "Telefonnummer (optional)",
+        "passwordLabel": "Passwort",
+        "confirmPasswordLabel": "Passwort bestätigen",
+        "acceptPrivacyStart": "Ich akzeptiere die ",
+        "privacyPolicyLink": "Datenschutzerklärung",
+        "acceptPrivacyEnd": ".",
+        "submit": "Registrieren",
+        "errors": {
+            "required": "Dieses Feld ist ein Pflichtfeld",
+            "emailInvalid": "Bitte gib eine gültige E-Mail-Adresse ein",
+            "emailExists": "E-Mail-Adresse wird bereits verwendet",
+            "phoneInvalid": "Bitte gib eine gültige Telefonnummer ein",
+            "minlength": "Das Passwort ist zu kurz",
+            "passwordComplex": "Groß-/Kleinbuchstabe, Zahl & Sonderzeichen",
+            "passwordsDontMatch": "Die Passwörter stimmen nicht überein",
+            "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren"
+        }
+    },
     "task": {
         "todo": "Zu erledigen",
         "inProgress": "In Bearbeitung",

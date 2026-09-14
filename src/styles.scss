@@ -120,6 +120,24 @@ mat-card {
   }
 }
 
+/* Back Button */
+/* Back Button (Global) */
+button.go-back-button {
+  min-width: unset;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  .mat-icon {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 
 /* Scrollbar */
 /* width */

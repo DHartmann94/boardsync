@@ -1,0 +1,138 @@
+<section>
+    <!-- Header -->
+    <app-header-public></app-header-public>
+
+    <!-- Sign-Up Card -->
+    <mat-card>
+        <mat-card-header class="centered-header">
+            <button mat-button class="go-back-button" (click)="navigateBack()">
+                <mat-icon matSuffix class="material-symbols-outlined mat-icon">arrow_back</mat-icon>
+            </button>
+
+            <h1 class="card-title">{{ 'signUp.title' | translate }}</h1>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="title-underline"></div>
+
+            <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
+
+                <!-- Vorname -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.firstNameLabel' | translate }}</mat-label>
+                    <input id="firstName" matInput type="text" formControlName="firstName" required
+                        [placeholder]="'signUp.firstNameLabel' | translate" autocomplete="given-name"
+                        [attr.aria-label]="'signUp.firstNameLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">person</mat-icon>
+                    @if (signUpForm.controls.firstName.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Nachname -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.lastNameLabel' | translate }}</mat-label>
+                    <input id="lastName" matInput type="text" formControlName="lastName" required
+                        [placeholder]="'signUp.lastNameLabel' | translate" autocomplete="family-name"
+                        [attr.aria-label]="'signUp.lastNameLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">person</mat-icon>
+                    @if (signUpForm.controls.lastName.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Email -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.emailLabel' | translate }}</mat-label>
+                    <input id="email" matInput type="email" formControlName="email" required
+                        [placeholder]="'signUp.emailPlaceholder' | translate" autocomplete="email"
+                        [attr.aria-label]="'signUp.emailLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">mail</mat-icon>
+                    @if (signUpForm.controls.email.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
+                    } @else if (signUpForm.controls.email.hasError('pattern')) {
+                    <mat-error>{{ 'signUp.errors.emailInvalid' | translate }}</mat-error>
+                    } @else if (emailExistsError()) {
+                    <mat-error>{{ 'signUp.errors.emailExists' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Telefonnummer (Optional) -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.phoneLabel' | translate }}</mat-label>
+                    <input id="phone" matInput type="tel" formControlName="phone"
+                        [placeholder]="'signUp.phoneLabel' | translate" autocomplete="tel"
+                        [attr.aria-label]="'signUp.phoneLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">phone</mat-icon>
+                    @if (signUpForm.controls.phone.hasError('pattern')) {
+                    <mat-error>{{ 'signUp.errors.phoneInvalid' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Passwort -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.passwordLabel' | translate }}</mat-label>
+                    <input id="password" matInput type="password" formControlName="password" required
+                        [placeholder]="'signUp.passwordLabel' | translate" autocomplete="new-password"
+                        [attr.aria-label]="'signUp.passwordLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">lock</mat-icon>
+                    @if (signUpForm.controls.password.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
+                    } @else if (signUpForm.controls.password.hasError('minlength')) {
+                    <mat-error>{{ 'signUp.errors.minlength' | translate }} (min. 8 Zeichen)</mat-error>
+                    } @else if (signUpForm.controls.password.hasError('pattern')) {
+                    <mat-error>{{ 'signUp.errors.passwordComplex' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Passwort bestätigen -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ 'signUp.confirmPasswordLabel' | translate }}</mat-label>
+                    <input id="confirmPassword" matInput type="password" formControlName="confirmPassword" required
+                        [placeholder]="'signUp.confirmPasswordLabel' | translate" autocomplete="new-password"
+                        [attr.aria-label]="'signUp.confirmPasswordLabel' | translate" />
+                    <mat-icon matSuffix class="material-symbols-outlined">lock_reset</mat-icon>
+                    @if (signUpForm.controls.confirmPassword.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
+                    } @else if (signUpForm.hasError('passwordMismatch')) {
+                    <mat-error>{{ 'signUp.errors.passwordsDontMatch' | translate }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Datenschutz Checkbox -->
+                <div class="privacy-wrapper">
+                    <mat-checkbox formControlName="privacyPolicy">
+                        {{ 'signUp.acceptPrivacyStart' | translate }}
+                        <a routerLink="/privacy" target="_blank" (click)="$event.stopPropagation()">
+                            {{ 'signUp.privacyPolicyLink' | translate }}
+                        </a>
+                        {{ 'signUp.acceptPrivacyEnd' | translate }}
+                    </mat-checkbox>
+
+                    @if (signUpForm.controls.privacyPolicy.touched &&
+                    signUpForm.controls.privacyPolicy.hasError('required')) {
+                    <mat-error>{{ 'signUp.errors.privacyRequired' | translate }}</mat-error>
+                    }
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button mat-flat-button type="submit" [disabled]="signUpForm.invalid || isSignUp()"
+                        class="btn-dark">
+                        {{ 'signUp.submit' | translate }}
+                    </button>
+                </div>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Footer -->
+    <app-footer-public></app-footer-public>
+
+    <!-- Loader -->
+    @if (isSignUp()) {
+    <div class="loading-overlay">
+        <mat-spinner diameter="40" />
+    </div>
+    }
+</section>

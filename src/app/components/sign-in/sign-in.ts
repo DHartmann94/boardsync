@@ -41,7 +41,6 @@ export class SignIn {
   protected readonly authentication = inject(Authentication);
 
   protected readonly isSignIn = signal(false);
-  protected readonly submitted = signal(false);
 
   protected readonly signInForm = this.fb.group({
     email: this.fb.control('', [
@@ -101,7 +100,6 @@ export class SignIn {
     setTimeout(() => {
       this.signInForm.enable();
       this.isSignIn.set(false);
-      this.submitted.set(false);
     }, 3500);
   }
 
