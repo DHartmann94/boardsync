@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
@@ -76,6 +76,22 @@ export class SignUp {
     }
   );
 
+  constructor() {
+    /**
+     * Sperrt/entsperrt gezielt nur die Privacy-Checkbox während des Sign-up-Vorgangs.
+     * `mat-checkbox` unterstützt kein natives `readonly`, daher hier bewusst `disable()`/`enable()`
+     * nur für dieses Control statt für die ganze Form – unproblematisch, da zu diesem Zeitpunkt
+     * bereits alle Validierungen bestanden sind.
+     */
+    effect(() => {
+      if (this.isSignUp()) {
+        this.signUpForm.controls.privacyPolicy.disable({ emitEvent: false });
+      } else {
+        this.signUpForm.controls.privacyPolicy.enable({ emitEvent: false });
+      }
+    });
+  }
+
   async signUp(): Promise<void> {
     if (this.signUpForm.invalid) {
       this.signUpForm.markAllAsTouched();
@@ -102,12 +118,17 @@ export class SignUp {
       const authUID = authResult.uid;
 
       const userFirestore = await this.userService.createUserDocument(authUID, {
-        firstName, lastName, email: emailLowerCase, phone, avatar
+        firstName,
+        lastName,
+        email: emailLowerCase,
+        phone,
+        avatar
       });
 
       if (userFirestore) {
         this.notificationService.showSuccess('signUp.success');
-        this.resetForm();
+        this.signUpForm.reset();
+        this.isSignUp.set(false);
         this.router.navigateByUrl('/sign-in');
       } else {
         await this.authenticationService.deleteUserInstance(createdUser);
@@ -145,11 +166,6 @@ export class SignUp {
 
 
   /*------ Help functions ------*/
-  resetForm() {
-    this.signUpForm.reset();
-    this.isSignUp.set(false);
-  }
-
   navigateBack(): void {
     this.location.back();
   }

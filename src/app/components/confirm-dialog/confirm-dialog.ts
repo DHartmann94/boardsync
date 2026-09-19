@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { TranslatePipe } from '@ngx-translate/core';
 
 export interface ConfirmDialogData {
   title: string;
@@ -19,8 +18,7 @@ export interface ConfirmDialogData {
     MatDialogModule,
     MatCardModule,
     MatButtonModule,
-    MatProgressBarModule,
-    TranslatePipe
+    MatProgressBarModule
   ],
   templateUrl: './confirm-dialog.html',
   styleUrl: './confirm-dialog.scss',

@@ -100,7 +100,7 @@
 
                 <!-- Privacy Checkbox -->
                 <div class="privacy-wrapper">
-                    <mat-checkbox formControlName="privacyPolicy" [disabled]="isSignUp()">
+                    <mat-checkbox formControlName="privacyPolicy">
                         {{ 'signUp.acceptPrivacyStart' | translate }}
                         <a routerLink="/privacy" target="_blank" (click)="$event.stopPropagation()">
                             {{ 'signUp.privacyPolicyLink' | translate }}
