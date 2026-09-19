@@ -1,0 +1,10 @@
+@use "../../components/sign-in/sign-in";
+
+.dialog-button-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: 24px;
+}

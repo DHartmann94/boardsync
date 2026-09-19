@@ -1,0 +1,22 @@
+<mat-card>
+    <mat-card-header>
+        <h2 class="card-title">{{ data.title | translate }}</h2>
+    </mat-card-header>
+
+    <mat-card-content>
+        <div class="title-underline"></div>
+
+        <p class="subtitle">
+            {{ data.message | translate }}
+        </p>
+
+        <div class="dialog-button-group">
+            <button mat-button [mat-dialog-close]="false">
+                {{ data.cancelText | translate }}
+            </button>
+            <button mat-flat-button color="primary" [mat-dialog-close]="true">
+                {{ data.confirmText | translate }}
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>

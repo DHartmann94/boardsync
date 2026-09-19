@@ -10,6 +10,8 @@
   --text-grey: #7B7B7C;
   --light-blue: #29ABE2;
   --grey: #D1D1D1;
+  --error: #d32f2f;
+  --success: #28a745;
 
   /* use: color: var(--example-color) */
 }
@@ -121,7 +123,6 @@ mat-card {
 }
 
 /* Back Button */
-/* Back Button (Global) */
 button.go-back-button {
   min-width: unset;
   width: 40px;
@@ -136,6 +137,15 @@ button.go-back-button {
     margin: 0;
     padding: 0;
   }
+}
+
+/* Snackbar */
+.notification-error .mdc-snackbar__surface {
+  background-color: var(--error) !important;
+}
+
+.notification-success .mdc-snackbar__surface {
+  background-color: var(--success) !important;
 }
 
 

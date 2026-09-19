@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,7 @@ import { MatRipple } from '@angular/material/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Authentication } from '../../services/authentication';
+import { Notification } from '../../services/notification';
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
 
@@ -38,7 +39,9 @@ import { FooterPublic } from '../../components/footer-public/footer-public';
 export class SignIn {
 
   private readonly fb = inject(NonNullableFormBuilder);
-  protected readonly authentication = inject(Authentication);
+  protected readonly authenticationService = inject(Authentication);
+  private readonly notificationService = inject(Notification);
+  private readonly router = inject(Router);
 
   protected readonly isSignIn = signal(false);
 
@@ -56,51 +59,70 @@ export class SignIn {
       return;
     }
 
-    // this.disableForm();
+    this.isSignIn.set(true);
 
-    // try {
-    //   const { email, password } = this.signInForm.getRawValue();
-    //   await this.authentication.login(email, password);
-    //   // Erfolgreicher Login -> Weiterleitung
-    // } catch (error: any) {
-    //   if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-    //     this.signInForm.controls.password.setErrors({ userNotFound: true });
-    //   } else if (error.code === 'auth/email-not-verified') {
-    //     this.signInForm.controls.email.setErrors({ emailNotVerify: true });
-    //   }
-    // } finally {
-    //   this.enableForm();
-    // }
+    try {
+      const { email, password } = this.signInForm.getRawValue();
+      await this.authenticationService.signAsUser(email, password);
+
+      this.router.navigateByUrl('/main');
+
+    } catch (error: any) {
+      switch (error.code) {
+        case 'auth/email-not-verified': {
+          const currentUser = error.user;
+
+          this.signInForm.controls.email.setErrors({ emailNotVerify: true });
+          this.signInForm.controls.email.markAsTouched();
+
+          this.notificationService.openConfirmDialog(
+            'signIn.emailNotVerifiedTitle',
+            'signIn.emailNotVerifiedMessage',
+            'signIn.resendEmail',
+            'general.close'
+          ).subscribe(async (resendConfirmed) => {
+            if (resendConfirmed && currentUser) {
+              const success = await this.authenticationService.sendVerificationMail(currentUser);
+              if (success) {
+                this.notificationService.showSuccess('signIn.verificationSent');
+              } else {
+                this.notificationService.showError('general.errors.failure');
+              }
+            }
+          });
+          break;
+        }
+
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          this.notificationService.showError("signIn.errors.userNotFound");
+          break;
+
+        case 'auth/too-many-requests':
+          this.notificationService.showError("signIn.errors.tooManyRequests");
+          break;
+
+        default:
+          this.notificationService.showError('general.errors.failure');
+      }
+    } finally {
+      this.isSignIn.set(false);
+    }
   }
 
-
   async signInGuest() {
-    //   this.disableForm();
+    //   this.isSignIn.set(true);
     //   try {
-    //     await this.authentication.signInAsGuest();
+    //     await this.authenticationService.signInAsGuest();
     //     // User wird um user.service effect geladen
     //     //await this.userService.getCurrentUser(); Wird im effect getriggert
     //   } catch (error: any) {
     //     this.notification.showError('auth.guestLoginFailed');
     //     // oder: this.userNotFound.set(true); je nach Fehlerfall differenzieren
     //   } finally {
-    //     this.enableForm();
+    //     this.isSignIn.set(false);
     //   }
-  }
-
-
-
-  /*------ Help functions ------*/
-  disableForm(): void {
-    this.signInForm.disable();
-    this.isSignIn.set(true);
-  }
-
-  enableForm(): void {
-    setTimeout(() => {
-      this.signInForm.enable();
-      this.isSignIn.set(false);
-    }, 3500);
   }
 
 }

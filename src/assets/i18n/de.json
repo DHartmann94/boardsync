@@ -2,7 +2,11 @@
     "general": {
         "imprint": "Impressum",
         "privacy": "Datenschutz",
-        "back": "Zurück"
+        "back": "Zurück",
+        "close": "Schließen",
+        "errors": {
+            "failure": "Es ist ein unbekannter Fehler aufgetreten"
+        }
     },
     "signIn": {
         "title": "Anmelden",
@@ -17,12 +21,17 @@
         "googleLogin": "Anmelden mit Google",
         "submit": "Anmelden",
         "guestLogin": "Gast-Login",
+        "verificationSent": "Eine neue verifizierungs E-Mail wurde versand",
+        "emailNotVerifiedTitle": "E-Mail nicht verifiziert",
+        "emailNotVerifiedMessage": "Ihre E-Mail wurde noch nicht verifiziert. Möchten Sie eine neue E-Mail erhalten?",
+        "resendEmail": "Neu senden",
         "errors": {
             "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
             "emailPattern": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
             "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail.",
             "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
-            "userNotFound": "E-Mail oder Passwort ist falsch."
+            "userNotFound": "E-Mail oder Passwort ist falsch.",
+            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst."
         }
     },
     "signUp": {
@@ -38,6 +47,7 @@
         "privacyPolicyLink": "Datenschutzerklärung",
         "acceptPrivacyEnd": ".",
         "submit": "Registrieren",
+        "success": "Konto erfolgreich erstellt. Verifizierungs E-Mail wurde versandt.",
         "errors": {
             "required": "Dieses Feld ist ein Pflichtfeld",
             "emailInvalid": "Bitte gib eine gültige E-Mail-Adresse ein",
@@ -46,7 +56,9 @@
             "minlength": "Das Passwort ist zu kurz",
             "passwordComplex": "Groß-/Kleinbuchstabe, Zahl & Sonderzeichen",
             "passwordsDontMatch": "Die Passwörter stimmen nicht überein",
-            "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren"
+            "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren",
+            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst.",
+            "failure": "Es ist ein Fehler aufgetreten, bitte versuchen Sie es noch einmal"
         }
     },
     "task": {

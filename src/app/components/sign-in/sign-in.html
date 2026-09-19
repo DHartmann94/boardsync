@@ -25,7 +25,7 @@
                 <!-- Email -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signIn.emailLabel' | translate }}</mat-label>
-                    <input id="email" matInput type="email" formControlName="email"
+                    <input id="email" matInput type="email" formControlName="email" [readonly]="isSignIn()"
                         [placeholder]="'signIn.emailPlaceholder' | translate" autocomplete="email"
                         [attr.aria-label]="'signIn.emailLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">mail</mat-icon>
@@ -41,14 +41,12 @@
                 <!-- Password -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signIn.passwordLabel' | translate }}</mat-label>
-                    <input id="password" matInput type="password" formControlName="password"
+                    <input id="password" matInput type="password" formControlName="password" [readonly]="isSignIn()"
                         [placeholder]="'signIn.passwordLabel' | translate" autocomplete="current-password"
                         [attr.aria-label]="'signIn.passwordLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">lock</mat-icon>
                     @if (signInForm.controls.password.hasError('required')) {
                     <mat-error>{{ 'signIn.errors.passwordRequired' | translate }}</mat-error>
-                    } @else if (signInForm.controls.password.hasError('userNotFound')) {
-                    <mat-error>{{ 'signIn.errors.userNotFound' | translate }}</mat-error>
                     }
                 </mat-form-field>
 
@@ -66,8 +64,8 @@
                 </div>
 
                 <!-- Google Button -->
-                <button type="button" class="btn-bright btn-google" matRipple
-                    (click)="authentication.signInWithGoogle()">
+                <button type="button" class="btn-bright btn-google" matRipple [disabled]="isSignIn()"
+                    (click)="authenticationService.signInWithGoogle()">
                     <img src="./assets/img/icons/google.svg" alt="Google Logo" />
                     <span>{{ 'signIn.googleLogin' | translate }}</span>
                 </button>
@@ -77,7 +75,8 @@
                     <button mat-flat-button type="submit" [disabled]="isSignIn()" class="btn-dark">
                         {{ 'signIn.submit' | translate }}
                     </button>
-                    <button mat-stroked-button type="button" class="btn-bright" (click)="signInGuest()">
+                    <button mat-stroked-button type="button" [disabled]="isSignIn()" class="btn-bright"
+                        (click)="signInGuest()">
                         {{ 'signIn.guestLogin' | translate }}
                     </button>
                 </div>
