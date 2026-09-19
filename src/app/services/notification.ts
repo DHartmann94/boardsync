@@ -42,18 +42,20 @@ export class Notification {
 
   // Dialog
   openConfirmDialog(
-    titleKey: string, 
-    messageKey: string, 
-    confirmTextKey: string = 'general.confirm', 
+    titleKey: string,
+    messageKey: string,
+    confirmTextKey: string = 'general.confirm',
     cancelTextKey: string = 'general.cancel',
-    messageParams?: object
+    messageParams?: object,
+    onConfirmAction?: () => Promise<boolean>
   ): Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmDialog, {
       data: {
         title: this.translate.instant(titleKey),
         message: this.translate.instant(messageKey, messageParams),
         confirmText: this.translate.instant(confirmTextKey),
-        cancelText: this.translate.instant(cancelTextKey)
+        cancelText: this.translate.instant(cancelTextKey),
+        onConfirmAction
       }
     });
 

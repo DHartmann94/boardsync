@@ -1,22 +1,29 @@
-<mat-card>
-    <mat-card-header>
-        <h2 class="card-title">{{ data.title | translate }}</h2>
-    </mat-card-header>
+<div class="background">
+    <mat-card>
+        <mat-card-header>
+            <h2 class="card-title">{{ data.title }}</h2>
+        </mat-card-header>
 
-    <mat-card-content>
-        <div class="title-underline"></div>
+        @if (isLoading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
 
-        <p class="subtitle">
-            {{ data.message | translate }}
-        </p>
+        <mat-card-content>
+            <div class="title-underline"></div>
 
-        <div class="dialog-button-group">
-            <button mat-button [mat-dialog-close]="false">
-                {{ data.cancelText | translate }}
-            </button>
-            <button mat-flat-button color="primary" [mat-dialog-close]="true">
-                {{ data.confirmText | translate }}
-            </button>
-        </div>
-    </mat-card-content>
-</mat-card>
+            <p class="subtitle">
+                {{ data.message }}
+            </p>
+
+            <div class="dialog-button-group">
+                <button mat-button [disabled]="isLoading()" [mat-dialog-close]="undefined" class="btn-bright">
+                    {{ data.cancelText }}
+                </button>
+                <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isLoading()" class="btn-dark">
+                    {{ data.confirmText }}
+                </button>
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>

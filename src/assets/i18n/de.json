@@ -5,7 +5,8 @@
         "back": "Zurück",
         "close": "Schließen",
         "errors": {
-            "failure": "Es ist ein unbekannter Fehler aufgetreten"
+            "failure": "Es ist ein unbekannter Fehler aufgetreten",
+            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst."
         }
     },
     "signIn": {
@@ -23,15 +24,14 @@
         "guestLogin": "Gast-Login",
         "verificationSent": "Eine neue verifizierungs E-Mail wurde versand",
         "emailNotVerifiedTitle": "E-Mail nicht verifiziert",
-        "emailNotVerifiedMessage": "Ihre E-Mail wurde noch nicht verifiziert. Möchten Sie eine neue E-Mail erhalten?",
+        "emailNotVerifiedMessage": "Ihre E-Mail wurde noch nicht verifiziert. Möchten Sie eine neue Verifizierungs-E-Mail erhalten?",
         "resendEmail": "Neu senden",
         "errors": {
             "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
             "emailPattern": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
             "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail.",
             "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
-            "userNotFound": "E-Mail oder Passwort ist falsch.",
-            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst."
+            "userNotFound": "E-Mail oder Passwort ist falsch."
         }
     },
     "signUp": {
@@ -56,9 +56,21 @@
             "minlength": "Das Passwort ist zu kurz",
             "passwordComplex": "Groß-/Kleinbuchstabe, Zahl & Sonderzeichen",
             "passwordsDontMatch": "Die Passwörter stimmen nicht überein",
-            "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren",
-            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst.",
-            "failure": "Es ist ein Fehler aufgetreten, bitte versuchen Sie es noch einmal"
+            "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren"
+        }
+    },
+    "resetPassword": {
+        "title": "Passwort zurücksetzen",
+        "emailLabel": "E-Mail",
+        "emailPlaceholder": "beispiel@email.de",
+        "submit": "E-Mail senden",
+        "success": "Falls Ihre E-Mail-Adresse bei uns registriert ist, senden wir Ihnen in Kürze eine E-Mail.",
+        "subtitle": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+        "helperText": "Wir senden Ihnen eine E-Mail, über die Sie Ihr Passwort ändern können.",
+        "errors": {
+            "required": "E-Mail ist erforderlich",
+            "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+            "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
         }
     },
     "task": {

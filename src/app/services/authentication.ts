@@ -1,5 +1,5 @@
 import { Injectable, inject, Signal } from '@angular/core';
-import { Auth, user, User, signInWithEmailAndPassword, signInAnonymously, createUserWithEmailAndPassword, sendEmailVerification, deleteUser } from '@angular/fire/auth';
+import { Auth, user, User, signInWithEmailAndPassword, signInAnonymously, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -68,7 +68,6 @@ export class Authentication {
   async sendVerificationMail(user: User): Promise<boolean> {
     try {
       await sendEmailVerification(user);
-      console.log('Verifizierungs-E-Mail erfolgreich gesendet.');
       return true;
     } catch (error: any) {
       console.error('ERROR email verification:', error);
@@ -82,6 +81,15 @@ export class Authentication {
       await deleteUser(user);
     } catch (error: any) {
       console.error('ERROR deleting auth user during rollback:', error);
+    }
+  }
+
+  async sendPasswordReset(email: string): Promise<void> {
+    try {
+      await sendPasswordResetEmail(this.auth, email);
+    } catch (error: any) {
+      console.error('ERROR password reset:', error);
+      throw error;
     }
   }
 

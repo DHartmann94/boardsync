@@ -128,7 +128,7 @@ export class SignUp {
           break;
 
         case 'auth/too-many-requests':
-          this.notificationService.showError('signUp.errors.tooManyRequests');
+          this.notificationService.showError('general.errors.tooManyRequests');
           this.isSignUp.set(false);
           break;
 
@@ -139,17 +139,15 @@ export class SignUp {
   }
 
   private handleSignUpFailure(): void {
-    this.notificationService.showError('signUp.errors.failure');
+    this.notificationService.showError('general.errors.failure');
     this.isSignUp.set(false);
   }
 
 
   /*------ Help functions ------*/
   resetForm() {
-    setTimeout(() => {
-      this.signUpForm.reset();
-      this.isSignUp.set(false);
-    }, 1000);
+    this.signUpForm.reset();
+    this.isSignUp.set(false);
   }
 
   navigateBack(): void {

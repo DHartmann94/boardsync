@@ -79,16 +79,17 @@ export class SignIn {
             'signIn.emailNotVerifiedTitle',
             'signIn.emailNotVerifiedMessage',
             'signIn.resendEmail',
-            'general.close'
-          ).subscribe(async (resendConfirmed) => {
-            if (resendConfirmed && currentUser) {
-              const success = await this.authenticationService.sendVerificationMail(currentUser);
-              if (success) {
-                this.notificationService.showSuccess('signIn.verificationSent');
-              } else {
-                this.notificationService.showError('general.errors.failure');
-              }
+            'general.close',
+            undefined,
+            currentUser ? () => this.authenticationService.sendVerificationMail(currentUser) : undefined
+          ).subscribe((success) => {
+            if (success) {
+              this.notificationService.showSuccess('signIn.verificationSent');
+            } else if (success === false && currentUser) {
+              // false kann jetzt zwei Dinge bedeuten: Abbruch ODER Mail-Versand fehlgeschlagen
+              this.notificationService.showError('general.errors.failure');
             }
+            // success === undefined/null → User hat abgebrochen, keine Meldung nötig
           });
           break;
         }
@@ -100,7 +101,7 @@ export class SignIn {
           break;
 
         case 'auth/too-many-requests':
-          this.notificationService.showError("signIn.errors.tooManyRequests");
+          this.notificationService.showError("general.errors.tooManyRequests");
           break;
 
         default:
