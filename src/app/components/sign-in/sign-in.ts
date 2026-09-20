@@ -16,6 +16,7 @@ import { Authentication } from '../../services/authentication';
 import { Notification } from '../../services/notification';
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
+import { Startscreen } from '../../components/startscreen/startscreen';
 
 @Component({
   selector: 'app-sign-in',
@@ -31,7 +32,8 @@ import { FooterPublic } from '../../components/footer-public/footer-public';
     MatRipple,
     TranslatePipe,
     HeaderPublic,
-    FooterPublic
+    FooterPublic,
+    Startscreen
   ],
   templateUrl: './sign-in.html',
   styleUrl: './sign-in.scss',

@@ -3,15 +3,20 @@
 .centered-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px;
+    justify-content: center;
     width: 100%;
+    position: relative;
     box-sizing: border-box;
+    min-height: 48px;
+
+    .go-back-button {
+        position: absolute;
+        left: 0;
+    }
 
     .card-title {
         margin: 0;
         text-align: center;
-        flex-grow: 1;
     }
 }
 

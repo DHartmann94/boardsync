@@ -1,3 +1,5 @@
+<app-startscreen></app-startscreen>
+
 <section>
     <!-- Header -->
     <app-header-public>
@@ -66,7 +68,7 @@
                 <!-- Google Button -->
                 <button type="button" class="btn-bright btn-google" matRipple [disabled]="isSignIn()"
                     (click)="authenticationService.signInWithGoogle()">
-                    <img src="./assets/img/icons/google.svg" alt="Google Logo" />
+                    <img src="./assets/img/icons/google.svg" draggable="false" alt="Google Logo" />
                     <span>{{ 'signIn.googleLogin' | translate }}</span>
                 </button>
 

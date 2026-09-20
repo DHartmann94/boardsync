@@ -1,0 +1,81 @@
+.splash-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--light-grey), var(--light-blue));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+    overflow: hidden;
+
+    background-size: 200% 200%;
+    animation: gradientTransition 4s ease infinite;
+}
+
+.splash-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    will-change: transform;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+}
+
+.splash-logo {
+    width: 130px;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    transform-origin: top left;
+}
+
+.splash-text-container {
+    display: flex;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    will-change: width;
+
+    .letter {
+        display: inline-block;
+        opacity: 1;
+        transform: scaleX(1);
+        transform-origin: right;
+    }
+
+    &.deleting .letter {
+        animation: fadeLetter 0.25s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    }
+}
+
+@keyframes fadeLetter {
+    to {
+        opacity: 0;
+        transform: scaleX(0.5);
+    }
+}
+
+@keyframes gradientTransition {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}

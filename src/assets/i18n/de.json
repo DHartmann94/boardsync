@@ -35,12 +35,13 @@
         }
     },
     "signUp": {
-        "title": "Konto erstellen",
+        "title": "Konto",
+        "title02": "erstellen",
         "firstNameLabel": "Vorname",
         "lastNameLabel": "Nachname",
         "emailLabel": "E-Mail",
         "emailPlaceholder": "beispiel@email.de",
-        "phoneLabel": "Telefonnummer (optional)",
+        "phoneLabel": "Telefonnr. (optional)",
         "passwordLabel": "Passwort",
         "confirmPasswordLabel": "Passwort bestätigen",
         "acceptPrivacyStart": "Ich akzeptiere die ",
