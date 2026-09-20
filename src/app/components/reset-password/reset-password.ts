@@ -14,8 +14,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
-import { Authentication } from '../../services/authentication';
-import { Notification } from '../../services/notification';
+import { AuthenticationService } from '../../services/authentication';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-reset-password',
@@ -36,8 +36,8 @@ import { Notification } from '../../services/notification';
 })
 export class ResetPassword {
 
-  private readonly authenticationService = inject(Authentication);
-  private readonly notificationService = inject(Notification);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly notificationService = inject(NotificationService);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly location = inject(Location);
   private readonly router = inject(Router);

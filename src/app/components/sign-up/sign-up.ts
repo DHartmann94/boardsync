@@ -15,10 +15,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
-import { Validation } from '../../services/validation';
-import { Authentication } from '../../services/authentication';
-import { Notification } from '../../services/notification';
-import { User } from '../../services/user';
+import { ValidationService } from '../../services/validation';
+import { AuthenticationService } from '../../services/authentication';
+import { NotificationService } from '../../services/notification';
+import { UserService } from '../../services/user';
 
 
 @Component({
@@ -42,10 +42,10 @@ import { User } from '../../services/user';
 })
 export class SignUp {
 
-  private readonly validationService = inject(Validation);
-  private readonly authenticationService = inject(Authentication);
-  private readonly notificationService = inject(Notification);
-  private readonly userService = inject(User);
+  private readonly validationService = inject(ValidationService);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly userService = inject(UserService);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly location = inject(Location);
   private readonly router = inject(Router);

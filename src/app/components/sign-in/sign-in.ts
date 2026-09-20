@@ -12,8 +12,9 @@ import { MatRipple } from '@angular/material/core';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Authentication } from '../../services/authentication';
-import { Notification } from '../../services/notification';
+import { AuthenticationService } from '../../services/authentication';
+import { UserService } from '../../services/user';
+import { NotificationService } from '../../services/notification';
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
 import { Startscreen } from '../../components/startscreen/startscreen';
@@ -41,8 +42,9 @@ import { Startscreen } from '../../components/startscreen/startscreen';
 export class SignIn {
 
   private readonly fb = inject(NonNullableFormBuilder);
-  protected readonly authenticationService = inject(Authentication);
-  private readonly notificationService = inject(Notification);
+  protected readonly authenticationService = inject(AuthenticationService);
+  protected readonly userService = inject(UserService);
+  private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
 
   protected readonly isSignIn = signal(false);
@@ -65,7 +67,7 @@ export class SignIn {
 
     try {
       const { email, password } = this.signInForm.getRawValue();
-      await this.authenticationService.signAsUser(email, password);
+      await this.authenticationService.signInAsUser(email, password);
 
       this.router.navigateByUrl('/main');
 

@@ -1,11 +1,11 @@
 import { Injectable, inject, Signal } from '@angular/core';
-import { Auth, user, User, signInWithEmailAndPassword, signInAnonymously, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
+import { Auth, user, User, signInWithEmailAndPassword, signInAnonymously, signOut, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Authentication {
+export class AuthenticationService {
 
   private readonly auth = inject(Auth);
 
@@ -23,7 +23,7 @@ export class Authentication {
     });
   }
 
-  async signAsUser(email: string, password: string): Promise<User> {
+  async signInAsUser(email: string, password: string): Promise<User> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
@@ -32,6 +32,7 @@ export class Authentication {
         const error: any = new Error('Email is not verified.');
         error.code = 'auth/email-not-verified';
         error.user = user;
+        await signOut(this.auth);
         throw error;
       }
 

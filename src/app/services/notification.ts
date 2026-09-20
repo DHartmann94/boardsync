@@ -9,7 +9,7 @@ import { ConfirmDialog } from '../components/confirm-dialog/confirm-dialog';
 @Injectable({
   providedIn: 'root',
 })
-export class Notification {
+export class NotificationService {
 
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
