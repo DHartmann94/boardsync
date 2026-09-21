@@ -5,35 +5,38 @@
     <!-- Sign-Up Card -->
     <mat-card>
         <mat-card-header class="centered-header">
-            <button mat-button class="go-back-button" (click)="navigateBack()">
+            <button mat-button class="go-back-button" [disabled]="isSignUp()" (click)="navigateBack()">
                 <mat-icon matSuffix class="material-symbols-outlined mat-icon">arrow_back</mat-icon>
             </button>
+            <div>
+                <h1 class="card-title">{{ 'signUp.title' | translate }}</h1>
+                <h1 class="card-title">{{ 'signUp.title02' | translate }}</h1>
+            </div>
 
-            <h1 class="card-title">{{ 'signUp.title' | translate }}</h1>
         </mat-card-header>
         <mat-card-content>
             <div class="title-underline"></div>
 
             <form [formGroup]="signUpForm" (ngSubmit)="signUp()">
 
-                <!-- Vorname -->
+                <!-- Firstname -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.firstNameLabel' | translate }}</mat-label>
                     <input id="firstName" matInput type="text" formControlName="firstName" required
-                        [placeholder]="'signUp.firstNameLabel' | translate" autocomplete="given-name"
-                        [attr.aria-label]="'signUp.firstNameLabel' | translate" />
+                        [readonly]="isSignUp()" [placeholder]="'signUp.firstNameLabel' | translate"
+                        autocomplete="given-name" [attr.aria-label]="'signUp.firstNameLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">person</mat-icon>
                     @if (signUpForm.controls.firstName.hasError('required')) {
                     <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
                     }
                 </mat-form-field>
 
-                <!-- Nachname -->
+                <!-- Lastname -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.lastNameLabel' | translate }}</mat-label>
                     <input id="lastName" matInput type="text" formControlName="lastName" required
-                        [placeholder]="'signUp.lastNameLabel' | translate" autocomplete="family-name"
-                        [attr.aria-label]="'signUp.lastNameLabel' | translate" />
+                        [readonly]="isSignUp()" [placeholder]="'signUp.lastNameLabel' | translate"
+                        autocomplete="family-name" [attr.aria-label]="'signUp.lastNameLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">person</mat-icon>
                     @if (signUpForm.controls.lastName.hasError('required')) {
                     <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
@@ -43,7 +46,7 @@
                 <!-- Email -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.emailLabel' | translate }}</mat-label>
-                    <input id="email" matInput type="email" formControlName="email" required
+                    <input id="email" matInput type="email" formControlName="email" required [readonly]="isSignUp()"
                         [placeholder]="'signUp.emailPlaceholder' | translate" autocomplete="email"
                         [attr.aria-label]="'signUp.emailLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">mail</mat-icon>
@@ -51,15 +54,15 @@
                     <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
                     } @else if (signUpForm.controls.email.hasError('pattern')) {
                     <mat-error>{{ 'signUp.errors.emailInvalid' | translate }}</mat-error>
-                    } @else if (emailExistsError()) {
+                    } @else if (signUpForm.controls.email.hasError('emailExists')) {
                     <mat-error>{{ 'signUp.errors.emailExists' | translate }}</mat-error>
                     }
                 </mat-form-field>
 
-                <!-- Telefonnummer (Optional) -->
+                <!-- Phone (Optional) -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.phoneLabel' | translate }}</mat-label>
-                    <input id="phone" matInput type="tel" formControlName="phone"
+                    <input id="phone" matInput type="tel" formControlName="phone" [readonly]="isSignUp()"
                         [placeholder]="'signUp.phoneLabel' | translate" autocomplete="tel"
                         [attr.aria-label]="'signUp.phoneLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">phone</mat-icon>
@@ -68,12 +71,12 @@
                     }
                 </mat-form-field>
 
-                <!-- Passwort -->
+                <!-- Password -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.passwordLabel' | translate }}</mat-label>
                     <input id="password" matInput type="password" formControlName="password" required
-                        [placeholder]="'signUp.passwordLabel' | translate" autocomplete="new-password"
-                        [attr.aria-label]="'signUp.passwordLabel' | translate" />
+                        [readonly]="isSignUp()" [placeholder]="'signUp.passwordLabel' | translate"
+                        autocomplete="new-password" [attr.aria-label]="'signUp.passwordLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">lock</mat-icon>
                     @if (signUpForm.controls.password.hasError('required')) {
                     <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
@@ -84,12 +87,12 @@
                     }
                 </mat-form-field>
 
-                <!-- Passwort bestätigen -->
+                <!-- Password confirm -->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ 'signUp.confirmPasswordLabel' | translate }}</mat-label>
                     <input id="confirmPassword" matInput type="password" formControlName="confirmPassword" required
-                        [placeholder]="'signUp.confirmPasswordLabel' | translate" autocomplete="new-password"
-                        [attr.aria-label]="'signUp.confirmPasswordLabel' | translate" />
+                        [readonly]="isSignUp()" [placeholder]="'signUp.confirmPasswordLabel' | translate"
+                        autocomplete="new-password" [attr.aria-label]="'signUp.confirmPasswordLabel' | translate" />
                     <mat-icon matSuffix class="material-symbols-outlined">lock_reset</mat-icon>
                     @if (signUpForm.controls.confirmPassword.hasError('required')) {
                     <mat-error>{{ 'signUp.errors.required' | translate }}</mat-error>
@@ -98,7 +101,7 @@
                     }
                 </mat-form-field>
 
-                <!-- Datenschutz Checkbox -->
+                <!-- Privacy Checkbox -->
                 <div class="privacy-wrapper">
                     <mat-checkbox formControlName="privacyPolicy">
                         {{ 'signUp.acceptPrivacyStart' | translate }}

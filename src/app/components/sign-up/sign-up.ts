@@ -1,6 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { MatCardModule } from '@angular/material/card';
@@ -15,7 +15,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
-import { Validation } from '../../services/validation';
+import { ValidationService } from '../../services/validation';
+import { AuthenticationService } from '../../services/authentication';
+import { NotificationService } from '../../services/notification';
+import { UserService } from '../../services/user';
 
 
 @Component({
@@ -37,14 +40,18 @@ import { Validation } from '../../services/validation';
   templateUrl: './sign-up.html',
   styleUrl: './sign-up.scss',
 })
-export class SignUp implements OnInit {
+export class SignUp {
 
-  private readonly validation = inject(Validation);
+  private readonly validationService = inject(ValidationService);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly userService = inject(UserService);
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly location = inject(Location);
+  private readonly router = inject(Router);
+
 
   protected readonly isSignUp = signal(false);
-  protected readonly emailExistsError = signal(false);
 
   protected readonly signUpForm = this.fb.group(
     {
@@ -65,58 +72,100 @@ export class SignUp implements OnInit {
       privacyPolicy: this.fb.control(false, [Validators.requiredTrue]),
     },
     {
-      validators: [this.validation.passwordMatchValidator]
+      validators: [this.validationService.passwordMatchValidator]
     }
   );
 
-
-  ngOnInit(): void {
-    // Sobald sich der Wert im E-Mail-Feld ändert, den Fehler zurücksetzen
-    this.signUpForm.get('email')?.valueChanges.subscribe(() => {
-      if (this.emailExistsError()) {
-        this.emailExistsError.set(false);
+  constructor() {
+    /**
+     * Sperrt/entsperrt gezielt nur die Privacy-Checkbox während des Sign-up-Vorgangs.
+     * `mat-checkbox` unterstützt kein natives `readonly`, daher hier bewusst `disable()`/`enable()`
+     * nur für dieses Control statt für die ganze Form – unproblematisch, da zu diesem Zeitpunkt
+     * bereits alle Validierungen bestanden sind.
+     */
+    effect(() => {
+      if (this.isSignUp()) {
+        this.signUpForm.controls.privacyPolicy.disable({ emitEvent: false });
+      } else {
+        this.signUpForm.controls.privacyPolicy.enable({ emitEvent: false });
       }
     });
   }
 
   async signUp(): Promise<void> {
     if (this.signUpForm.invalid) {
+      this.signUpForm.markAllAsTouched();
       return;
     }
-    this.disableForm();
+    this.isSignUp.set(true);
 
-    await this.checkSignUp();
+    await this.createUser(this.signUpForm.value.email?.toLowerCase() ?? '');
   }
 
+  async createUser(emailLowerCase: string): Promise<void> {
+    let createdUser: any = null;
 
-  async checkSignUp(): Promise<void> {
-    const emailLowerCase: string = this.signUpForm.value.email?.toLowerCase() || '';
+    try {
+      const firstName = this.signUpForm.value.firstName ?? '';
+      const lastName = this.signUpForm.value.lastName ?? '';
+      const password = this.signUpForm.value.password ?? '';
+      const phone = this.signUpForm.value.phone ?? '';
+      const avatar = this.userService.generateInitialsAvatar(firstName, lastName);
 
-    if (await this.validation.emailExistsValidator(emailLowerCase)) {
-      this.emailExistsError.set(true);
-      this.signUpForm.enable();
-      this.isSignUp.set(false);
-      return;
+      const authResult = await this.authenticationService.sendUserToAuthenticator(emailLowerCase, password);
+      // Geht automatisch in den Catch wenn kein User erstellt werden kann (z.B. gleiche Mail)
+      createdUser = authResult.user;
+      const authUID = authResult.uid;
+
+      const userFirestore = await this.userService.createUserDocument(authUID, {
+        firstName,
+        lastName,
+        email: emailLowerCase,
+        phone,
+        avatar
+      });
+
+      if (userFirestore) {
+        this.notificationService.showSuccess('signUp.success');
+        this.signUpForm.reset();
+        this.isSignUp.set(false);
+        this.router.navigateByUrl('/sign-in');
+      } else {
+        await this.authenticationService.deleteUserInstance(createdUser);
+        this.handleSignUpFailure();
+      }
+
+    } catch (error: any) {
+      console.error('Error during creation process:', error);
+      if (createdUser) {
+        await this.authenticationService.deleteUserInstance(createdUser);
+      }
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          this.signUpForm.controls.email.setErrors({ emailExists: true });
+          this.signUpForm.controls.email.markAsTouched();
+          this.isSignUp.set(false);
+          break;
+
+        case 'auth/too-many-requests':
+          this.notificationService.showError('general.errors.tooManyRequests');
+          this.isSignUp.set(false);
+          break;
+
+        default:
+          this.handleSignUpFailure();
+      }
     }
+  }
 
-    // await this.createUser(emailLowerCase);
+  private handleSignUpFailure(): void {
+    this.notificationService.showError('general.errors.failure');
+    this.isSignUp.set(false);
   }
 
 
   /*------ Help functions ------*/
-  disableForm(): void {
-    this.signUpForm.disable();
-    this.isSignUp.set(true);
-  }
-
-
-  enableForm(): void {
-    setTimeout(() => {
-      this.signUpForm.enable();
-      this.isSignUp.set(false);
-    }, 3500);
-  }
-
   navigateBack(): void {
     this.location.back();
   }

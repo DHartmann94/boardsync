@@ -1,0 +1,29 @@
+<div class="background">
+    <mat-card>
+        <mat-card-header>
+            <h2 class="card-title">{{ data.title }}</h2>
+        </mat-card-header>
+
+        @if (isLoading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+
+        <mat-card-content>
+            <div class="title-underline"></div>
+
+            <p class="subtitle">
+                {{ data.message }}
+            </p>
+
+            <div class="dialog-button-group">
+                <button mat-button [disabled]="isLoading()" [mat-dialog-close]="undefined" class="btn-bright">
+                    {{ data.cancelText }}
+                </button>
+                <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isLoading()" class="btn-dark">
+                    {{ data.confirmText }}
+                </button>
+            </div>
+
+        </mat-card-content>
+    </mat-card>
+</div>

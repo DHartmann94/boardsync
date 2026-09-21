@@ -1,0 +1,15 @@
+@if (showSplash()) {
+<div class="splash-overlay">
+    <div class="splash-center" #splashCenter>
+        <img src="./assets/img/logos/logo.png" draggable="false" alt="BoardSync Logo" class="splash-logo" #splashLogo />
+
+        <div class="splash-text-container" [class.deleting]="deleting()" #splashText>
+            @for (letter of letters; track $index; let i = $index) {
+            <span class="letter" [style.animation-delay.ms]="(letters.length - 1 - i) * 70">
+                {{ letter }}
+            </span>
+            }
+        </div>
+    </div>
+</div>
+}

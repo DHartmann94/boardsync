@@ -8,6 +8,26 @@ section {
     padding: 20px;
     box-sizing: border-box;
 
+    .centered-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        position: relative;
+        box-sizing: border-box;
+        min-height: 48px;
+
+        .go-back-button {
+            position: absolute;
+            left: 0;
+        }
+
+        .card-title {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
     mat-card {
         width: 100%;
         max-width: 520px;

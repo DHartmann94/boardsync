@@ -2,7 +2,12 @@
     "general": {
         "imprint": "Impressum",
         "privacy": "Datenschutz",
-        "back": "Zurück"
+        "back": "Zurück",
+        "close": "Schließen",
+        "errors": {
+            "failure": "Es ist ein unbekannter Fehler aufgetreten",
+            "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst."
+        }
     },
     "signIn": {
         "title": "Anmelden",
@@ -17,6 +22,10 @@
         "googleLogin": "Anmelden mit Google",
         "submit": "Anmelden",
         "guestLogin": "Gast-Login",
+        "verificationSent": "Eine neue verifizierungs E-Mail wurde versand",
+        "emailNotVerifiedTitle": "E-Mail nicht verifiziert",
+        "emailNotVerifiedMessage": "Ihre E-Mail wurde noch nicht verifiziert. Möchten Sie eine neue Verifizierungs-E-Mail erhalten?",
+        "resendEmail": "Neu senden",
         "errors": {
             "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
             "emailPattern": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
@@ -26,18 +35,20 @@
         }
     },
     "signUp": {
-        "title": "Konto erstellen",
+        "title": "Konto",
+        "title02": "erstellen",
         "firstNameLabel": "Vorname",
         "lastNameLabel": "Nachname",
         "emailLabel": "E-Mail",
         "emailPlaceholder": "beispiel@email.de",
-        "phoneLabel": "Telefonnummer (optional)",
+        "phoneLabel": "Telefonnr. (optional)",
         "passwordLabel": "Passwort",
         "confirmPasswordLabel": "Passwort bestätigen",
         "acceptPrivacyStart": "Ich akzeptiere die ",
         "privacyPolicyLink": "Datenschutzerklärung",
         "acceptPrivacyEnd": ".",
         "submit": "Registrieren",
+        "success": "Konto erfolgreich erstellt. Verifizierungs E-Mail wurde versandt.",
         "errors": {
             "required": "Dieses Feld ist ein Pflichtfeld",
             "emailInvalid": "Bitte gib eine gültige E-Mail-Adresse ein",
@@ -47,6 +58,20 @@
             "passwordComplex": "Groß-/Kleinbuchstabe, Zahl & Sonderzeichen",
             "passwordsDontMatch": "Die Passwörter stimmen nicht überein",
             "privacyRequired": "Bitte die Datenschutzerklärung akzeptieren"
+        }
+    },
+    "resetPassword": {
+        "title": "Passwort zurücksetzen",
+        "emailLabel": "E-Mail",
+        "emailPlaceholder": "beispiel@email.de",
+        "submit": "E-Mail senden",
+        "success": "Falls Ihre E-Mail-Adresse bei uns registriert ist, senden wir Ihnen in Kürze eine E-Mail.",
+        "subtitle": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+        "helperText": "Wir senden Ihnen eine E-Mail, über die Sie Ihr Passwort ändern können.",
+        "errors": {
+            "required": "E-Mail ist erforderlich",
+            "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+            "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
         }
     },
     "task": {
