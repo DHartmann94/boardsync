@@ -1,0 +1,37 @@
+<div class="app-container"> <!-- Sidebar --> <mat-sidenav-container class="sidenav-container" autosize>
+<mat-sidenav
+  class="sidebar"
+  [class.sidebar-collapsed]="sidebarCollapsed()"
+  mode="side"
+  opened>
+
+  <app-sidebar-main [collapsed]="sidebarCollapsed()"></app-sidebar-main>
+
+</mat-sidenav>
+
+
+<!-- Rechter Bereich -->
+<mat-sidenav-content class="content-container">
+
+  <!-- Header -->
+  <header class="app-header">
+
+    <app-header-main (toggleSidebar)="toggleSidebar()"></app-header-main>
+
+  </header>
+
+
+  <!-- Body -->
+  <main class="app-body">
+
+    <div class="content-wrapper">
+
+      <router-outlet></router-outlet>
+
+    </div>
+
+  </main>
+
+</mat-sidenav-content>
+
+</mat-sidenav-container> </div>

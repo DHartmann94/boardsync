@@ -4,6 +4,8 @@ import { SignUp } from './components/sign-up/sign-up';
 import { Imprint } from './components/imprint/imprint';
 import { Privacy } from './components/privacy/privacy';
 import { NotFound } from './components/not-found/not-found';
+import { Main } from './components/main/main';
+import { AddTasks } from './components/add-tasks/add-tasks';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
@@ -11,7 +13,15 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUp },
   { path: 'imprint', component: Imprint },
   { path: 'privacy', component: Privacy },
-
-  // 404-Fallback
+  {
+    path: 'main',
+    component: Main,
+    children: [
+      { path: 'add-tasks', component: AddTasks },
+      //{ path: '', redirectTo: 'add-tasks', pathMatch: 'full' },
+    ],
+  },
+  
+ // 404-Fallback
   { path: '**', component: NotFound }
 ];
