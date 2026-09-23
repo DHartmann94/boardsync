@@ -116,18 +116,41 @@ export class SignIn {
     }
   }
 
-  async signInGuest() {
-    //   this.isSignIn.set(true);
-    //   try {
-    //     await this.authenticationService.signInAsGuest();
-    //     // User wird um user.service effect geladen
-    //     //await this.userService.getCurrentUser(); Wird im effect getriggert
-    //   } catch (error: any) {
-    //     this.notification.showError('auth.guestLoginFailed');
-    //     // oder: this.userNotFound.set(true); je nach Fehlerfall differenzieren
-    //   } finally {
-    //     this.isSignIn.set(false);
-    //   }
+  async signInWithGoogle(): Promise<void> {
+    this.isSignIn.set(true);
+
+    try {
+      await this.authenticationService.signInWithGoogle();
+      // User wird automatisch über den effect im Firestore angelegt
+
+      this.router.navigateByUrl('/main');
+
+    } catch (error: any) {
+      console.error('ERROR during Google login:', error);
+      if (error.code === 'auth/popup-closed-by-user') {
+        return;
+      }
+
+      this.notificationService.showError('general.errors.failure');
+    } finally {
+      this.isSignIn.set(false);
+    }
   }
+
+  // async signInGuest(): Promise<void> {
+  //   this.isSignIn.set(true);
+
+  //   try {
+  //     await this.authenticationService.signInAsGuest();
+
+  //     this.router.navigateByUrl('/main');
+
+  //   } catch (error: any) {
+  //     console.error('ERROR during Guest login:', error);
+  //     this.notificationService.showError('general.errors.failure');
+  //   } finally {
+  //     this.isSignIn.set(false);
+  //   }
+  // }
 
 }

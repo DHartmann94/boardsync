@@ -1,5 +1,5 @@
 import { Injectable, inject, Signal } from '@angular/core';
-import { Auth, user, User, signInWithEmailAndPassword, signInAnonymously, signOut, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
+import { Auth, user, User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -43,18 +43,27 @@ export class AuthenticationService {
     }
   }
 
-  async signInAsGuest() {
+  // async signInAsGuest() {
+  //   try {
+  //     await signOut(this.auth);
+  //     const userCredential = await signInAnonymously(this.auth);
+  //     return userCredential.user;
+  //   } catch (error: any) {
+  //     console.error('ERROR signInAsGuest:', error);
+  //     throw error;
+  //   }
+  // }
+
+  async signInWithGoogle(): Promise<User> {
     try {
-      const userCredential = await signInAnonymously(this.auth);
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(this.auth, provider);
+
       return userCredential.user;
     } catch (error: any) {
-      console.error('ERROR signInAsGuest:', error);
-      throw error; // Präsentation entscheidet die Component
+      console.error('ERROR during Google login:', error.code, error.message);
+      throw error;
     }
-  }
-
-  async signInWithGoogle() {
-    // TODO
   }
 
   async sendUserToAuthenticator(emailLowerCase: string, password: string): Promise<{ uid: string; user: User }> {

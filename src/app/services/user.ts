@@ -79,30 +79,65 @@ export class UserService {
       if (this.authenticationService.authUser()?.uid !== userID) return;
 
       if (docSnapshot.exists()) {
-        // Normaler Firestore User
+        // 1. Normaler Firestore User (bereits registriert)
         const mappedUser = this.mapToUser(userID, docSnapshot.data());
         this.currentUser.set(mappedUser);
         console.log('User geladen:', mappedUser);
-      } else if (authUser.isAnonymous) {
-        // GAST ohne Firestore-Eintrag: liegt nur lokal ab
-        this.currentUser.set({
-          id: userID,
-          firstName: 'Guest',
-          lastName: '',
-          email: '',
-          phone: '',
-          avatar: '/assets/profile-pictures/unknown-user.png',
-          role: 'user',
-          status: '',
-          createdAt: this.dateService.parseDate(authUser.metadata.creationTime) ?? new Date()
-        });
+
+      } else if (this.isGoogleProvider(authUser)) {
+        // 2. Google Erst-Login (Dokument existiert noch nicht)
+        await this.handleGoogleFirstLogin(userID, authUser);
+
       } else {
+        // 3. Fallback
         this.currentUser.set(null);
       }
+
     } catch (error: any) {
       console.error('ERROR loading current user:', error);
       this.loadError.set(true);
     }
+  }
+
+  private isGoogleProvider(authUser: any): boolean {
+    return authUser.providerData.some((p: any) => p.providerId === 'google.com');
+  }
+
+  private async handleGoogleFirstLogin(userID: string, authUser: any): Promise<void> {
+    const fullName = authUser.displayName ?? '';
+    const spaceIndex = fullName.lastIndexOf(' ');
+    let firstName = fullName;
+    let lastName = '';
+
+    if (spaceIndex !== -1) {
+      firstName = fullName.substring(0, spaceIndex);
+      lastName = fullName.substring(spaceIndex + 1);
+    }
+
+    const avatar = this.generateInitialsAvatar(firstName, lastName);
+
+    const newUserData: Partial<UserInterface> = {
+      firstName: firstName,
+      lastName: lastName,
+      email: authUser.email ?? '',
+      avatar: avatar ?? '/assets/profile-pictures/unknown-user.png',
+      role: 'user'
+    };
+
+    await this.createUserDocument(userID, newUserData);
+
+    // Lokales Signal setzen
+    this.currentUser.set({
+      id: userID,
+      firstName: newUserData.firstName!,
+      lastName: newUserData.lastName!,
+      email: newUserData.email!,
+      phone: '',
+      avatar: newUserData.avatar!,
+      role: 'user',
+      status: '',
+      createdAt: new Date()
+    });
   }
 
   async createUserDocument(authUID: string, userDataDto: Partial<UserInterface>): Promise<boolean> {
@@ -121,18 +156,11 @@ export class UserService {
       const userDocRef = doc(this.firestore, 'users', authUID);
       await setDoc(userDocRef, userPayload);
 
-      console.log('User erfolgreich in Firestore angelegt mit ID:', authUID);
       return true;
     } catch (error) {
       console.error('ERROR user send to Firebase / Firestore:', error);
       return false;
     }
-  }
-
-  generateInitialsAvatar(firstName: string, lastName: string): string {
-    const firstInitial = firstName.trim().charAt(0).toUpperCase();
-    const lastInitial = lastName.trim().charAt(0).toUpperCase();
-    return `${firstInitial}${lastInitial}`;
   }
 
 
@@ -149,5 +177,11 @@ export class UserService {
       status: data['status'] ?? '',
       createdAt: this.dateService.parseDate(data['createdAt'])
     };
+  }
+
+  generateInitialsAvatar(firstName: string, lastName: string): string {
+    const firstInitial = firstName.trim().charAt(0).toUpperCase();
+    const lastInitial = lastName.trim().charAt(0).toUpperCase();
+    return `${firstInitial}${lastInitial}`;
   }
 }

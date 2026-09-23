@@ -67,7 +67,7 @@
 
                 <!-- Google Button -->
                 <button type="button" class="btn-bright btn-google" matRipple [disabled]="isSignIn()"
-                    (click)="authenticationService.signInWithGoogle()">
+                    (click)="signInWithGoogle()">
                     <img src="./assets/img/icons/google.svg" draggable="false" alt="Google Logo" />
                     <span>{{ 'signIn.googleLogin' | translate }}</span>
                 </button>
@@ -77,10 +77,10 @@
                     <button mat-flat-button type="submit" [disabled]="isSignIn()" class="btn-dark">
                         {{ 'signIn.submit' | translate }}
                     </button>
-                    <button mat-stroked-button type="button" [disabled]="isSignIn()" class="btn-bright"
+                    <!-- <button mat-stroked-button type="button" [disabled]="isSignIn()" class="btn-bright"
                         (click)="signInGuest()">
                         {{ 'signIn.guestLogin' | translate }}
-                    </button>
+                    </button> -->
                 </div>
 
             </form>
