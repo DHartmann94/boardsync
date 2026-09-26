@@ -1,4 +1,4 @@
-import { Injectable, inject, Signal } from '@angular/core';
+import { Injectable, inject, Injector, Signal, runInInjectionContext } from '@angular/core';
 import { Auth, user, User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -8,15 +8,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class AuthenticationService {
 
   private readonly auth = inject(Auth);
+  private readonly injector = inject(Injector);
 
   readonly authUser: Signal<User | null | undefined>;
 
   constructor() {
     /**
-     * Signal for the current Firebase Auth status:
-     * - undefined : Initial state (Firebase is still resolving the login after a page reload/F5)
-     * - null      : User is logged out
-     * - User      : Authenticated Firebase user
+     * Signal für den aktuellen Firebase-Auth-Status:
+     * - undefined : Anfangszustand (Firebase löst den Login nach einem Seiten-Reload/F5 noch auf)
+     * - null      : User ist ausgeloggt
+     * - User      : Authentifizierter Firebase-User
      */
     this.authUser = toSignal<User | null | undefined>(user(this.auth), {
       initialValue: undefined
@@ -25,20 +26,36 @@ export class AuthenticationService {
 
   async signInAsUser(email: string, password: string): Promise<User> {
     try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      const userCredential = await runInInjectionContext(this.injector, () =>
+        signInWithEmailAndPassword(this.auth, email, password)
+      );
       const user = userCredential.user;
 
       if (!user.emailVerified) {
         const error: any = new Error('Email is not verified.');
         error.code = 'auth/email-not-verified';
         error.user = user;
-        await signOut(this.auth);
+        await this.signOutUser();
         throw error;
       }
 
       return user;
     } catch (error: any) {
       console.error('ERROR during login:', error.code, error.message);
+      throw error;
+    }
+  }
+
+  async signInWithGoogle(): Promise<User> {
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await runInInjectionContext(this.injector, () =>
+        signInWithPopup(this.auth, provider)
+      );
+
+      return userCredential.user;
+    } catch (error: any) {
+      console.error('ERROR during Google login:', error.code, error.message);
       throw error;
     }
   }
@@ -54,20 +71,19 @@ export class AuthenticationService {
   //   }
   // }
 
-  async signInWithGoogle(): Promise<User> {
+  async signOutUser(): Promise<void> {
     try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(this.auth, provider);
-
-      return userCredential.user;
+      await runInInjectionContext(this.injector, () => signOut(this.auth));
     } catch (error: any) {
-      console.error('ERROR during Google login:', error.code, error.message);
+      console.error('ERROR during sign out:', error);
       throw error;
     }
   }
 
   async sendUserToAuthenticator(emailLowerCase: string, password: string): Promise<{ uid: string; user: User }> {
-    const userCredential = await createUserWithEmailAndPassword(this.auth, emailLowerCase, password);
+    const userCredential = await runInInjectionContext(this.injector, () =>
+      createUserWithEmailAndPassword(this.auth, emailLowerCase, password)
+    );
     const user = userCredential.user;
 
     await this.sendVerificationMail(user);
@@ -77,7 +93,7 @@ export class AuthenticationService {
 
   async sendVerificationMail(user: User): Promise<boolean> {
     try {
-      await sendEmailVerification(user);
+      await runInInjectionContext(this.injector, () => sendEmailVerification(user));
       return true;
     } catch (error: any) {
       console.error('ERROR email verification:', error);
@@ -88,7 +104,7 @@ export class AuthenticationService {
   // Sauberes Löschen über die direkte Instanz
   async deleteUserInstance(user: User): Promise<void> {
     try {
-      await deleteUser(user);
+      await runInInjectionContext(this.injector, () => deleteUser(user));
     } catch (error: any) {
       console.error('ERROR deleting auth user during rollback:', error);
     }
@@ -96,7 +112,7 @@ export class AuthenticationService {
 
   async sendPasswordReset(email: string): Promise<void> {
     try {
-      await sendPasswordResetEmail(this.auth, email);
+      await runInInjectionContext(this.injector, () => sendPasswordResetEmail(this.auth, email));
     } catch (error: any) {
       console.error('ERROR password reset:', error);
       throw error;

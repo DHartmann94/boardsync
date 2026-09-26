@@ -112,28 +112,34 @@ export class SignUp {
       const phone = this.signUpForm.value.phone ?? '';
       const avatar = this.userService.generateInitialsAvatar(firstName, lastName);
 
-      const authResult = await this.authenticationService.sendUserToAuthenticator(emailLowerCase, password);
-      // Geht automatisch in den Catch wenn kein User erstellt werden kann (z.B. gleiche Mail)
-      createdUser = authResult.user;
-      const authUID = authResult.uid;
 
-      const userFirestore = await this.userService.createUserDocument(authUID, {
-        firstName,
-        lastName,
-        email: emailLowerCase,
-        phone,
-        avatar
+      // withoutAutoLoad: Unterdrückt das automatische Nachladen während der Registrierung,
+      // da das Firestore-Dokument erst im Anschluss erstellt wird.
+      await this.userService.withoutAutoLoad(async () => {
+        const authResult = await this.authenticationService.sendUserToAuthenticator(emailLowerCase, password);
+        createdUser = authResult.user;
+        const authUID = authResult.uid;
+
+        const userFirestore = await this.userService.createUserDocument(authUID, {
+          firstName,
+          lastName,
+          email: emailLowerCase,
+          phone,
+          avatar
+        });
+
+        if (!userFirestore) {
+          throw new Error('Could not create Firestore document');
+        }
       });
 
-      if (userFirestore) {
-        this.notificationService.showSuccess('signUp.success');
-        this.signUpForm.reset();
-        this.isSignUp.set(false);
-        this.router.navigateByUrl('/sign-in');
-      } else {
-        await this.authenticationService.deleteUserInstance(createdUser);
-        this.handleSignUpFailure();
-      }
+
+      // Wenn alles geklappt hat weiterleiten
+      await this.authenticationService.signOutUser();
+      this.notificationService.showSuccess('signUp.success');
+      this.signUpForm.reset();
+      this.isSignUp.set(false);
+      this.router.navigateByUrl('/sign-in');
 
     } catch (error: any) {
       console.error('Error during creation process:', error);
