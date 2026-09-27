@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideAppInitializer, inject } from '@angular/core';
 
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -6,7 +6,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 
 // i18n
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Firebase
@@ -29,6 +29,12 @@ export const appConfig: ApplicationConfig = {
       }),
       fallbackLang: 'de',
       lang: 'de'
+    }),
+
+    // Wartet mit dem ersten Render, bis die Übersetzungen geladen sind
+    provideAppInitializer(() => {
+      const translate = inject(TranslateService);
+      return translate.use('de');
     }),
 
     // Firebase

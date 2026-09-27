@@ -1,0 +1,30 @@
+<section>
+    <!-- Header -->
+    <app-header-public></app-header-public>
+
+    <!-- Load-Error Card -->
+    <mat-card>
+        <mat-card-header>
+            <h1 class="card-title">{{ 'loadError.title' | translate }}</h1>
+        </mat-card-header>
+        <mat-card-content class="load-error-content">
+            <div class="title-underline"></div>
+
+            <h2>{{ 'loadError.headline' | translate }}</h2>
+            <p class="subtitle">{{ 'loadError.description' | translate }}</p>
+
+            <div class="button-group">
+                @if (isRetrying()) {
+                    <mat-spinner diameter="32"></mat-spinner>
+                } @else {
+                    <button mat-flat-button class="btn-dark" (click)="retry()">
+                        {{ 'loadError.retry' | translate }}
+                    </button>
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Footer -->
+    <app-footer-public></app-footer-public>
+</section>

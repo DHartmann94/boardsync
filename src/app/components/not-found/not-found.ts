@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,10 +24,9 @@ import { FooterPublic } from '../../components/footer-public/footer-public';
 })
 export class NotFound {
 
-
-  private readonly location = inject(Location);
+  private readonly router = inject(Router);
 
   navigateBack(): void {
-    this.location.back();
+    this.router.navigate(['/main']);
   }
 }

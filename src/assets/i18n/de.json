@@ -74,27 +74,6 @@
             "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
         }
     },
-    "task": {
-        "todo": "Zu erledigen",
-        "inProgress": "In Bearbeitung",
-        "awaitingFeedback": "Rückmeldung ausstehend",
-        "done": "Erledigt",
-        "low": "Niedrig",
-        "medium": "Mittel",
-        "urgent": "Dringend",
-        "categoryLoadError": "Kategorien konnten nicht geladen werden.",
-        "taskLoadError": "Tasks konnten nicht aus der Datenbank geladen werden.",
-        "categoryCreated": "Kategorie erstellt.",
-        "categoryCreateError": "Kategorie konnte nicht erstellt werden.",
-        "taskCreated": "Task erfolgreich erstellt.",
-        "taskCreateError": "Task konnte nicht erstellt werden.",
-        "taskNotFound": "Task nicht gefunden.",
-        "taskUpdateError": "Task konnte nicht aktualisiert werden.",
-        "taskStatusUpdated": "Task-Status aktualisiert.",
-        "cannotMoveIncompleteSubtasks": "Task kann nicht verschoben werden: Bitte zuerst alle Subtasks abschließen.",
-        "taskDeleted": "Task erfolgreich gelöscht.",
-        "taskDeleteError": "Task konnte nicht gelöscht werden."
-    },
     "guard": {
         "loadUserDataError": "Deine Daten konnten nicht geladen werden. Bitte überprüfe deine Verbindung und versuche es erneut.",
         "noPermission": "Du hast keine Berechtigung, auf diese Seite zuzugreifen."
@@ -102,5 +81,12 @@
     "404": {
         "notFound": "Seite nicht gefunden",
         "oops": "Hoppla! Die von dir aufgerufene Seite existiert leider nicht oder wurde verschoben."
+    },
+    "loadError": {
+        "title": "Fehler :(",
+        "headline": "Daten konnten nicht geladen werden",
+        "description": "Beim Laden ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+        "retry": "Erneut versuchen",
+        "stillFailing": "Der Fehler besteht weiterhin. Bitte prüfe deine Internetverbindung."
     }
 }
