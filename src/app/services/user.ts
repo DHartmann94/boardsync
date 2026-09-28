@@ -73,7 +73,7 @@ export class UserService {
   readonly loadError = computed(() => this.state().status === 'error');
 
   constructor() {
-    effect(() => console.log('[currentUser]', this.currentUser()));
+    effect(() => console.log('[currentUser]', this.currentUser())); //Todo delete
     /**
      * Der Effect hat nur eine Aufgabe: Firestore-Daten laden, sobald sich der Auth-User ändert.
      * Der Zustand selbst kommt aus dem computed `state`.
@@ -97,6 +97,9 @@ export class UserService {
   /**
    * Für den Guard: wartet, bis der Zustand nicht mehr 'loading' ist.
    * Timeout gegen hängende Firebase-Initialisierung -> dann 'error'.
+   * 
+   * @param timeoutMs Die maximale Wartezeit in Millisekunden (Standard: 10.000 ms).
+   * @returns Ein Promise, das den aktuellen UserState oder im Fehlerfall den Status 'error' zurückgibt.
    */
   isReady(timeoutMs = 10_000): Promise<UserState> {
     const current = this.state();
@@ -130,6 +133,16 @@ export class UserService {
 
   /*------ Laden ------*/
 
+  /**
+   * Lädt die Benutzerdaten aus Firestore und aktualisiert den Profil-Status.
+   * 
+   * Ruft das Benutzerprofil anhand der UID ab. Falls kein Profil existiert 
+   * und es sich um einen Google-Login handelt, wird automatisch ein neuer 
+   * Benutzerdatensatz erstellt. Über einen Race-Guard wird sichergestellt, 
+   * dass sich der authentifizierte Benutzer während des Ladens nicht geändert hat.
+   * 
+   * @param authUser Der aktuell angemeldete Firebase-Auth-Benutzer.
+   */
   private async load(authUser: User): Promise<void> {
     let user: UserInterface | null = null;
 
@@ -156,7 +169,10 @@ export class UserService {
   }
 
   /**
-   * Firestore-Aufrufe laufen im Injection Context, dadurch von überall aufrufbar.
+   * Ruft einen Benutzer anhand seiner UID aus Firestore ab.
+   * 
+   * @param uid Die eindeutige ID des Benutzers.
+   * @returns Ein Promise, das das gemappte UserInterface-Objekt oder `null` zurückgibt, falls kein Dokument existiert.
    */
   async getUserById(uid: string): Promise<UserInterface | null> {
     const snapshot = await runInInjectionContext(this.injector, () =>
@@ -169,6 +185,15 @@ export class UserService {
     return authUser.providerData.some((p) => p.providerId === 'google.com');
   }
 
+  /**
+   * Erstellt automatisch ein neues Benutzerdokument in Firestore für einen Google-User.
+   * 
+   * Teilt den Anzeigenamen in Vor- und Nachnamen auf, generiert einen Avatar 
+   * und speichert den neuen Benutzerdatensatz in der Datenbank.
+   * 
+   * @param authUser Der Firebase-Auth-Benutzer vom Google-Login.
+   * @returns Ein Promise, das das erstellte UserInterface-Objekt zurückgibt.
+   */
   private async createGoogleUser(authUser: User): Promise<UserInterface> {
     const fullName = authUser.displayName ?? '';
     const spaceIndex = fullName.lastIndexOf(' ');
@@ -204,6 +229,13 @@ export class UserService {
     };
   }
 
+  /**
+   * Erstellt ein neues Benutzerdokument in Firestore für die angegebene Auth-UID.
+   * 
+   * @param authUID Die eindeutige Benutzer-ID aus dem Authentifizierungssystem.
+   * @param userDataDto Ein Teilobjekt mit den Benutzerdaten zur Initialisierung.
+   * @returns Ein Promise, das `true` bei Erfolg oder `false` im Fehlerfall zurückgibt.
+   */
   async createUserDocument(authUID: string, userDataDto: Partial<UserInterface>): Promise<boolean> {
     try {
       const userPayload = {
@@ -217,8 +249,6 @@ export class UserService {
         createdAt: serverTimestamp(),
       };
 
-      // Nach einem await läuft der Code ggf. außerhalb des Injection Contexts,
-      // deshalb Firestore-Aufrufe explizit im Context ausführen
       const userDocRef = runInInjectionContext(this.injector, () => doc(this.firestore, 'users', authUID));
       await runInInjectionContext(this.injector, () => setDoc(userDocRef, userPayload));
 

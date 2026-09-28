@@ -6,6 +6,12 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 })
 export class ValidationService {
 
+  /**
+   * Validiert, ob das Passwort und das Bestätigungspasswort übereinstimmen.
+   * 
+   * @param control Das zu validierende Formulargruppen-Control.
+   * @returns Ein Validierungsfehler-Objekt bei Nicht-Übereinstimmung, andernfalls `null`.
+   */
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');

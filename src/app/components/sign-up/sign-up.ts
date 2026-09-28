@@ -92,6 +92,13 @@ export class SignUp {
     });
   }
 
+  /**
+   * Führt den Registrierungsvorgang über das Registrierungsformular aus.
+   * 
+   * Validiert das Formular und leitet bei Gültigkeit die Erstellung 
+   * des neuen Benutzerkontos ein.
+   *
+   */
   async signUp(): Promise<void> {
     if (this.signUpForm.invalid) {
       this.signUpForm.markAllAsTouched();
@@ -102,6 +109,15 @@ export class SignUp {
     await this.createUser(this.signUpForm.value.email?.toLowerCase() ?? '');
   }
 
+  /**
+   * Erstellt einen neuen Benutzer in Firebase Auth und Firestore.
+   * 
+   * Registriert den Benutzer, legt das Firestore-Dokument an und loggt ihn
+   * für die Verifizierung aus. Bei Fehlern wird ein eventuell erstellter
+   * Authentifizierungs-Account automatisch zurückgerollt (Clean-up).
+   * 
+   * @param emailLowerCase Die E-Mail-Adresse des Benutzers in Kleinbuchstaben.
+   */
   async createUser(emailLowerCase: string): Promise<void> {
     let createdUser: any = null;
 

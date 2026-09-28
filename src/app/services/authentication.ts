@@ -24,6 +24,16 @@ export class AuthenticationService {
     });
   }
 
+  /**
+   * Meldet einen Benutzer mit E-Mail und Passwort an.
+   * 
+   * Überprüft nach dem Login, ob die E-Mail-Adresse verifiziert wurde. 
+   * Ist dies nicht der Fall, wird der Benutzer abgemeldet und ein Fehler ausgelöst.
+   * 
+   * @param email Die E-Mail-Adresse des Benutzers.
+   * @param password Das Passwort des Benutzers.
+   * @returns Ein Promise, das das angemeldete User-Objekt zurückgibt.
+   */
   async signInAsUser(email: string, password: string): Promise<User> {
     try {
       const userCredential = await runInInjectionContext(this.injector, () =>
@@ -46,6 +56,11 @@ export class AuthenticationService {
     }
   }
 
+  /**
+   * Meldet einen Benutzer über ein Google-Popup an.
+   * 
+   * @returns Ein Promise, das das angemeldete User-Objekt zurückgibt.
+   */
   async signInWithGoogle(): Promise<User> {
     try {
       const provider = new GoogleAuthProvider();
@@ -80,6 +95,14 @@ export class AuthenticationService {
     }
   }
 
+  /**
+   * Erstellt einen neuen Firebase-Auth-Benutzer mit E-Mail und Passwort
+   * und sendet eine E-Mail zur Verifizierung.
+   * 
+   * @param emailLowerCase Die E-Mail-Adresse des Benutzers in Kleinbuchstaben.
+   * @param password Das Passwort für den neuen Account.
+   * @returns Ein Promise, das die UID und das User-Objekt zurückgibt.
+   */
   async sendUserToAuthenticator(emailLowerCase: string, password: string): Promise<{ uid: string; user: User }> {
     const userCredential = await runInInjectionContext(this.injector, () =>
       createUserWithEmailAndPassword(this.auth, emailLowerCase, password)
@@ -91,6 +114,12 @@ export class AuthenticationService {
     return { uid: user.uid, user };
   }
 
+  /**
+   * Sendet eine E-Mail zur Verifizierung an den angegebenen Benutzer.
+   * 
+   * @param user Der Benutzer, an den die Verifizierungs-E-Mail gesendet werden soll.
+   * @returns Ein Promise, das `true` bei Erfolg oder `false` im Fehlerfall zurückgibt.
+   */
   async sendVerificationMail(user: User): Promise<boolean> {
     try {
       await runInInjectionContext(this.injector, () => sendEmailVerification(user));
@@ -101,7 +130,11 @@ export class AuthenticationService {
     }
   }
 
-  // Sauberes Löschen über die direkte Instanz
+  /**
+   * Löscht die angegebene Instanz des authentifizierten Benutzers (Rollback).
+   * 
+   * @param user Der zu löschende Firebase-User.
+   */
   async deleteUserInstance(user: User): Promise<void> {
     try {
       await runInInjectionContext(this.injector, () => deleteUser(user));
@@ -110,6 +143,11 @@ export class AuthenticationService {
     }
   }
 
+  /**
+   * Sendet eine E-Mail zum Zurücksetzen des Passworts an die angegebene Adresse.
+   * 
+   * @param email Die E-Mail-Adresse des Benutzers.
+   */
   async sendPasswordReset(email: string): Promise<void> {
     try {
       await runInInjectionContext(this.injector, () => sendPasswordResetEmail(this.auth, email));

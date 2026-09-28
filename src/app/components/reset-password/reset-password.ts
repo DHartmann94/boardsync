@@ -51,6 +51,14 @@ export class ResetPassword {
     ]),
   });
 
+  /**
+   * Validiert das Passwort-Zurücksetzen-Formular und leitet das Senden der E-Mail ein.
+   * 
+   * Überprüft, ob das Formular gültig ist (markiert andernfalls alle Felder als berührt),
+   * setzt den Ladezustand und sendet die E-Mail zum Zurücksetzen an die angegebene E-Mail-Adresse.
+   * 
+   * @returns Ein Promise, das nach Abschluss des Vorgangs aufgelöst wird.
+   */
   async resetPassword(): Promise<void> {
     if (this.resetPasswordForm.invalid) {
       this.resetPasswordForm.markAllAsTouched();
@@ -62,6 +70,14 @@ export class ResetPassword {
     await this.sendPasswordResetEmail(emailLowerCase);
   }
 
+  /**
+   * Sendet eine E-Mail zum Zurücksetzen des Passworts und steuert den UI-Feedback-Ablauf.
+   * 
+   * Ruft den Authentifizierungsdienst auf, zeigt Erfolgsmeldungen an, leitet bei Erfolg 
+   * zur Anmeldeseite weiter und behandelt spezifische Fehler wie zu viele Anfragen.
+   * 
+   * @param emailLowerCase Die E-Mail-Adresse des Benutzers in Kleinbuchstaben.
+   */
   async sendPasswordResetEmail(emailLowerCase: string): Promise<void> {
     try {
       await this.authenticationService.sendPasswordReset(emailLowerCase);

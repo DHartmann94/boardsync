@@ -57,6 +57,15 @@ export class SignIn {
     password: this.fb.control('', Validators.required),
   });
 
+  /**
+   * Führt den Anmeldevorgang über das Anmeldeformular aus.
+   * 
+   * Validiert das Formular, authentifiziert den Benutzer und leitet bei Erfolg
+   * zur Hauptseite (/main) weiter. Behandelt spezifische Authentifizierungsfehler
+   * (z. B. unbestätigte E-Mail, falsche Zugangsdaten) mit Benachrichtigungen.
+   * 
+   * @returns Ein Promise, das nach Abschluss aufgelöst wird.
+   */
   async signIn(): Promise<void> {
     if (this.signInForm.invalid) {
       this.signInForm.markAllAsTouched();
@@ -116,6 +125,14 @@ export class SignIn {
     }
   }
 
+  /**
+   * Führt den Anmeldevorgang über Google aus.
+   * 
+   * Startet die Google-Anmeldung, leitet bei Erfolg zur Hauptseite weiter
+   * und behandelt auftretende Fehler (ignoriert geschlossene Pop-ups).
+   * 
+   * @returns Ein Promise, das nach Abschluss aufgelöst wird.
+   */
   async signInWithGoogle(): Promise<void> {
     this.isSignIn.set(true);
 

@@ -20,6 +20,14 @@ export class NotificationService {
 
 
   // Snackbar
+  /**
+   * Zeigt eine Snackbar-Benachrichtigung mit übersetztem Text und optionalen Parametern an.
+   * 
+   * @param key Der Übersetzungsschlüssel für die Nachricht.
+   * @param duration Die Anzeigedauer in Millisekunden (bei Werten <= 0 unendlich).
+   * @param panelClass Die CSS-Klasse für das Styling des Panels.
+   * @param params Optional: Parameter zum Ersetzen von Platzhaltern in der Übersetzung.
+   */
   private show(key: string, duration: number, panelClass: string, params?: object): void {
     const message = this.translate.instant(key, params);
     const action = this.translate.instant('general.close');
@@ -41,6 +49,17 @@ export class NotificationService {
   }
 
   // Dialog
+  /**
+   * Öffnet einen Bestätigungsdialog mit übersetzten Texten und optionalen Aktionen.
+   * 
+   * @param titleKey Der Übersetzungsschlüssel für den Titel des Dialogs.
+   * @param messageKey Der Übersetzungsschlüssel für die Nachricht.
+   * @param confirmTextKey Der Übersetzungsschlüssel für den Bestätigungsbutton.
+   * @param cancelTextKey Der Übersetzungsschlüssel für den Abbrechenbutton.
+   * @param messageParams Optional: Parameter für Platzhalter in der Nachricht.
+   * @param onConfirmAction Optional: Eine asynchrone Funktion, die bei Bestätigung ausgeführt wird.
+   * @returns Ein Observable, das nach dem Schließen des Dialogs das Ergebnis (boolean) zurückgibt.
+   */
   openConfirmDialog(
     titleKey: string,
     messageKey: string,
