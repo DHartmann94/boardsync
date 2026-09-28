@@ -11,9 +11,4 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrl: './header-main.scss',
 })
 export class HeaderMain {
-  readonly toggleSidebar = output<void>();
-
-  onToggleSidebar(): void {
-    this.toggleSidebar.emit();
-  }
 }

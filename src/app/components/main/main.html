@@ -5,7 +5,10 @@
   mode="side"
   opened>
 
-  <app-sidebar-main [collapsed]="sidebarCollapsed()"></app-sidebar-main>
+ <app-sidebar-main
+  [collapsed]="sidebarCollapsed()"
+  (toggleSidebar)="toggleSidebar()">
+</app-sidebar-main>
 
 </mat-sidenav>
 

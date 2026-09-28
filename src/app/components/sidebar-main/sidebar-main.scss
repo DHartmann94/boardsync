@@ -10,6 +10,7 @@ mat-nav-list {
 
 a[mat-list-item] {
   margin: 4px 8px;
+  width: calc(100% - 16px);
   border-radius: 8px;
   display: flex !important;
   align-items: center;
@@ -59,3 +60,14 @@ a[mat-list-item].active mat-icon {
 mat-divider {
   margin: 12px 8px;
 }
+
+.sidebar-header .nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+:host-context(.sidebar-collapsed) .sidebar-header .nav-content {
+  justify-content: center;
+}
+
