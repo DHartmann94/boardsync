@@ -1,1 +1,78 @@
-<p>board works!</p>
+<section class="board">
+
+    <!-- Header -->
+    <div class="board__header">
+        <div class="board__header-left">
+            <h1 class="board__title">{{ 'board.title' | translate }}</h1>
+
+            <!-- Project select mit Suche -->
+            <mat-form-field appearance="outline" class="board__project-select" subscriptSizing="dynamic">
+                <mat-label>{{ 'board.project.placeholder' | translate }}</mat-label>
+                <input id="projectSearch" matInput type="text" [formControl]="projectSearchControl"
+                    [matAutocomplete]="projectAuto" [placeholder]="'board.project.placeholder' | translate"
+                    [attr.aria-label]="'board.project.placeholder' | translate" autocomplete="off"
+                    #projectTrigger="matAutocompleteTrigger" (focus)="projectTrigger.openPanel()"
+                    (click)="projectTrigger.openPanel()" />
+                <mat-icon matSuffix class="material-symbols-outlined board__project-select-arrow"
+                    [class.board__project-select-arrow--open]="projectTrigger.panelOpen">expand_more</mat-icon>
+
+                <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProject"
+                    (optionSelected)="onProjectSelected($event.option.value)">
+                    @for (project of filteredProjects | async; track project.id) {
+                    <mat-option [value]="project">{{ project.title }}</mat-option>
+                    }
+
+                    @if ((filteredProjects | async)?.length === 0) {
+                    <mat-option disabled>{{ 'board.project.noResults' | translate }}</mat-option>
+                    }
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+
+        <div class="board__actions">
+            <mat-form-field appearance="outline" class="board__search" subscriptSizing="dynamic">
+                <mat-label>{{ 'board.search.placeholder' | translate }}</mat-label>
+                <input id="taskSearch" matInput type="text" [formControl]="searchControl"
+                    [placeholder]="'board.search.placeholder' | translate"
+                    [attr.aria-label]="'board.search.placeholder' | translate" autocomplete="off" />
+                <mat-icon matSuffix class="material-symbols-outlined">search</mat-icon>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" class="btn-dark" type="button">
+                <mat-icon class="material-symbols-outlined">add</mat-icon>
+                {{ 'board.addTask' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Columns -->
+    <div class="board__columns" cdkDropListGroup>
+
+        @for (column of columns(); track column.id) {
+        <section class="column">
+            <div class="column__header">
+                <h3>{{ column.title }}</h3>
+            </div>
+
+            <div class="column__drop-list" cdkDropList [id]="column.id" [cdkDropListData]="column.tasks"
+                (cdkDropListDropped)="onTaskDropped($event)">
+
+                @if (!column.tasks.length) {
+                <p class="column__empty">
+                    {{ 'board.column.empty' | translate: { column: column.title } }}
+                </p>
+                }
+
+                @for (task of column.tasks; track task.id) {
+                <div class="column__task" cdkDrag>
+                    <div class="column__task-drag-placeholder" *cdkDragPlaceholder></div>
+                    <div class="column__task-stub">{{ task.title }}</div>
+                </div>
+                }
+            </div>
+        </section>
+        }
+
+    </div>
+
+</section>

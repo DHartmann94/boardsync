@@ -88,5 +88,25 @@
         "description": "Beim Laden ist ein Fehler aufgetreten. Bitte versuche es erneut.",
         "retry": "Erneut versuchen",
         "stillFailing": "Der Fehler besteht weiterhin. Bitte prüfe deine Internetverbindung."
+    },
+    "board": {
+        "title": "Board",
+        "project": {
+            "placeholder": "Projekt auswählen",
+            "noResults": "Keine Projekte gefunden"
+        },
+        "search": {
+            "placeholder": "Aufgabe suchen"
+        },
+        "addTask": "Aufgabe hinzufügen",
+        "column": {
+            "empty": "Keine Aufgaben in {{column}}",
+            "addAria": "Aufgabe zu {{column}} hinzufügen"
+        },
+        "errors": {
+            "moveFailed": "Aufgabe konnte nicht verschoben werden",
+            "loadProjectsFailed": "Projekte konnten nicht geladen werden",
+            "loadTasksFailed": "Aufgaben konnten nicht geladen werden"
+        }
     }
 }
