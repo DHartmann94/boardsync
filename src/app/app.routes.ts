@@ -8,6 +8,7 @@ import { NotFound } from './components/not-found/not-found';
 import { LoadError } from './components/load-error/load-error';
 import { Main } from './components/main/main';
 import { AddTasks } from './components/add-tasks/add-tasks';
+import { Board } from './components/board/board';
 
 import { authGuard } from './guards/auth-guard';
 
@@ -21,10 +22,11 @@ export const routes: Routes = [
   {
     path: 'main',
     component: Main,
-    canActivate: [authGuard],
+    //canActivate: [authGuard], //Todo: für Entwicklung deaktiviert
     children: [
       { path: 'add-tasks', component: AddTasks },
       //{ path: '', redirectTo: 'add-tasks', pathMatch: 'full' },
+      { path: 'board', component: Board },
     ],
   },
 
