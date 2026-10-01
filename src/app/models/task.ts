@@ -12,7 +12,7 @@ export interface TaskInterface {
   step: string;
   prio: string;
   categoryId: string;
-  assignedToUser: string;
+  assignedToUser: string[];
   subtasks: SubtaskInterface[];
   createdAt: Date;
   updatedAt: Date;

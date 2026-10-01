@@ -8,11 +8,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { collection, collectionData, doc, Firestore, query, serverTimestamp, Timestamp, updateDoc, where } from '@angular/fire/firestore';
+import { collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, debounceTime, map, of, startWith, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap } from 'rxjs';
 
 import { UserService } from '../../services/user';
+import { TaskService } from '../../services/task';
 import { NotificationService } from '../../services/notification';
 import { ProjectInterface } from '../../models/project';
 import { TaskInterface } from '../../models/task';
@@ -49,6 +50,7 @@ export class Board {
   // Services
   private readonly firestore = inject(Firestore);
   private readonly userService = inject(UserService);
+  private readonly taskService = inject(TaskService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly notificationService = inject(NotificationService);
@@ -71,7 +73,9 @@ export class Board {
   // Projekte laden basierend auf User-ID
   private readonly projects$ = toObservable(this.userService.state).pipe(
     map((state) => (state.status === 'ready' ? state.user.id : null)),
-    switchMap((uid) => (uid ? this.loadProjects(uid) : of([])))
+    distinctUntilChanged(),
+    switchMap((uid) => (uid ? this.loadProjects(uid) : of([]))),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   // Für das Autocomplete im Template (Observable)
@@ -133,14 +137,19 @@ export class Board {
 
   // --- Task-Logik & Echtzeit-Synchronisation ---
   private initTaskSync(): void {
-    // Sob sich das Projekt ändert, laden wir die Tasks neu
+    // Sobald sich das Projekt ändert, laden wir die Tasks neu
     toObservable(this.selectedProject).pipe(
       switchMap((project) => {
-        if (!project) return of([]);
-        const tasksRef = collection(this.firestore, 'tasks');
-        const q = query(tasksRef, where('projectId', '==', project.id));
-        return collectionData(q, { idField: 'id' }).pipe(
-          map((res) => res as TaskInterface[]),
+        if (!project) {
+          this.userService.loadUsersForProject([]);
+          return of([]);
+        }
+
+        // Projekt-User für die Avatare laden
+        void this.userService.loadUsersForProject(project.memberIds);
+
+        // Tasks über den TaskService laden und Fehler hier in der Component abfangen
+        return this.taskService.getTasksForProject(project.id).pipe(
           catchError(() => {
             this.notificationService.showError('board.errors.loadTasksFailed');
             return of([]);
@@ -156,7 +165,7 @@ export class Board {
         )
       ),
       takeUntilDestroyed(this.destroyRef)
-    ).forEach(({ tasks, term }) => {
+    ).subscribe(({ tasks, term }) => {
       this.updateColumnsWithTasks(tasks, term);
     });
   }
@@ -198,7 +207,7 @@ export class Board {
     const previousStep = task.step;
     const newStep = event.container.id;
 
-    // Optimistisches UI-Update über CDK
+    // 1. Optimistisches UI-Update über CDK
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
@@ -207,17 +216,18 @@ export class Board {
     );
     task.step = newStep;
 
-    // In Firestore speichern
+    // 2. Über den Service in Firestore speichern
     try {
-      const taskRef = doc(this.firestore, 'tasks', task.id);
-      await updateDoc(taskRef, {
-        step: newStep,
-        updatedAt: serverTimestamp(),
-      });
+      await this.taskService.updateTaskStep(task.id, newStep);
     } catch {
       // Rollback bei Fehler
+      transferArrayItem(
+        event.container.data,
+        event.previousContainer.data,
+        event.currentIndex,
+        event.previousIndex,
+      );
       task.step = previousStep;
-      // UI einmal neu aufbauen lassen durch erneutes Zuweisen
       this.columns.update((cols) => [...cols]);
       this.notificationService.showError('board.errors.moveFailed');
     }

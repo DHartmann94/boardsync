@@ -28,6 +28,10 @@ export class UserService {
   private readonly dateService = inject(DateService);
   private readonly injector = inject(Injector);
 
+  /** Signal für die User des aktuell aktiven Projekts */
+  private readonly projectUsersSignal = signal<UserInterface[]>([]);
+  readonly projectUsers = this.projectUsersSignal.asReadonly();
+
   /**
    * Ergebnis des letzten Firestore-Loads, gehört immer zu genau einer uid.
    * Basis für `state`/`currentUser` – nie direkt außerhalb dieses Service lesen.
@@ -179,6 +183,32 @@ export class UserService {
       getDoc(doc(this.firestore, 'users', uid))
     );
     return snapshot.exists() ? this.mapToUser(uid, snapshot.data()) : null;
+  }
+
+  /**
+   * Lädt alle Benutzer, die zu einem Projekt gehören, anhand ihrer IDs.
+   * 
+   * @param memberIds Array von Benutzer-IDs, die zum Projekt gehören
+   * @returns Ein Promise, das aufgelöst wird, wenn die Benutzer geladen und im Signal gespeichert wurden
+   */
+  async loadUsersForProject(memberIds: string[]): Promise<void> {
+    if (!memberIds || memberIds.length === 0) {
+      this.projectUsersSignal.set([]);
+      return;
+    }
+
+    try {
+      const userPromises = memberIds.map((uid) => this.getUserById(uid));
+      const users = await Promise.all(userPromises);
+
+      // Nur gültige User behalten (falls ein Dokument mal fehlen sollte)
+      const validUsers = users.filter((u): u is UserInterface => u !== null);
+
+      this.projectUsersSignal.set(validUsers);
+    } catch (error) {
+      console.error('ERROR loading project members:', error);
+      this.projectUsersSignal.set([]);
+    }
   }
 
   private isGoogleProvider(authUser: User): boolean {
