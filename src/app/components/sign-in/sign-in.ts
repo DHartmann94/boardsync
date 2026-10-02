@@ -78,7 +78,7 @@ export class SignIn {
       const { email, password } = this.signInForm.getRawValue();
       await this.authenticationService.signInAsUser(email, password);
 
-      this.router.navigateByUrl('/main');
+      await this.router.navigateByUrl('/main');
 
     } catch (error: any) {
       switch (error.code) {
@@ -140,7 +140,7 @@ export class SignIn {
       await this.authenticationService.signInWithGoogle();
       // User wird automatisch über den effect im Firestore angelegt
 
-      this.router.navigateByUrl('/main');
+      await this.router.navigateByUrl('/main');
 
     } catch (error: any) {
       console.error('ERROR during Google login:', error);

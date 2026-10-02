@@ -17,6 +17,7 @@ import { TaskService } from '../../services/task';
 import { NotificationService } from '../../services/notification';
 import { ProjectInterface } from '../../models/project';
 import { TaskInterface } from '../../models/task';
+import { Task } from '../task/task';
 
 interface BoardColumn {
   id: string;
@@ -41,6 +42,7 @@ const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
     CdkDropList,
     CdkDrag,
     CdkDragPlaceholder,
+    Task // Nur wichtig für die Component im HTML
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -141,12 +143,16 @@ export class Board {
     toObservable(this.selectedProject).pipe(
       switchMap((project) => {
         if (!project) {
-          this.userService.loadUsersForProject([]);
+          this.userService.loadUsersForProject([]).catch((err) => {
+            console.error('Failed to clear users', err);
+          });
           return of([]);
         }
 
         // Projekt-User für die Avatare laden
-        void this.userService.loadUsersForProject(project.memberIds);
+        this.userService.loadUsersForProject(project.memberIds).catch((err) => {
+          console.error('Failed to load users for project', err);
+        });
 
         // Tasks über den TaskService laden und Fehler hier in der Component abfangen
         return this.taskService.getTasksForProject(project.id).pipe(
