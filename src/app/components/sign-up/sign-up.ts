@@ -155,7 +155,7 @@ export class SignUp {
       this.notificationService.showSuccess('signUp.success');
       this.signUpForm.reset();
       this.isSignUp.set(false);
-      this.router.navigateByUrl('/sign-in');
+      await this.router.navigateByUrl('/sign-in');
 
     } catch (error: any) {
       console.error('Error during creation process:', error);

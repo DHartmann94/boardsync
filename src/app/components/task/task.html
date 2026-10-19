@@ -1,0 +1,45 @@
+<mat-card class="task-card">
+
+    <div class="task-card__badge" [ngClass]="categoryClass">
+        {{ categoryLabel }}
+    </div>
+
+    <div class="task-card__content">
+        <h4 class="task-card__title">
+            {{ task.title }}
+        </h4>
+
+        <p class="task-card__description">
+            {{ task.description }}
+        </p>
+    </div>
+
+    @if (totalSubtasks > 0) {
+    <div class="task-card__subtasks">
+        <mat-progress-bar mode="determinate" [value]="progress">
+        </mat-progress-bar>
+        <span>
+            {{ completedSubtasks }}/{{ totalSubtasks }}
+            Subtasks
+        </span>
+    </div>
+    }
+
+    <div class="task-card__footer">
+        <div class="task-card__users">
+            @for (user of assignedUsers(); track user.id) {
+            <div class="task-card__avatar" [title]="user.firstName + ' ' + user.lastName">
+                @if (user.avatar && user.avatar.length > 3) {
+                <img [src]="user.avatar" [alt]="user.firstName" />
+                } @else {
+                {{ user.avatar }}
+                }
+            </div>
+            }
+        </div>
+
+        <img class="task-card__priority" [src]="task.prio" alt="Priority">
+
+    </div>
+
+</mat-card>
