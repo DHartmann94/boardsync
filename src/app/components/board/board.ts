@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal } from '@angular/core';
+import { OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Injector, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, CdkDropListGroup, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
+import { addDoc, collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap } from 'rxjs';
 
@@ -48,7 +48,7 @@ const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
   styleUrl: './board.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Board {
+export class Board implements OnInit {
   // Services
   private readonly firestore = inject(Firestore);
   private readonly userService = inject(UserService);
@@ -93,23 +93,43 @@ export class Board {
     )
   );
 
-  constructor() {
-    this.initProjectsAndAutoSelect();
-    this.initTaskSync();
-  }
+ngOnInit() {
+  this.userService.isReady()
+    .then((state) => {
+      console.log("START");
+      if (state.status === 'ready') { // Nur bei bereitem User laden
+        this.initProjectsAndAutoSelect();
+        this.initTaskSync();
+        console.log("Finish");
+      }
+    })
+    .catch((error) => {
+
+    });
+}
+
+  //constructor() {
+  //  this.initProjectsAndAutoSelect();
+  //  this.initTaskSync();
+  //}
 
   // --- Projekt-Logik ---
-  private loadProjects(uid: string) {
-    const projectsRef = collection(this.firestore, 'projects');
-    const q = query(projectsRef, where('memberIds', 'array-contains', uid));
-    return collectionData(q, { idField: 'id' }).pipe(
-      map((res) => res as ProjectInterface[]),
-      catchError(() => {
-        this.notificationService.showError('board.errors.loadProjectsFailed');
-        return of([]);
-      })
-    );
-  }
+private loadProjects(uid: string) {
+  const projectsRef = collection(this.firestore, 'projects');
+  const q = query(projectsRef, where('memberIds', 'array-contains', uid));
+
+  return collectionData(q, { idField: 'id' }).pipe(
+    map((res) => {
+      console.log('[DEBUG] Projects loaded:', res.length);
+      return res as ProjectInterface[];
+    }),
+    catchError((error) => {
+      console.error('[DEBUG] Firestore ERROR:', error);
+      this.notificationService.showError('board.errors.loadProjectsFailed');
+      return of([]);
+    })
+  );
+}
 
   private initProjectsAndAutoSelect(): void {
     this.projects$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((projects) => {
@@ -245,4 +265,192 @@ export class Board {
     if (value instanceof Date) return value.getTime();
     return 0;
   }
+
+  async createDemoData(): Promise<void> {
+  try {
+    const now = new Date();
+    // =========================
+    // Kategorien anlegen
+    // =========================
+    const frontendCategory = await addDoc(
+      collection(this.firestore, 'categories'),
+      {
+        type: 'Frontend',
+        color: '#29ABE2'
+      }
+    );
+    const backendCategory = await addDoc(
+      collection(this.firestore, 'categories'),
+      {
+        type: 'Backend',
+        color: '#8B5CF6'
+      }
+    );
+    const testingCategory = await addDoc(
+      collection(this.firestore, 'categories'),
+      {
+        type: 'Testing',
+        color: '#22C55E'
+      }
+    );
+    // =========================
+    // Projekt 1
+    // =========================
+    const projectOne = await addDoc(
+      collection(this.firestore, 'projects'),
+      {
+        title: 'Dashboard Development',
+        description: 'Entwicklung des Angular Dashboards',
+        ownerId: '2FXlnXfgZTT6C9KlFW11f0lqew63',
+        memberIds: [
+          '2FXlnXfgZTT6C9KlFW11f0lqew63',
+          'user-1',
+          'user-2'
+        ],
+        createdAt: now,
+        updatedAt: now,
+        dueDate: new Date(
+          now.getTime() + 1000 * 60 * 60 * 24 * 30
+        ),
+        completed: false
+      }
+    );
+    // =========================
+    // Projekt 2
+    // =========================
+    const projectTwo = await addDoc(
+      collection(this.firestore, 'projects'),
+      {
+        title: 'Mobile App',
+        description: 'Entwicklung der mobilen Anwendung',
+        ownerId: '2FXlnXfgZTT6C9KlFW11f0lqew633',
+        memberIds: [
+          '2FXlnXfgZTT6C9KlFW11f0lqew633',
+          'user-3'
+        ],
+        createdAt: now,
+        updatedAt: now,
+        dueDate: new Date(
+          now.getTime() + 1000 * 60 * 60 * 24 * 45
+        ),
+        completed: false
+      }
+    );
+    // =========================
+    // Tasks Projekt 1
+    // =========================
+    await addDoc(collection(this.firestore, 'tasks'), {
+      projectId: projectOne.id,
+      title: 'Login Seite erstellen',
+      description: 'Login UI entwickeln',
+      step: 'todo',
+      prio: 'high',
+      categoryId: frontendCategory.id,
+      assignedToUser: ['2FXlnXfgZTT6C9KlFW11f0lqew63'],
+      subtasks: [
+        {
+          title: 'Mockup erstellen',
+          completed: true
+        },
+        {
+          title: 'UI implementieren',
+          completed: false
+        }
+      ],
+      createdAt: now,
+      updatedAt: now,
+      dueDate: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 7)
+    });
+    await addDoc(collection(this.firestore, 'tasks'), {
+      projectId: projectOne.id,
+      title: 'Firestore anbinden',
+      description: 'Services und Datenzugriff erstellen',
+      step: 'inprogress',
+      prio: 'high',
+      categoryId: backendCategory.id,
+      assignedToUser: ['2FXlnXfgZTT6C9KlFW11f0lqew63'],
+      subtasks: [
+        {
+          title: 'Collection erstellen',
+          completed: true
+        },
+        {
+          title: 'CRUD implementieren',
+          completed: false
+        }
+      ],
+      createdAt: now,
+      updatedAt: now,
+      dueDate: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 10)
+    });
+    await addDoc(collection(this.firestore, 'tasks'), {
+      projectId: projectOne.id,
+      title: 'Board testen',
+      description: 'Alle Board Funktionen prüfen',
+      step: 'done',
+      prio: 'medium',
+      categoryId: testingCategory.id,
+      assignedToUser: ['2FXlnXfgZTT6C9KlFW11f0lqew63'],
+      subtasks: [
+        {
+          title: 'Drag & Drop',
+          completed: true
+        },
+        {
+          title: 'Filter testen',
+          completed: true
+        }
+      ],
+      createdAt: now,
+      updatedAt: now,
+      dueDate: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14)
+    });
+    // =========================
+    // Tasks Projekt 2
+    // =========================
+    await addDoc(collection(this.firestore, 'tasks'), {
+      projectId: projectTwo.id,
+      title: 'Mobile Layout',
+      description: 'Responsive Mobile Ansicht erstellen',
+      step: 'todo',
+      prio: 'medium',
+      categoryId: frontendCategory.id,
+      assignedToUser: ['2FXlnXfgZTT6C9KlFW11f0lqew633'],
+      subtasks: [
+        {
+          title: 'Breakpoints definieren',
+          completed: false
+        }
+      ],
+      createdAt: now,
+      updatedAt: now,
+      dueDate: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 5)
+    });
+    await addDoc(collection(this.firestore, 'tasks'), {
+      projectId: projectTwo.id,
+      title: 'API Integration',
+      description: 'Backend anbinden',
+      step: 'await-feedback',
+      prio: 'high',
+      categoryId: backendCategory.id,
+      assignedToUser: ['2FXlnXfgZTT6C9KlFW11f0lqew633'],
+      subtasks: [
+        {
+          title: 'API testen',
+          completed: true
+        },
+        {
+          title: 'Review abwarten',
+          completed: false
+        }
+      ],
+      createdAt: now,
+      updatedAt: now,
+      dueDate: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 12)
+    });
+    console.log('Demo-Daten erfolgreich erstellt.');
+  } catch (error) {
+    console.error('Fehler beim Erstellen der Demo-Daten:', error);
+  }
+}
 }
