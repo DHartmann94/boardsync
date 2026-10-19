@@ -1,1 +1,308 @@
-<p>add-tasks works!</p>
+<main class="task-page">
+  <h1>{{ 'addTaskForm.title' | translate }}</h1>
+
+  <form
+    id="add-task-form"
+    class="task-form"
+    [formGroup]="taskForm"
+    [attr.aria-label]="'addTaskForm.formLabel' | translate"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="left-column">
+      <div class="field-group">
+        <label class="field-label" for="task-title">
+          {{ 'addTaskForm.titleLabel' | translate }}<span class="required">*</span>
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <input
+            id="task-title"
+            matInput
+            type="text"
+            [placeholder]="'addTaskForm.titlePlaceholder' | translate"
+            formControlName="title"
+            [attr.aria-invalid]="taskForm.controls.title.invalid && taskForm.controls.title.touched"
+            [attr.aria-describedby]="
+              taskForm.controls.title.invalid && taskForm.controls.title.touched
+                ? 'task-title-error'
+                : null
+            "
+          />
+        </mat-form-field>
+        @if (taskForm.controls.title.hasError('required') && taskForm.controls.title.touched) {
+          <span id="task-title-error" class="validation-error" role="alert">
+            {{ 'addTaskForm.titleRequired' | translate }}
+          </span>
+        }
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="task-description">
+          {{ 'addTaskForm.descriptionLabel' | translate }}
+        </label>
+        <mat-form-field
+          appearance="outline"
+          class="task-input-field description-field"
+          subscriptSizing="dynamic"
+        >
+          <textarea
+            id="task-description"
+            matInput
+            [placeholder]="'addTaskForm.descriptionPlaceholder' | translate"
+            formControlName="description"
+          ></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="task-due-date">
+          {{ 'addTaskForm.dueDateLabel' | translate }}<span class="required">*</span>
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <input
+            id="task-due-date"
+            matInput
+            [matDatepicker]="dueDatePicker"
+            [min]="today"
+            [placeholder]="'addTaskForm.dueDatePlaceholder' | translate"
+            formControlName="dueDate"
+            [attr.aria-invalid]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched"
+            [attr.aria-describedby]="
+              taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched
+                ? 'task-due-date-error'
+                : null
+            "
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #dueDatePicker></mat-datepicker>
+        </mat-form-field>
+        @if (taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched) {
+          <span id="task-due-date-error" class="validation-error" role="alert">
+            {{
+              (taskForm.controls.dueDate.hasError('pastDate')
+                ? 'addTaskForm.dueDatePast'
+                : 'addTaskForm.dueDateRequired') | translate
+            }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="field-group">
+        <label class="field-label">
+          {{ 'addTaskForm.priorityLabel' | translate }}<span class="required">*</span>
+        </label>
+        <mat-radio-group
+          class="priority-options"
+          [attr.aria-label]="'addTaskForm.priorityLabel' | translate"
+          formControlName="prio"
+        >
+          <mat-radio-button
+            class="priority-btn priority-urgent"
+            [class.selected]="taskForm.controls.prio.value === 'urgent'"
+            value="urgent"
+          >
+            <span class="priority-label">{{ 'addTaskForm.urgent' | translate }}</span>
+            <span class="priority-icon" aria-hidden="true">
+              <img
+                [src]="
+                  taskForm.controls.prio.value === 'urgent'
+                    ? 'assets/img/icons/add-task-urgent-white.svg'
+                    : 'assets/img/icons/add-task-urgent.svg'
+                "
+                alt=""
+              />
+            </span>
+          </mat-radio-button>
+          <mat-radio-button
+            class="priority-btn priority-medium"
+            [class.selected]="taskForm.controls.prio.value === 'medium'"
+            value="medium"
+          >
+            <span class="priority-label">{{ 'addTaskForm.medium' | translate }}</span>
+            <span class="priority-icon" aria-hidden="true">
+              <img
+                [src]="
+                  taskForm.controls.prio.value === 'medium'
+                    ? 'assets/img/icons/add-task-medium-white.svg'
+                    : 'assets/img/icons/add-task-medium.svg'
+                "
+                alt=""
+              />
+            </span>
+          </mat-radio-button>
+          <mat-radio-button
+            class="priority-btn priority-low"
+            [class.selected]="taskForm.controls.prio.value === 'low'"
+            value="low"
+          >
+            <span class="priority-label">{{ 'addTaskForm.low' | translate }}</span>
+            <span class="priority-icon" aria-hidden="true">
+              <img
+                [src]="
+                  taskForm.controls.prio.value === 'low'
+                    ? 'assets/img/icons/add-task-low-white.svg'
+                    : 'assets/img/icons/add-task-low.svg'
+                "
+                alt=""
+              />
+            </span>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="assigned-to">
+          {{ 'addTaskForm.assignedToLabel' | translate }}
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <mat-select
+            id="assigned-to"
+            [attr.aria-label]="'addTaskForm.assignedToLabel' | translate"
+            [placeholder]="'addTaskForm.assignedToPlaceholder' | translate"
+            multiple
+            formControlName="assignedToUser"
+          >
+            @for (user of users; track user.id) {
+              <mat-option [value]="user.id">{{ user.displayName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (taskForm.controls.assignedToUser.value.length > 0) {
+          <ul
+            class="subtask-list"
+            [attr.aria-label]="'addTaskForm.assignedToLabel' | translate"
+          >
+            @for (userId of taskForm.controls.assignedToUser.value; track userId) {
+              <li>{{ getUserDisplayName(userId) }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="task-category">
+          {{ 'addTaskForm.categoryLabel' | translate }}
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <mat-icon matPrefix class="material-symbols-outlined" aria-hidden="true">category</mat-icon>
+          <mat-select
+            id="task-category"
+            [attr.aria-label]="'addTaskForm.categoryLabel' | translate"
+            [placeholder]="'addTaskForm.categoryPlaceholder' | translate"
+            formControlName="categoryId"
+          >
+            <mat-option *ngFor="let category of categories" [value]="category.id">
+              {{ category.text }}  
+            </mat-option>
+            <mat-option class="category-add-option">
+              <div
+                class="category-add-form"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              >
+                <h2 class="category-add-heading">Kategorie hinzufügen</h2>
+                <div class="category-description-row">
+                  <label class="category-description-label" for="new-category-description">
+                    Beschreibung
+                  </label>
+                  <input
+                  id="new-category-description"
+                  class="category-description-input"
+                  placeholder="Beschreibung hinzufügen"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="potentialcategory.name"
+                  (keydown)="$event.stopPropagation()">
+                </div>
+                <span class="category-color-label">Farbe auswählen</span>
+                <mat-radio-group
+                  [(ngModel)]="potentialcategory.color"
+                  [ngModelOptions]="{ standalone: true }"
+                  aria-label="Farbe auswählen"
+                  class="color-radio-group"
+                >
+                  <mat-radio-button
+                    *ngFor="let color of colors"
+                    [value]="color"
+                    [style.--color]="color"
+                    [class.selected]="potentialcategory.color === color"
+                    [attr.aria-label]="color"
+                    class="color-radio-button">
+                  </mat-radio-button>
+                </mat-radio-group>
+                <button mat-button type="button" (click)="addCategory($event)">
+                  Hinzufügen
+                </button>
+              </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="task-subtasks">
+          {{ 'addTaskForm.subtasksLabel' | translate }}
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <input
+            id="task-subtasks"
+            matInput
+            [placeholder]="'addTaskForm.subtaskPlaceholder' | translate"
+            type="text"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="newSubtask.Subtask.title"
+            (keydown.enter)="addSubtask()"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Eingabe leeren"
+            (click)="clearInput()"
+          >
+            <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Subtask bestätigen"
+            (click)="addSubtask()"
+          >
+            <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>
+          </button>
+        </mat-form-field>
+        @if (newSubtask.valid === false) {
+          <span class="validation-error" role="alert">
+            {{ 'addTaskForm.subtaskRequired' | translate }}
+          </span>
+        }
+        @if (taskForm.controls.subtasks.value.length > 0) {
+          <ul
+            class="subtask-list"
+            [attr.aria-label]="'addTaskForm.subtasksLabel' | translate"
+          >
+            @for (subtask of taskForm.controls.subtasks.value; track $index) {
+              <li>{{ subtask.title }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  </form>
+
+  <div class="form-footer">
+    <div class="required-note">{{ 'addTaskForm.requiredNote' | translate }}</div>
+
+    <div class="form-actions">
+      <button mat-stroked-button type="button" class="clear-btn" (click)="onClear()">
+        {{ 'addTaskForm.clear' | translate }}
+        <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
+      </button>
+      <button mat-flat-button type="submit" form="add-task-form" class="primary-btn">
+        {{ 'addTaskForm.createTask' | translate }}
+        <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>
+      </button>
+    </div>
+  </div>
+</main>

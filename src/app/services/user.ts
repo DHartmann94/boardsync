@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, effect, computed, untracked, Injector, runInInjectionContext } from '@angular/core';
 import { User } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, serverTimestamp, getDoc, DocumentData } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, serverTimestamp, getDoc, getDocs, DocumentData, collection } from '@angular/fire/firestore';
 
 import { UserInterface } from '../models/user';
 import { AuthenticationService } from '../services/authentication';
@@ -208,6 +208,18 @@ export class UserService {
     } catch (error) {
       console.error('ERROR loading project members:', error);
       this.projectUsersSignal.set([]);
+    }
+  }
+
+  async getallUsers(): Promise<UserInterface[]> {
+    try {
+      const usersCollection = await runInInjectionContext(this.injector, () =>
+        getDocs(collection(this.firestore, 'users'))
+      );
+      return usersCollection.docs.map((doc) => this.mapToUser(doc.id, doc.data()));
+    } catch (error) {
+      console.error('ERROR loading all users:', error);
+      return [];
     }
   }
 

@@ -108,5 +108,46 @@
             "loadProjectsFailed": "Projekte konnten nicht geladen werden",
             "loadTasksFailed": "Aufgaben konnten nicht geladen werden"
         }
+    },
+    "task": {
+            "taskCreated": "Aufgabe wurde erfolgreich hinzugefügt.",
+            "taskCreateError": "Aufgabe konnte nicht erstellt werden."
+    },
+    "addTaskForm": {
+        "title": "Aufgabe hinzufügen",
+        "formLabel": "Formular zum Hinzufügen einer Aufgabe",
+        "titleLabel": "Titel",
+        "titlePlaceholder": "Titel eingeben",
+        "titleRequired": "Bitte einen Titel eingeben.",
+        "descriptionLabel": "Beschreibung",
+        "descriptionPlaceholder": "Beschreibung eingeben",
+        "dueDateLabel": "Fälligkeitsdatum",
+        "dueDatePlaceholder": "TT.MM.JJJJ",
+        "dueDateRequired": "Bitte ein Fälligkeitsdatum eingeben.",
+        "dueDatePast": "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen.",
+        "priorityLabel": "Priorität",
+        "urgent": "Dringend",
+        "medium": "Mittel",
+        "low": "Niedrig",
+        "assignedToLabel": "Zugewiesen an",
+        "assignedToPlaceholder": "Kontakte zum Zuweisen auswählen",
+        "categoryLabel": "Kategorie",
+        "categoryPlaceholder": "Aufgabenkategorie auswählen",
+        "createCategoryOption": "Neue Kategorie erstellen",
+        "newCategoryLabel": "Name der neuen Kategorie",
+        "newCategoryPlaceholder": "Kategorienamen eingeben",
+        "categoryNameRequired": "Bitte einen Kategorienamen eingeben.",
+        "categoryAlreadyExists": "Eine Kategorie mit diesem Namen gibt es bereits.",
+        "categoryColorLabel": "Farbe",
+        "createCategory": "Kategorie speichern",
+        "categoryCreated": "Kategorie wurde erstellt.",
+        "categoryCreateError": "Kategorie konnte nicht erstellt werden.",
+        "categoryLoadError": "Kategorien konnten nicht geladen werden.",
+        "subtasksLabel": "Unteraufgaben",
+        "subtaskPlaceholder": "Neue Unteraufgabe hinzufügen",
+        "requiredNote": "* Dieses Feld ist ein Pflichtfeld",
+        "clear": "Leeren",
+        "createTask": "Aufgabe erstellen",
+        "subtaskRequired": "Bitte eine richtige Unteraufgabe eingeben. falls sie eine Unteraufgabe hinzuufügen möchten, geben Sie bitte einen Titel ein."
     }
 }

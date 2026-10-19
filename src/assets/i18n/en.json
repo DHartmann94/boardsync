@@ -1,7 +1,8 @@
 {
     "general": {
         "imprint": "Legal Notice",
-        "privacy": "Privacy Policy"
+        "privacy": "Privacy Policy",
+        "close": "Close"
     },
     "signIn": {
         "title": "Log In",
@@ -44,6 +45,43 @@
         "cannotMoveIncompleteSubtasks": "Cannot move task: Please complete all subtasks first.",
         "taskDeleted": "Task deleted successfully.",
         "taskDeleteError": "Failed to delete task."
+    },
+    "addTaskForm": {
+        "title": "Add Task",
+        "formLabel": "Add task form",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Enter a title",
+        "titleRequired": "Please enter a title.",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Enter a description",
+        "dueDateLabel": "Due date",
+        "dueDatePlaceholder": "dd/mm/yyyy",
+        "dueDateRequired": "Please enter a due date.",
+        "dueDatePast": "The due date cannot be in the past.",
+        "priorityLabel": "Priority",
+        "urgent": "Urgent",
+        "medium": "Medium",
+        "low": "Low",
+        "assignedToLabel": "Assigned to",
+        "assignedToPlaceholder": "Select contacts to assign",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select task category",
+        "createCategoryOption": "Create new category",
+        "newCategoryLabel": "New category name",
+        "newCategoryPlaceholder": "Enter a category name",
+        "categoryNameRequired": "Please enter a category name.",
+        "categoryAlreadyExists": "A category with this name already exists.",
+        "categoryColorLabel": "Color",
+        "createCategory": "Save category",
+        "categoryCreated": "Category created.",
+        "categoryCreateError": "Failed to create category.",
+        "categoryLoadError": "Failed to load categories.",
+        "subtasksLabel": "Subtasks",
+        "subtaskPlaceholder": "Add new subtask",
+        "requiredNote": "This field is required",
+        "clear": "Clear",
+        "createTask": "Create Task",
+        "subtaskRequired": "Please enter a valid subtask. If you want to add a subtask, please enter a title."
     },
     "guard": {
         "loadUserDataError": "Your data could not be loaded. Please check your connection and try again.",
