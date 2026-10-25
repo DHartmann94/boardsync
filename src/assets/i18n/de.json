@@ -106,7 +106,8 @@
         "errors": {
             "moveFailed": "Aufgabe konnte nicht verschoben werden",
             "loadProjectsFailed": "Projekte konnten nicht geladen werden",
-            "loadTasksFailed": "Aufgaben konnten nicht geladen werden"
+            "loadTasksFailed": "Aufgaben konnten nicht geladen werden",
+            "subtasksNotCompleted": "Task noch nicht beendet: Es gibt offene Subtasks."
         }
     },
     "task": {
