@@ -91,6 +91,7 @@
     },
     "board": {
         "title": "Board",
+        "loading": "Tasks werden geladen",
         "project": {
             "placeholder": "Projekt auswählen",
             "noResults": "Keine Projekte gefunden"

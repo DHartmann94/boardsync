@@ -8,9 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, filter, take } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, filter, take, tap } from 'rxjs';
 
 import { UserService } from '../../services/user';
 import { TaskService } from '../../services/task';
@@ -38,6 +39,7 @@ const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
     MatIconModule,
     MatButtonModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     CdkDropListGroup,
     CdkDropList,
     CdkDrag,
@@ -64,6 +66,8 @@ export class Board implements OnInit {
 
   // State
   readonly selectedProject = signal<ProjectInterface | null>(null);
+  // Startet mit true, damit der Spinner sofort sichtbar ist
+  readonly isLoadingTasks = signal(true);
 
   readonly columns = signal<BoardColumn[]>([
     { id: 'todo', title: 'To do', tasks: [] },
@@ -99,10 +103,13 @@ export class Board implements OnInit {
         if (state.status === 'ready') {
           this.initProjectsAndAutoSelect();
           this.initTaskSync();
+        } else {
+          this.isLoadingTasks.set(false);
         }
       })
       .catch((error) => {
         console.error('Error checking user readiness:', error);
+        this.isLoadingTasks.set(false);
       });
   }
 
@@ -114,9 +121,16 @@ export class Board implements OnInit {
 
       return collectionData(q, { idField: 'id' }).pipe(
         map((res) => res as ProjectInterface[]),
+        // Echte Antwort von Firestore ohne Projekte: es werden nie Tasks geladen
+        tap((projects) => {
+          if (projects.length === 0) {
+            this.isLoadingTasks.set(false);
+          }
+        }),
         catchError((error) => {
           console.error('Firestore error while loading projects:', error);
           this.notificationService.showError('board.errors.loadProjectsFailed');
+          this.isLoadingTasks.set(false);
           return of([] as ProjectInterface[]);
         })
       );
@@ -158,6 +172,7 @@ export class Board implements OnInit {
     runInInjectionContext(this.injector, () => {
       toObservable(this.selectedProject).pipe(
         filter((project): project is ProjectInterface => project !== null),
+        tap(() => this.isLoadingTasks.set(true)),
         switchMap((project) => {
           this.userService.loadUsersForProject(project.memberIds).catch((err) => {
             console.error('Failed to load users for project', err);
@@ -170,6 +185,7 @@ export class Board implements OnInit {
             })
           );
         }),
+        tap(() => this.isLoadingTasks.set(false)),
         switchMap((tasks) =>
           this.searchControl.valueChanges.pipe(
             debounceTime(200),
@@ -209,7 +225,7 @@ export class Board implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // Drag & Drop
+  // --- Drag & Drop ---
   async onTaskDropped(event: CdkDragDrop<TaskInterface[]>): Promise<void> {
     if (event.previousContainer === event.container) {
       return;

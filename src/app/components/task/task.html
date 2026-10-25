@@ -1,11 +1,13 @@
 <mat-card class="task-card">
 
-    <div class="task-card__badge" [ngClass]="categoryClass">
-        {{ categoryLabel }}
+    @if (category; as cat) {
+    <div class="task-card__badge" [style.background-color]="cat.color">
+        {{ cat.type }}
     </div>
+    }
 
     <div class="task-card__content">
-        <h4 class="task-card__title">
+        <h4 class="task-card__title" [title]="task.title">
             {{ task.title }}
         </h4>
 
@@ -27,19 +29,20 @@
 
     <div class="task-card__footer">
         <div class="task-card__users">
-            @for (user of assignedUsers(); track user.id) {
-            <div class="task-card__avatar" [title]="user.firstName + ' ' + user.lastName">
-                @if (user.avatar && user.avatar.length > 3) {
-                <img [src]="user.avatar" [alt]="user.firstName" />
-                } @else {
+            @for (user of visibleUsers; track user.id) {
+            <div class="task-card__avatar" [class.task-card__avatar--own]="user.isOwn" [title]="user.fullName">
                 {{ user.avatar }}
-                }
+            </div>
+            }
+
+            @if (hiddenUsers.length > 0) {
+            <div class="task-card__avatar task-card__avatar--more" [title]="hiddenNames">
+                +{{ hiddenUsers.length }}
             </div>
             }
         </div>
 
-        <img class="task-card__priority" [src]="task.prio" alt="Priority">
-
+        <img class="task-card__priority" [src]="prioIcon" [alt]="task.prio" />
     </div>
 
 </mat-card>

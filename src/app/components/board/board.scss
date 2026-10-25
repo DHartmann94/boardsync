@@ -138,6 +138,17 @@ $radius-m: 8px;
   color: var(--dark-grey);
 }
 
+.board__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+
+  mat-spinner {
+    --mat-progress-spinner-active-indicator-color: var(--light-blue);
+  }
+}
+
 /*------ Responsive ------*/
 @media (max-width: 768px) {
   .board {
