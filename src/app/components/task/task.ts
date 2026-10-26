@@ -1,17 +1,18 @@
-import { Component, Input, computed, inject } from '@angular/core';
-
-import { NgClass } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { TaskInterface, SubtaskInterface } from '../../models/task';
 import { UserService } from '../../services/user';
+import { CategoryService } from '../../services/category';
+import { TaskService } from '../../services/task';
+
+const MAX_VISIBLE_AVATARS = 4;
 
 @Component({
   selector: 'app-task',
   imports: [
-    NgClass,
     MatCardModule,
     MatProgressBarModule,
   ],
@@ -20,16 +21,46 @@ import { UserService } from '../../services/user';
 })
 export class Task {
   private readonly userService = inject(UserService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly taskService = inject(TaskService);
 
   @Input({ required: true })
   task!: TaskInterface;
 
-  // Filtert die User des Projekts für die Avatare auf der Task-Karte
-  readonly assignedUsers = computed(() => {
-    const projectMembers = this.userService.projectUsers();
+  // Fälligkeitsdatum überschritten (erledigte Tasks zählen nicht)
+  get isOverdue(): boolean {
+    return this.taskService.isTaskOverdue(this.task);
+  }
+
+  // Alle zugeordneten User des Projekts, der eigene User steht zuerst
+  get assignedUsers() {
     const assignedIds = this.task.assignedToUser ?? [];
-    return projectMembers.filter((user) => assignedIds.includes(user.id));
-  });
+    const state = this.userService.state();
+    const currentId = state.status === 'ready' ? state.user.id : null;
+
+    return this.userService
+      .projectUsers()
+      .filter((user) => assignedIds.includes(user.id))
+      .map((user) => ({
+        id: user.id,
+        avatar: user.avatar || '?',
+        fullName: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
+        isOwn: user.id === currentId,
+      }))
+      .sort((a, b) => Number(b.isOwn) - Number(a.isOwn));
+  }
+
+  get visibleUsers() {
+    return this.assignedUsers.slice(0, MAX_VISIBLE_AVATARS);
+  }
+
+  get hiddenUsers() {
+    return this.assignedUsers.slice(MAX_VISIBLE_AVATARS);
+  }
+
+  get hiddenNames(): string {
+    return this.hiddenUsers.map((user) => user.fullName).join(', ');
+  }
 
   get completedSubtasks(): number {
     return this.task.subtasks
@@ -46,23 +77,18 @@ export class Task {
       return 0;
     }
 
-    return (
-      this.completedSubtasks /
-      this.totalSubtasks
-    ) * 100;
+    return (this.completedSubtasks / this.totalSubtasks) * 100;
   }
 
-  // Todo Noch Platzhalter
-  get categoryClass(): string {
-    return this.task.categoryId === 'technical-task'
-      ? 'task-card__badge--technical'
-      : 'task-card__badge--story';
+  get category() {
+    const categories = this.categoryService.categoryMap();
+    if (categories.size === 0) {
+      return null;
+    }
+    return categories.get(this.task.categoryId) ?? { type: 'Unknown', color: 'var(--light-blue)' };
   }
 
-  get categoryLabel(): string {
-    return this.task.categoryId === 'technical-task'
-      ? 'Technical Task'
-      : 'User Story';
+  get prioIcon(): string {
+    return this.taskService.getPrioIcon(this.task.prio);
   }
-
 }

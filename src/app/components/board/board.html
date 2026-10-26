@@ -45,6 +45,12 @@
         </div>
     </div>
 
+    @if (isLoadingTasks()) {
+    <!-- Ladeanzeige -->
+    <div class="board__loading">
+        <mat-spinner diameter="48" [attr.aria-label]="'board.loading' | translate"></mat-spinner>
+    </div>
+    } @else {
     <!-- Columns -->
     <div class="board__columns" cdkDropListGroup>
 
@@ -64,7 +70,8 @@
                 }
 
                 @for (task of column.tasks; track task.id) {
-                <div class="column__task" cdkDrag>
+                <div class="column__task" cdkDrag tabindex="0" role="button" (click)="openTask(task)"
+                    (keydown.enter)="openTask(task)">
                     <div class="column__task-drag-placeholder" *cdkDragPlaceholder></div>
                     <!-- Hier wird die Task-Komponente geladen -->
                     <app-task [task]="task"></app-task>
@@ -75,12 +82,6 @@
         }
 
     </div>
-
-    <button
-  mat-raised-button
-  color="warn"
-  (click)="createDemoData()">
-  Demo-Daten erstellen
-</button>
+    }
 
 </section>

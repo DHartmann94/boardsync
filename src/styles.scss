@@ -131,6 +131,12 @@ button.go-back-button {
   }
 }
 
+/* Tasks */
+.task-detail-dialog .mat-mdc-dialog-surface {
+  background: transparent;
+  box-shadow: none;
+}
+
 /* Snackbar */
 .notification-error .mdc-snackbar__surface {
   background-color: var(--error) !important;

@@ -4,6 +4,7 @@
         "privacy": "Datenschutz",
         "back": "Zurück",
         "close": "Schließen",
+        "cancel": "Abbrechen",
         "errors": {
             "failure": "Es ist ein unbekannter Fehler aufgetreten",
             "tooManyRequests": "Zu viele Versuche. Bitte warte einen Moment, bevor du es erneut versuchst."
@@ -91,6 +92,7 @@
     },
     "board": {
         "title": "Board",
+        "loading": "Tasks werden geladen",
         "project": {
             "placeholder": "Projekt auswählen",
             "noResults": "Keine Projekte gefunden"
@@ -106,12 +108,38 @@
         "errors": {
             "moveFailed": "Aufgabe konnte nicht verschoben werden",
             "loadProjectsFailed": "Projekte konnten nicht geladen werden",
-            "loadTasksFailed": "Aufgaben konnten nicht geladen werden"
+            "loadTasksFailed": "Aufgaben konnten nicht geladen werden",
+            "subtasksNotCompleted": "Task noch nicht beendet: Es gibt offene Subtasks."
         }
     },
     "task": {
-            "taskCreated": "Aufgabe wurde erfolgreich hinzugefügt.",
-            "taskCreateError": "Aufgabe konnte nicht erstellt werden."
+        "taskCreated": "Aufgabe wurde erfolgreich hinzugefügt.",
+        "taskCreateError": "Aufgabe konnte nicht erstellt werden."
+    },
+    "taskDetail": {
+        "close": "Schließen",
+        "dueDate": "Fälligkeitsdatum",
+        "priority": "Priorität",
+        "assignedTo": "Zugewiesen an",
+        "subtasks": "Subtasks",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "deleted": "Aufgabe wurde gelöscht.",
+        "noAssignees": "Niemand zugewiesen",
+        "noSubtasks": "Keine Subtasks",
+        "notFound": "Task wurde nicht gefunden",
+        "prio": {
+            "urgent": "Dringend",
+            "medium": "Mittel",
+            "low": "Niedrig"
+        },
+        "deleteDialog": {
+            "title": "Aufgabe löschen",
+            "message": "Möchtest du die Aufgabe „{{title}}“ wirklich löschen? Das kann nicht rückgängig gemacht werden."
+        },
+        "errors": {
+            "deleteFailed": "Aufgabe konnte nicht gelöscht werden."
+        }
     },
     "addTaskForm": {
         "title": "Aufgabe hinzufügen",

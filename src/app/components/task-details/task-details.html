@@ -1,0 +1,100 @@
+<mat-card class="task-detail">
+
+    @if (task(); as t) {
+
+    <mat-card-header class="task-detail__header">
+        @if (category(); as cat) {
+        <div class="task-detail__badge" [style.background-color]="cat.color">
+            {{ cat.type }}
+        </div>
+        }
+
+        <button mat-icon-button type="button" class="task-detail__close" (click)="close()"
+            [attr.aria-label]="'taskDetail.close' | translate">
+            <mat-icon class="material-symbols-outlined">close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <mat-card-content>
+        <h1 class="task-detail__title">{{ t.title }}</h1>
+
+        <p class="task-detail__description">{{ t.description }}</p>
+
+        <dl class="task-detail__meta">
+            <div class="task-detail__row">
+                <dt>{{ 'taskDetail.dueDate' | translate }}:</dt>
+                <dd [class.task-detail__value--overdue]="isOverdue()">
+                    {{ dueDate() | date: 'dd.MM.yyyy' }}
+                </dd>
+            </div>
+
+            <div class="task-detail__row">
+                <dt>{{ 'taskDetail.priority' | translate }}:</dt>
+                <dd class="task-detail__priority">
+                    <span>{{ ('taskDetail.prio.' + t.prio) | translate }}</span>
+                    <img [src]="prioIcon()" alt="" />
+                </dd>
+            </div>
+        </dl>
+
+        <section class="task-detail__section">
+            <h2 class="task-detail__label">{{ 'taskDetail.assignedTo' | translate }}:</h2>
+            <ul class="task-detail__users">
+                @for (user of assignedUsers(); track user.id) {
+                <li class="task-detail__user">
+                    <span class="task-detail__avatar" [class.task-detail__avatar--own]="user.isOwn">
+                        {{ user.avatar }}
+                    </span>
+                    <span>{{ user.fullName }}</span>
+                </li>
+                } @empty {
+                <li class="task-detail__empty">{{ 'taskDetail.noAssignees' | translate }}</li>
+                }
+            </ul>
+        </section>
+
+        <section class="task-detail__section">
+            <h2 class="task-detail__label">{{ 'taskDetail.subtasks' | translate }}</h2>
+            <ul class="task-detail__subtasks">
+                @for (subtask of t.subtasks; track $index) {
+                <li>
+                    <mat-checkbox [checked]="subtask.completed" disabled>
+                        {{ subtask.title }}
+                    </mat-checkbox>
+                </li>
+                } @empty {
+                <li class="task-detail__empty">{{ 'taskDetail.noSubtasks' | translate }}</li>
+                }
+            </ul>
+        </section>
+    </mat-card-content>
+
+    <mat-card-actions class="task-detail__actions">
+        <button mat-button type="button" (click)="confirmDelete()" [disabled]="isDeleting()">
+            <mat-icon class="material-symbols-outlined">delete</mat-icon>
+            {{ 'taskDetail.delete' | translate }}
+        </button>
+        <span class="task-detail__actions-divider"></span>
+        <!-- Platzhalter, Logik folgt -->
+        <button mat-button type="button" disabled>
+            <mat-icon class="material-symbols-outlined">edit</mat-icon>
+            {{ 'taskDetail.edit' | translate }}
+        </button>
+    </mat-card-actions>
+
+    } @else if (task() === null && !isDeleting()) {
+
+    <div class="task-detail__state">
+        <p>{{ 'taskDetail.notFound' | translate }}</p>
+        <button mat-button type="button" (click)="close()">{{ 'taskDetail.close' | translate }}</button>
+    </div>
+
+    } @else {
+
+    <div class="task-detail__state">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    }
+
+</mat-card>
