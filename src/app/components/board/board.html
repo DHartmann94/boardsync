@@ -70,7 +70,8 @@
                 }
 
                 @for (task of column.tasks; track task.id) {
-                <div class="column__task" cdkDrag>
+                <div class="column__task" cdkDrag tabindex="0" role="button" (click)="openTask(task)"
+                    (keydown.enter)="openTask(task)">
                     <div class="column__task-drag-placeholder" *cdkDragPlaceholder></div>
                     <!-- Hier wird die Task-Komponente geladen -->
                     <app-task [task]="task"></app-task>

@@ -5,11 +5,12 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, CdkDropListGroup, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
+import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, filter, take, tap } from 'rxjs';
 
@@ -19,6 +20,7 @@ import { NotificationService } from '../../services/notification';
 import { ProjectInterface } from '../../models/project';
 import { TaskInterface } from '../../models/task';
 import { Task } from '../task/task';
+import { TaskDetails } from '../task-details/task-details';
 
 interface BoardColumn {
   id: string;
@@ -59,6 +61,7 @@ export class Board implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly injector = inject(Injector);
   private readonly notificationService = inject(NotificationService);
+  private readonly dialog = inject(MatDialog);
 
   // Form Controls
   readonly projectSearchControl = new FormControl<ProjectInterface | string | null>('');
@@ -121,7 +124,8 @@ export class Board implements OnInit {
 
       return collectionData(q, { idField: 'id' }).pipe(
         map((res) => res as ProjectInterface[]),
-        // Echte Antwort von Firestore ohne Projekte: es werden nie Tasks geladen
+        // User hat keine Projekte: Es wird kein Projekt gewählt, daher kommt keine
+        // Task-Antwort mehr, die den Spinner beenden könnte
         tap((projects) => {
           if (projects.length === 0) {
             this.isLoadingTasks.set(false);
@@ -207,7 +211,7 @@ export class Board implements OnInit {
         task.title.toLowerCase().includes(term) ||
         task.description?.toLowerCase().includes(term)
       );
-    }).sort((a, b) => this.toMillis(a.createdAt) - this.toMillis(b.createdAt));
+    }).sort((a, b) => this.taskService.toMillis(a.createdAt) - this.taskService.toMillis(b.createdAt));
 
     const currentColumns = [
       { id: 'todo', title: 'To do', tasks: [] as TaskInterface[] },
@@ -223,6 +227,17 @@ export class Board implements OnInit {
 
     this.columns.set(currentColumns);
     this.cdr.markForCheck();
+  }
+
+  // --- Task-Details ---
+  openTask(task: TaskInterface): void {
+    this.dialog.open(TaskDetails, {
+      data: { taskId: task.id },
+      panelClass: 'task-detail-dialog',
+      width: '525px',
+      maxWidth: '95vw',
+      autoFocus: false,
+    });
   }
 
   // --- Drag & Drop ---
@@ -266,12 +281,5 @@ export class Board implements OnInit {
 
   private hasOpenSubtasks(task: TaskInterface): boolean {
     return task.subtasks?.some((subtask) => !subtask.completed) ?? false;
-  }
-
-  /*------ Help functions ------*/
-  private toMillis(value: unknown): number {
-    if (value instanceof Timestamp) return value.toMillis();
-    if (value instanceof Date) return value.getTime();
-    return 0;
   }
 }

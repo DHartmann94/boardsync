@@ -1,4 +1,4 @@
-<mat-card class="task-card">
+<mat-card class="task-card" [class.task-card--overdue]="isOverdue">
 
     @if (category; as cat) {
     <div class="task-card__badge" [style.background-color]="cat.color">

@@ -6,6 +6,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TaskInterface, SubtaskInterface } from '../../models/task';
 import { UserService } from '../../services/user';
 import { CategoryService } from '../../services/category';
+import { TaskService } from '../../services/task';
 
 const MAX_VISIBLE_AVATARS = 4;
 
@@ -21,15 +22,15 @@ const MAX_VISIBLE_AVATARS = 4;
 export class Task {
   private readonly userService = inject(UserService);
   private readonly categoryService = inject(CategoryService);
+  private readonly taskService = inject(TaskService);
 
   @Input({ required: true })
   task!: TaskInterface;
 
-  private readonly prioIcons: Record<string, string> = {
-    low: 'assets/img/icons/add-task-low.svg',
-    medium: 'assets/img/icons/add-task-medium.svg',
-    urgent: 'assets/img/icons/add-task-urgent.svg',
-  };
+  // Fälligkeitsdatum überschritten (erledigte Tasks zählen nicht)
+  get isOverdue(): boolean {
+    return this.taskService.isTaskOverdue(this.task);
+  }
 
   // Alle zugeordneten User des Projekts, der eigene User steht zuerst
   get assignedUsers() {
@@ -80,10 +81,14 @@ export class Task {
   }
 
   get category() {
-    return this.categoryService.categoryMap().get(this.task.categoryId);
+    const categories = this.categoryService.categoryMap();
+    if (categories.size === 0) {
+      return null;
+    }
+    return categories.get(this.task.categoryId) ?? { type: 'Unknown', color: 'var(--light-blue)' };
   }
 
   get prioIcon(): string {
-    return this.prioIcons[this.task.prio] ?? this.prioIcons['medium'];
+    return this.taskService.getPrioIcon(this.task.prio);
   }
 }
