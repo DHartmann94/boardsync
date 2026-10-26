@@ -203,5 +203,15 @@
         "createProject": "Projekt erstellen",
         "projectCreated": "Projekt wurde erfolgreich erstellt.",
         "projectCreateError": "Projekt konnte nicht erstellt werden."
+    },
+    "header": {
+        "notifications": "Benachrichtigungen",
+        "profile": "Profil",
+        "logout": "Abmelden"
+    },
+    "sidebar": {
+        "board": "Board",
+        "addTasks": "Add Tasks",
+        "addProjects": "Add Projects"
     }
 }

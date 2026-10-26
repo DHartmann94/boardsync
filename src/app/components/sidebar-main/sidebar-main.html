@@ -1,49 +1,65 @@
-<mat-nav-list>
-  
-  <a
-    mat-list-item
-    title="Sidebar öffnen oder schließen">
-  <span class="nav-content">
-      <button
-        mat-icon-button
-        (click)="onToggleSidebar()"
-        aria-label="Sidebar öffnen oder schließen">
-        <mat-icon class="material-symbols-outlined">menu</mat-icon>
-      </button>
-    </span>
-  </a>
-  <a
-    mat-list-item
-    routerLink="/main/add-tasks"
-    routerLinkActive="active"
-    [attr.aria-label]="collapsed() ? 'Add Tasks' : null"
-    title="Add Tasks">
-    <span class="nav-content">
-      <span class="nav-label">Add Tasks</span>
-      <mat-icon class="material-symbols-outlined">Assignment_add</mat-icon>
-    </span>
-  </a>
-    <a
-    mat-list-item
-    routerLink="/main/board"
-    routerLinkActive="active"
-    [attr.aria-label]="collapsed() ? 'Board' : null"
-    title="Board">
-    <span class="nav-content">
-      <span class="nav-label">Board</span>
-      <mat-icon class="material-symbols-outlined">view_quilt</mat-icon>
-    </span>
-  </a>
-  <a
-    mat-list-item
-    routerLink="/main/add-projects"
-    routerLinkActive="active"
-    [attr.aria-label]="collapsed() ? 'Add Projects' : null"
-    title="Add Projects">
-    <span class="nav-content">
-      <span class="nav-label">Add Projects</span>
-      <mat-icon class="material-symbols-outlined">add_box</mat-icon>
-    </span>
-  </a>
+<div class="sidebar-container">
+  <!-- Oben: Sidebar öffnen/schließen & Logo -->
+  <div class="sidebar-top">
+    <div class="logo-container">
+      <img src="./assets/img/logos/logo-nn.png" alt="Logo" class="sidebar-logo" />
+    </div>
 
-</mat-nav-list>
+    <!-- Toggle-Button mit dynamischem Pfeil-Icon -->
+    <button mat-icon-button (click)="onToggleSidebar()" aria-label="Sidebar öffnen oder schließen" class="toggle-btn">
+      <mat-icon class="material-symbols-outlined">
+        @if (collapsed()) {
+        chevron_right
+        } @else {
+        chevron_left
+        }
+      </mat-icon>
+    </button>
+  </div>
+
+  <!-- Haupt-Navigation -->
+  <mat-nav-list class="nav-list-main">
+    <a mat-list-item routerLink="/main/board" routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? ('sidebar.board' | translate) : null" title="Board">
+      <span class="nav-content">
+        <mat-icon class="material-symbols-outlined">view_quilt</mat-icon>
+        <span class="nav-label">{{ 'sidebar.board' | translate }}</span>
+      </span>
+    </a>
+
+    <a mat-list-item routerLink="/main/add-tasks" routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? ('sidebar.addTasks' | translate) : null" title="Add Tasks">
+      <span class="nav-content">
+        <mat-icon class="material-symbols-outlined">assignment_add</mat-icon>
+        <span class="nav-label">{{ 'sidebar.addTasks' | translate }}</span>
+      </span>
+    </a>
+
+    <a mat-list-item routerLink="/main/add-projects" routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? ('sidebar.addProjects' | translate) : null" title="Add Projects">
+      <span class="nav-content">
+        <mat-icon class="material-symbols-outlined">add_box</mat-icon>
+        <span class="nav-label">{{ 'sidebar.addProjects' | translate }}</span>
+      </span>
+    </a>
+  </mat-nav-list>
+
+  <!-- Unten: Footer-Links -->
+  <mat-nav-list class="nav-list-footer">
+    <a mat-list-item routerLink="/privacy" routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? ('general.privacy' | translate) : null" title="Privacy Policy">
+      <span class="nav-content">
+        <mat-icon class="material-symbols-outlined">shield</mat-icon>
+        <span class="nav-label">{{ 'general.privacy' | translate }}</span>
+      </span>
+    </a>
+
+    <a mat-list-item routerLink="/imprint" routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? ('general.imprint' | translate) : null" title="Legal notice">
+      <span class="nav-content">
+        <mat-icon class="material-symbols-outlined">description</mat-icon>
+        <span class="nav-label">{{ 'general.imprint' | translate }}</span>
+      </span>
+    </a>
+  </mat-nav-list>
+</div>

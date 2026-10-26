@@ -1,25 +1,41 @@
-    <mat-toolbar color="primary" class="toolbar">
+<mat-toolbar class="toolbar">
 
-      <span class="app-title">
-        Board-Sync
-      </span>
+  <span class="app-title">
+    Kanban Project Management Tool
+  </span>
 
-      <span class="header-spacer"></span>
+  <span class="header-spacer"></span>
 
-      <button
-        mat-icon-button
-        aria-label="Benachrichtigungen">
+  <!-- Benachrichtigungen -->
+  <button mat-icon-button [attr.aria-label]="'header.notifications' | translate">
+    <mat-icon class="material-symbols-outlined">notifications</mat-icon>
+  </button>
 
-        <mat-icon class="material-symbols-outlined">notifications</mat-icon>
+  <!-- Profil Avatar & Dropdown-Menü -->
+  @if (currentUser(); as user) {
+  <button mat-icon-button [matMenuTriggerFor]="userMenu" [attr.aria-label]="'header.profile' | translate"
+    class="avatar-button">
 
-      </button>
+    @if (user.avatar && user.avatar.startsWith('http')) {
+    <img [src]="user.avatar" alt="Avatar" class="user-avatar-img" />
+    } @else {
+    <div class="user-initials-circle">
+      {{ user.avatar || 'U' }}
+    </div>
+    }
+  </button>
 
-      <button
-        mat-icon-button
-        aria-label="Profil">
+  <mat-menu #userMenu="matMenu" xPosition="before">
+    <div class="user-info-header">
+      <p class="user-name"><strong>{{ user.firstName }} {{ user.lastName }}</strong></p>
+      <p class="user-email">{{ user.email }}</p>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon class="material-symbols-outlined">logout</mat-icon>
+      <span>{{ 'header.logout' | translate }}</span>
+    </button>
+  </mat-menu>
+  }
 
-        <mat-icon class="material-symbols-outlined">account_circle</mat-icon>
-
-      </button>
-
-    </mat-toolbar>
+</mat-toolbar>

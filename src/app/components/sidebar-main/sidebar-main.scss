@@ -1,21 +1,58 @@
-
 :host {
   display: block;
   height: 100%;
+  background-color: var(--dark-grey);
+  color: var(--white);
 }
 
-mat-nav-list {
-  padding-top: 8px;
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 24px 0;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px 32px 16px;
+  position: relative;
+
+  .sidebar-logo {
+    max-width: 100px;
+    height: auto;
+  }
+
+  .toggle-btn {
+    position: absolute;
+    right: 12px;
+    color: var(--white);
+  }
+}
+
+.nav-list-main {
+  flex: 1;
+}
+
+.nav-list-footer {
+  padding-bottom: 16px;
 }
 
 a[mat-list-item] {
-  margin: 4px 8px;
-  width: calc(100% - 16px);
+  margin: 4px 16px;
+  width: calc(100% - 32px);
   border-radius: 8px;
   display: flex !important;
   align-items: center;
-  min-height: 56px;
+  min-height: 48px;
   box-sizing: border-box;
+  color: var(--white) !important;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
 }
 
 .nav-content {
@@ -23,51 +60,68 @@ a[mat-list-item] {
   align-items: center;
   width: 100%;
   min-width: 0;
+  gap: 16px;
 }
 
 .nav-label {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 1rem;
+  color: var(--white);
 }
 
+/* Icons weiß färben */
 a[mat-list-item] mat-icon {
   flex: 0 0 auto;
-  margin-left: auto;
+  color: var(--white);
+  margin-left: 0;
 }
 
-:host-context(.sidebar-collapsed) .nav-content {
-  justify-content: center;
-}
-
-:host-context(.sidebar-collapsed) a[mat-list-item] .nav-label {
-  display: none;
-}
-
-:host-context(.sidebar-collapsed) a[mat-list-item] mat-icon {
-  margin: 0;
-}
-
+/* Aktiver Zustand */
 a[mat-list-item].active {
-  background-color: #e3f2fd;
-  color: #042649;
+  background-color: var(--focus-blue) !important;
+  color: var(--white) !important;
+
+  mat-icon {
+    color: var(--light-blue);
+  }
 }
 
-a[mat-list-item].active mat-icon {
-  color: #1976d2;
-}
+/* Eingeklappter Zustand (Collapsed) */
+:host-context(.sidebar-collapsed) {
+  .sidebar-top {
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 8px 24px 8px;
 
-mat-divider {
-  margin: 12px 8px;
-}
+    .sidebar-logo {
+      max-width: 40px; // Logo kleiner machen im eingeklappten Zustand
+    }
 
-.sidebar-header .nav-content {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
+    .toggle-btn {
+      position: static;
+    }
+  }
 
-:host-context(.sidebar-collapsed) .sidebar-header .nav-content {
-  justify-content: center;
-}
+  /* Ränder für die Links anpassen, damit sie in die schmale Sidebar passen */
+  a[mat-list-item] {
+    margin: 4px 8px;
+    width: calc(100% - 16px);
+    justify-content: center;
+    padding: 0 !important;
+  }
 
+  .nav-content {
+    justify-content: center;
+    gap: 0;
+  }
+
+  a[mat-list-item] .nav-label {
+    display: none;
+  }
+
+  a[mat-list-item] mat-icon {
+    margin: 0;
+  }
+}
