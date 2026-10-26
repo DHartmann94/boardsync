@@ -23,4 +23,27 @@
       <mat-icon class="material-symbols-outlined">Assignment_add</mat-icon>
     </span>
   </a>
+    <a
+    mat-list-item
+    routerLink="/main/board"
+    routerLinkActive="active"
+    [attr.aria-label]="collapsed() ? 'Board' : null"
+    title="Board">
+    <span class="nav-content">
+      <span class="nav-label">Board</span>
+      <mat-icon class="material-symbols-outlined">view_quilt</mat-icon>
+    </span>
+  </a>
+  <a
+    mat-list-item
+    routerLink="/main/add-projects"
+    routerLinkActive="active"
+    [attr.aria-label]="collapsed() ? 'Add Projects' : null"
+    title="Add Projects">
+    <span class="nav-content">
+      <span class="nav-label">Add Projects</span>
+      <mat-icon class="material-symbols-outlined">add_box</mat-icon>
+    </span>
+  </a>
+
 </mat-nav-list>

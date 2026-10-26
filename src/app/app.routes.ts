@@ -9,7 +9,7 @@ import { LoadError } from './components/load-error/load-error';
 import { Main } from './components/main/main';
 import { AddTasks } from './components/add-tasks/add-tasks';
 import { Board } from './components/board/board';
-
+import { AddProjects } from './components/add-projects/add-projects';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -27,6 +27,7 @@ export const routes: Routes = [
       { path: 'add-tasks', component: AddTasks },
       //{ path: '', redirectTo: 'add-tasks', pathMatch: 'full' },
       { path: 'board', component: Board },
+      { path: 'add-projects', component: AddProjects },
     ],
   },
 

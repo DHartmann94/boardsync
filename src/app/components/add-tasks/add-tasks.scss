@@ -98,9 +98,20 @@ h1 {
 }
 
 .category-option {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.category-option button {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+}
+
+:host ::ng-deep .category-item-option .mdc-list-item__primary-text {
+  width: 100%;
 }
 
 .category-color-swatch {
@@ -129,7 +140,7 @@ h1 {
   line-height: 1.25;
 }
 
-.category-description-row {
+.category-type-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -137,12 +148,12 @@ h1 {
   width: 100%;
 }
 
-.category-description-label {
+.category-type-label {
   flex: 0 0 auto;
   font-size: 0.9rem;
 }
 
-.category-description-input {
+.category-type-input {
   flex: 1 1 0;
   min-width: 0;
   box-sizing: border-box;
@@ -154,7 +165,7 @@ h1 {
   font: inherit;
 }
 
-.category-description-input::placeholder {
+.category-type-input::placeholder {
   color: #7f868d;
   opacity: 1;
 }
@@ -192,7 +203,7 @@ h1 {
   content: '';
 }
 
-.category-description-input:focus {
+.category-type-input:focus {
   border-color: rgba(42, 46, 51, 0.65);
   outline: 2px solid rgba(54, 93, 255, 0.25);
   outline-offset: 1px;

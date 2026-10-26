@@ -1,0 +1,138 @@
+<main class="project-page">
+  <h1>{{ 'addProjectForm.title' | translate }}</h1>
+
+  <form
+    id="add-project-form"
+    class="project-form"
+    [formGroup]="projectForm"
+    [attr.aria-label]="'addProjectForm.formLabel' | translate"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="field-group">
+      <label class="field-label" for="project-title">
+        {{ 'addProjectForm.titleLabel' | translate }}<span class="required">*</span>
+      </label>
+      <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
+        <input
+          id="project-title"
+          matInput
+          type="text"
+          [placeholder]="'addProjectForm.titlePlaceholder' | translate"
+          formControlName="title"
+          [attr.aria-invalid]="projectForm.controls.title.invalid && projectForm.controls.title.touched"
+          [attr.aria-describedby]="
+            projectForm.controls.title.invalid && projectForm.controls.title.touched
+              ? 'project-title-error'
+              : null
+          "
+        />
+      </mat-form-field>
+      @if (projectForm.controls.title.hasError('required') && projectForm.controls.title.touched) {
+        <span id="project-title-error" class="validation-error" role="alert">
+          {{ 'addProjectForm.titleRequired' | translate }}
+        </span>
+      }
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="project-description">
+        {{ 'addProjectForm.descriptionLabel' | translate }}
+      </label>
+      <mat-form-field
+        appearance="outline"
+        class="project-input-field description-field"
+        subscriptSizing="dynamic"
+      >
+        <textarea
+          id="project-description"
+          matInput
+          [placeholder]="'addProjectForm.descriptionPlaceholder' | translate"
+          formControlName="description"
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="project-due-date">
+        {{ 'addProjectForm.dueDateLabel' | translate }}<span class="required">*</span>
+      </label>
+      <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
+        <input
+          id="project-due-date"
+          matInput
+          [matDatepicker]="dueDatePicker"
+          [min]="today"
+          [placeholder]="'addProjectForm.dueDatePlaceholder' | translate"
+          formControlName="dueDate"
+          [attr.aria-invalid]="projectForm.controls.dueDate.invalid && projectForm.controls.dueDate.touched"
+          [attr.aria-describedby]="
+            projectForm.controls.dueDate.invalid && projectForm.controls.dueDate.touched
+              ? 'project-due-date-error'
+              : null
+          "
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #dueDatePicker></mat-datepicker>
+      </mat-form-field>
+      @if (projectForm.controls.dueDate.invalid && projectForm.controls.dueDate.touched) {
+        <span id="project-due-date-error" class="validation-error" role="alert">
+          {{
+            (projectForm.controls.dueDate.hasError('pastDate')
+              ? 'addProjectForm.dueDatePast'
+              : 'addProjectForm.dueDateRequired') | translate
+          }}
+        </span>
+      }
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="project-members">
+        {{ 'addProjectForm.membersLabel' | translate }}
+      </label>
+      <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
+        <mat-select
+          id="project-members"
+          [attr.aria-label]="'addProjectForm.membersLabel' | translate"
+          [placeholder]="'addProjectForm.membersPlaceholder' | translate"
+          multiple
+          formControlName="memberIds"
+        >
+          @for (user of users; track user.id) {
+            <mat-option [value]="user.id">{{ user.displayName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (projectForm.controls.memberIds.value.length > 0) {
+        <ul
+          class="member-list"
+          [attr.aria-label]="'addProjectForm.membersLabel' | translate"
+        >
+          @for (userId of projectForm.controls.memberIds.value; track userId) {
+            <li>{{ getUserDisplayName(userId) }}</li>
+          }
+        </ul>
+      }
+    </div>
+  </form>
+
+  <div class="form-footer">
+    <div class="required-note">{{ 'addProjectForm.requiredNote' | translate }}</div>
+
+    <div class="form-actions">
+      <button mat-stroked-button type="button" class="clear-btn" (click)="onClear()">
+        {{ 'addProjectForm.clear' | translate }}
+        <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
+      </button>
+      <button
+        mat-flat-button
+        type="submit"
+        form="add-project-form"
+        class="primary-btn"
+        [disabled]="isSubmitting"
+      >
+        {{ 'addProjectForm.createProject' | translate }}
+        <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>
+      </button>
+    </div>
+  </div>
+</main>

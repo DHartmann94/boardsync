@@ -1,6 +1,16 @@
-import { Component, inject, Injector } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {Firestore,doc,setDoc,serverTimestamp,collection, getDocs,type DocumentData,} from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from '@angular/fire/firestore';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import type { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,7 +24,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../services/user';
 import { NotificationService } from '../../services/notification';
+import type { CategoryInterface, CreateategoryPayload } from '../../models/category';
 import { SubtaskInterface, TaskInterface } from '../../models/task';
+
+interface ProjectOption {
+  id: string;
+  title: string;
+}
 
 const dateNotInPastValidator: ValidatorFn = (
   control: AbstractControl<Date | null>,
@@ -54,6 +70,7 @@ const dateNotInPastValidator: ValidatorFn = (
 export class AddTasks {
   readonly today = new Date(new Date().setHours(0, 0, 0, 0));
   private readonly firestore = inject(Firestore);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly injector = inject(Injector);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
@@ -65,16 +82,17 @@ export class AddTasks {
     valid: true
   };
 
-  potentialcategory = {name: '', color: ''};
+  potentialCategory = { type: '', color: '' };
   users: { id: string; displayName: string }[] = [];
-  categories: { id: string; text: string; colorbackground: string; colortext: string }[] = [];
+  categories: CategoryInterface[] = [];
   colors: string[] = [
   '#F44336', // Rot
   '#FF9800', // Orange
   '#FFEB3B', // Gelb
   '#4CAF50', // Grün
   '#2196F3'  // Blau
-];
+  ];
+  projectOptions: ProjectOption[] = [];
 
   async ngOnInit(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
@@ -84,6 +102,7 @@ export class AddTasks {
     }));
     this.users = potentialUsers;
     this.loadCategories();
+    this.loadProjects();
   }
 
   async loadCategories(): Promise<void> {
@@ -91,15 +110,36 @@ export class AddTasks {
     const categoriesSnapshot = await Categories;
     this.categories = categoriesSnapshot.docs.map((doc) => ({
       id: doc.id,
-      text: doc.data()['name'],
-      colorbackground: doc.data()['colorbackground'],
-      colortext: doc.data()['colortext'],
+      type: doc.data()['type'] as string,
+      color: doc.data()['color'] as string,
     }));
+    this.cdr.markForCheck();
+  }
+  async loadProjects(): Promise<void> {
+    const Projects = getDocs(collection(this.firestore, 'projects'));
+    const projectsSnapshot = await Projects;
+    const projectOptions = projectsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      title: doc.data()['title'],
+      memberIds: doc.data()['memberIds'] as string[],
+    }));
+    const currentUser = this.userService.currentUser();
+    if (currentUser) {
+      this.projectOptions = projectOptions.filter((project) => {
+        console.log('Projekt:', project);
+        console.log('Member IDs:', project.memberIds);
+        console.log('Current User ID:', currentUser.id);
+
+        const includesUser = project.memberIds.includes(currentUser.id);
+        console.log('Enthält User:', includesUser);
+
+        return includesUser;
+      });
+    }
   }
 
-
   readonly taskForm = new FormGroup({
-    projectId: new FormControl('', { nonNullable: true }),
+    projectId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true }),
     prio: new FormControl('medium', { nonNullable: true, validators: [Validators.required] }),
@@ -112,6 +152,11 @@ export class AddTasks {
 
   
   async onSubmit(): Promise<void> {
+    if (this.taskForm.controls.projectId.invalid) {
+      this.taskForm.controls.projectId.markAsTouched();
+      return;
+    }
+
     let Data = this.taskForm.value;
     const taskRef = doc(collection(this.firestore, 'tasks'));
     const newTask: TaskInterface = {
@@ -126,7 +171,7 @@ export class AddTasks {
       dueDate: Data.dueDate ?? new Date(),
       createdAt: serverTimestamp() as unknown as Date,
       updatedAt: serverTimestamp() as unknown as Date,
-      step: "ToDo",
+      step: "todo",
     }
     try {
       const response = await setDoc(taskRef, newTask);
@@ -140,7 +185,6 @@ export class AddTasks {
     }
 
   }
-
   onClear(): void {
     this.taskForm.reset({
       projectId: '',
@@ -153,32 +197,69 @@ export class AddTasks {
       dueDate: null,
     });
   }
+  async deleteCategory(categoryId: string, event: MouseEvent): Promise<void> {
+    event.stopPropagation();
+    try {
+      const tasksQuery = query(
+        collection(this.firestore, 'tasks'),
+        where('categoryId', '==', categoryId),
+      );
+      const tasksSnapshot = await getDocs(tasksQuery);
+
+      if (!tasksSnapshot.empty) {
+        this.notificationService.showError('addTaskForm.categoryInUse', 3000);
+        return;
+      }
+
+      await deleteDoc(doc(this.firestore, 'categories', categoryId));
+      this.categories = this.categories.filter((category) => category.id !== categoryId);
+      if (this.taskForm.controls.categoryId.value === categoryId) {
+        this.taskForm.controls.categoryId.setValue('');
+      }
+      this.cdr.markForCheck();
+      this.notificationService.showSuccess('addTaskForm.categoryDeleted');
+    } catch (error) {
+      console.error('Error deleting category: ', error);
+      this.notificationService.showError('addTaskForm.categoryDeleteError', 3000);
+    }
+  }
+
   async addCategory(event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    const color = this.potentialcategory.color;
-    const name = this.potentialcategory.name.trim();
+    const color = this.potentialCategory.color;
+    const type = this.potentialCategory.type.trim();
     const categoryRef = doc(collection(this.firestore, 'categories'));
-    const newCategory = {
-      name,
-      colorbackground: color,
-      colortext: this.getTextColor(color),
+    const newCategory: CreateategoryPayload = {
+      type,
+      color,
     };
 
     try {
+      const categoriesQuery = query(
+        collection(this.firestore, 'categories'),
+        where('type', '==', type),
+      );
+      const categoriesSnapshot = await getDocs(categoriesQuery);
+
+      if (!categoriesSnapshot.empty) {
+        this.notificationService.showError('addTaskForm.categoryAlreadyExists', 3000);
+        return;
+      }
+
       await setDoc(categoryRef, newCategory);
       this.categories = [
         ...this.categories,
         {
           id: categoryRef.id,
-          text: name,
-          colorbackground: color,
-          colortext: newCategory.colortext,
+          ...newCategory,
         },
       ];
       this.taskForm.controls.categoryId.setValue(categoryRef.id);
-      this.potentialcategory = { name: '', color: '' };
+      this.potentialCategory = { type: '', color: '' };
+      this.cdr.markForCheck();
     } catch (error) {
       console.error('Error adding category: ', error);
+      this.notificationService.showError('addTaskForm.categoryCreateError', 3000);
     }
   }
   addSubtask(): void {
@@ -205,15 +286,5 @@ export class AddTasks {
 
   getUserDisplayName(userId: string): string {
     return this.users.find((user) => user.id === userId)?.displayName ?? userId;
-  }
-
-  getTextColor(hex: string): "black" | "white" {
-  const color = parseInt(hex.replace("#", ""), 16);
-  const r = (color >> 16) & 255;
-  const g = (color >> 8) & 255;
-  const b = color & 255;
-  return (r * 299 + g * 587 + b * 114) / 1000 >= 128
-    ? "black"
-    : "white";
   }
 }

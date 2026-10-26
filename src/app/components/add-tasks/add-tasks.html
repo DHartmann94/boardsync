@@ -10,6 +10,32 @@
   >
     <div class="left-column">
       <div class="field-group">
+        <label class="field-label" for="task-project">
+          {{ 'addTaskForm.projectLabel' | translate }}
+        </label>
+        <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
+          <mat-select
+            id="task-project"
+            [attr.aria-label]="'addTaskForm.projectLabel' | translate"
+            [placeholder]="'addTaskForm.projectPlaceholder' | translate"
+            formControlName="projectId"
+          >
+            @for (project of projectOptions; track project.id) {
+              <mat-option [value]="project.id">{{ project.title }}</mat-option>
+            }
+            @if (projectOptions.length === 0) {
+              <mat-option disabled>{{ 'board.project.noResults' | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (taskForm.controls.projectId.hasError('required') && taskForm.controls.projectId.touched) {
+          <span id="task-project-error" class="validation-error" role="alert">
+            {{ 'addTaskForm.projectRequired' | translate }}
+          </span>
+        }
+      </div>
+
+      <div class="field-group">
         <label class="field-label" for="task-title">
           {{ 'addTaskForm.titleLabel' | translate }}<span class="required">*</span>
         </label>
@@ -192,8 +218,23 @@
             [placeholder]="'addTaskForm.categoryPlaceholder' | translate"
             formControlName="categoryId"
           >
-            <mat-option *ngFor="let category of categories" [value]="category.id">
-              {{ category.text }}  
+            <mat-option
+              *ngFor="let category of categories"
+              [value]="category.id"
+              class="category-item-option"
+            >
+              <span class="category-option">
+                <span>{{ category.type }}</span>
+                <button
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="'Kategorie ' + category.type + ' löschen'"
+                  (click)="deleteCategory(category.id, $event)"
+                  (keydown)="$event.stopPropagation()"
+                >
+                  <mat-icon class="material-symbols-outlined" aria-hidden="true">delete</mat-icon>
+                </button>
+              </span>
             </mat-option>
             <mat-option class="category-add-option">
               <div
@@ -202,21 +243,22 @@
                 (keydown)="$event.stopPropagation()"
               >
                 <h2 class="category-add-heading">Kategorie hinzufügen</h2>
-                <div class="category-description-row">
-                  <label class="category-description-label" for="new-category-description">
-                    Beschreibung
+                <div class="category-type-row">
+                  <label class="category-type-label" for="new-category-type">
+                    Typ
                   </label>
                   <input
-                  id="new-category-description"
-                  class="category-description-input"
-                  placeholder="Beschreibung hinzufügen"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="potentialcategory.name"
-                  (keydown)="$event.stopPropagation()">
+                    id="new-category-type"
+                    class="category-type-input"
+                    placeholder="Typ hinzufügen"
+                    [ngModelOptions]="{ standalone: true }"
+                    [(ngModel)]="potentialCategory.type"
+                    (keydown)="$event.stopPropagation()"
+                  />
                 </div>
                 <span class="category-color-label">Farbe auswählen</span>
                 <mat-radio-group
-                  [(ngModel)]="potentialcategory.color"
+                  [(ngModel)]="potentialCategory.color"
                   [ngModelOptions]="{ standalone: true }"
                   aria-label="Farbe auswählen"
                   class="color-radio-group"
@@ -225,10 +267,10 @@
                     *ngFor="let color of colors"
                     [value]="color"
                     [style.--color]="color"
-                    [class.selected]="potentialcategory.color === color"
+                    [class.selected]="potentialCategory.color === color"
                     [attr.aria-label]="color"
-                    class="color-radio-button">
-                  </mat-radio-button>
+                    class="color-radio-button"
+                  ></mat-radio-button>
                 </mat-radio-group>
                 <button mat-button type="button" (click)="addCategory($event)">
                   Hinzufügen
