@@ -19,7 +19,6 @@
             aria-labelledby="task-project-label"
             [placeholder]="'addTaskForm.projectPlaceholder' | translate"
             formControlName="projectId"
-            (selectionChange)="onProjectSelectionChange($event.value)"
           >
             @for (project of projectOptions; track project.id) {
               <mat-option [value]="project.id">{{ project.title }}</mat-option>
@@ -107,7 +106,6 @@
             [min]="today"
             [placeholder]="'addTaskForm.dueDatePlaceholder' | translate"
             formControlName="dueDate"
-            (dateChange)="onDueDateChange()"
             [attr.aria-invalid]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched"
             [attr.aria-describedby]="
               taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched
@@ -123,7 +121,11 @@
             {{
               (taskForm.controls.dueDate.hasError('pastDate')
                 ? 'addTaskForm.dueDatePast'
-                : 'addTaskForm.dueDateRequired') | translate
+                : taskForm.controls.dueDate.hasError('afterProjectEnd')
+                  ? 'addTaskForm.dueDateAfterProjectEnd'
+                  : taskForm.controls.dueDate.hasError('projectDueDateLoadFailed')
+                    ? 'addTaskForm.projectDueDateLoadError'
+                    : 'addTaskForm.dueDateRequired') | translate
             }}
           </span>
         }
@@ -359,7 +361,7 @@
         {{ 'addTaskForm.clear' | translate }}
         <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
       </button>
-      <button mat-flat-button type="submit" [disabled]="taskForm.invalid" form="add-task-form" class="primary-btn">
+      <button mat-flat-button type="submit" [disabled]="taskForm.invalid || taskForm.pending" form="add-task-form" class="primary-btn">
         {{ 'addTaskForm.createTask' | translate }}
         <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>
       </button>

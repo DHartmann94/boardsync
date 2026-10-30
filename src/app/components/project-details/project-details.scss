@@ -84,7 +84,8 @@
 
     /* ===== Bearbeiten-Formular ===== */
     &__form {
-        display: block;
+        display: grid;
+        gap: 16px;
     }
 
     &__form-title {
@@ -95,10 +96,50 @@
         line-height: 1.1;
     }
 
+    &__field-group {
+        display: flex;
+        flex-direction: column;
+    }
+
     &__field {
-        display: block;
         width: 100%;
-        margin-bottom: 8px;
+
+        textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+    }
+
+    &__required-note {
+        margin-right: auto;
+        color: var(--error);
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+
+    &__member-list {
+        display: grid;
+        gap: 6px;
+        margin: 8px 0 0 12px;
+        padding: 0 0 0 12px;
+        border-left: 2px solid var(--grey);
+        list-style: none;
+
+        li {
+            color: var(--dark-grey);
+            font-size: 0.875rem;
+        }
+    }
+
+    .required {
+        margin-left: 4px;
+        color: var(--error);
+    }
+
+    .validation-error {
+        margin-top: 6px;
+        color: var(--error);
+        font-size: 0.875rem;
     }
 
     &__toggle {

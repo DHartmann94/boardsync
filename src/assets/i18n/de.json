@@ -130,6 +130,13 @@
         "noAssignees": "Niemand zugewiesen",
         "noSubtasks": "Keine Subtasks",
         "notFound": "Task wurde nicht gefunden",
+        "editTitle": "Aufgabe bearbeiten",
+        "save": "Änderungen speichern",
+        "cancel": "Abbrechen",
+        "updated": "Aufgabe wurde aktualisiert.",
+        "addSubtask": "Unteraufgabe hinzufügen",
+        "subtaskTitle": "Unteraufgabe",
+        "removeSubtask": "Unteraufgabe entfernen",
         "prio": {
             "urgent": "Dringend",
             "medium": "Mittel",
@@ -140,7 +147,8 @@
             "message": "Möchtest du die Aufgabe „{{title}}“ wirklich löschen? Das kann nicht rückgängig gemacht werden."
         },
         "errors": {
-            "deleteFailed": "Aufgabe konnte nicht gelöscht werden."
+            "deleteFailed": "Aufgabe konnte nicht gelöscht werden.",
+            "updateFailed": "Aufgabe konnte nicht aktualisiert werden."
         }
     },
     "projectDetail": {
@@ -148,6 +156,10 @@
         "delete": "Löschen",
         "edit": "Bearbeiten",
         "noDescription": "Keine Beschreibung vorhanden.",
+        "editTitle": "Projekt bearbeiten",
+        "save": "Änderungen speichern",
+        "cancel": "Abbrechen",
+        "updated": "Projekt wurde aktualisiert.",
         "statusLabel": "Status",
         "status": {
             "open": "Offen",
@@ -165,7 +177,10 @@
         },
         "deleted": "Projekt gelöscht",
         "errors": {
-            "deleteFailed": "Das Projekt konnte nicht gelöscht werden. Bitte versuche es erneut."
+            "deleteFailed": "Das Projekt konnte nicht gelöscht werden. Bitte versuche es erneut.",
+            "updateFailed": "Das Projekt konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+            "memberValidationFailed": "Die Aufgaben des Mitglieds konnten nicht überprüft werden. Bitte versuche es erneut.",
+            "memberHasOpenTasks": "{{member}} kann nicht entfernt werden, solange noch offene Aufgaben zugewiesen sind."
         }
     },
     "addTaskForm": {

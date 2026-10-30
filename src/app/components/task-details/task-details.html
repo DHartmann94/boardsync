@@ -1,7 +1,5 @@
 <mat-card class="task-detail">
-
     @if (task(); as t) {
-
     <mat-card-header class="task-detail__header">
         @if (category(); as cat) {
         <div class="task-detail__badge" [style.background-color]="cat.color">
@@ -10,14 +8,155 @@
         }
 
         <button mat-icon-button type="button" class="task-detail__close" (click)="close()"
-            [attr.aria-label]="'taskDetail.close' | translate">
+            [disabled]="isSaving()" [attr.aria-label]="'taskDetail.close' | translate">
             <mat-icon class="material-symbols-outlined">close</mat-icon>
         </button>
     </mat-card-header>
 
     <mat-card-content>
-        <h1 class="task-detail__title">{{ t.title }}</h1>
+        @if (isEditing()) {
+        <h1 class="task-detail__form-title">{{ 'taskDetail.editTitle' | translate }}</h1>
+        <form id="edit-task-form" class="task-detail__form" [formGroup]="taskForm"
+            [attr.aria-label]="'taskDetail.editTitle' | translate" (ngSubmit)="saveChanges()">
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-title">
+                    {{ 'addTaskForm.titleLabel' | translate }}<span class="required">*</span>
+                </label>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <input id="edit-task-title" matInput formControlName="title"
+                        [placeholder]="'addTaskForm.titlePlaceholder' | translate"
+                        [attr.aria-invalid]="taskForm.controls.title.invalid && taskForm.controls.title.touched"
+                        [attr.aria-describedby]="taskForm.controls.title.invalid && taskForm.controls.title.touched ? 'edit-task-title-error' : null" />
+                </mat-form-field>
+                @if (taskForm.controls.title.hasError('required') && taskForm.controls.title.touched) {
+                <span id="edit-task-title-error" class="validation-error" role="alert">
+                    {{ 'addTaskForm.titleRequired' | translate }}
+                </span>
+                } @else if (taskForm.controls.title.hasError('maxlength') &&
+                (taskForm.controls.title.touched || taskForm.controls.title.dirty)) {
+                <span id="edit-task-title-error" class="validation-error" role="alert">
+                    {{ 'addTaskForm.titleMaxLength' | translate }}
+                </span>
+                }
+            </div>
 
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-description">
+                    {{ 'addTaskForm.descriptionLabel' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <textarea id="edit-task-description" matInput formControlName="description"
+                        [placeholder]="'addTaskForm.descriptionPlaceholder' | translate"></textarea>
+                </mat-form-field>
+            </div>
+
+            <div class="task-detail__field-group">
+                <span id="edit-task-due-date-label" class="task-detail__label">
+                    {{ 'addTaskForm.dueDateLabel' | translate }}<span class="required">*</span>
+                </span>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <input id="edit-task-due-date" matInput aria-labelledby="edit-task-due-date-label"
+                        [matDatepicker]="dueDatePicker" [min]="today"
+                        [placeholder]="'addTaskForm.dueDatePlaceholder' | translate"
+                        formControlName="dueDate"
+                        [attr.aria-invalid]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched"
+                        [attr.aria-describedby]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched ? 'edit-task-due-date-error' : null" />
+                    <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #dueDatePicker></mat-datepicker>
+                </mat-form-field>
+                @if (taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched) {
+                <span id="edit-task-due-date-error" class="validation-error" role="alert">
+                    {{ (taskForm.controls.dueDate.hasError('pastDate')
+                        ? 'addTaskForm.dueDatePast'
+                        : taskForm.controls.dueDate.hasError('afterProjectEnd')
+                          ? 'addTaskForm.dueDateAfterProjectEnd'
+                          : taskForm.controls.dueDate.hasError('projectDueDateLoadFailed')
+                            ? 'addTaskForm.projectDueDateLoadError'
+                            : 'addTaskForm.dueDateRequired') | translate }}
+                </span>
+                }
+            </div>
+
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-prio">
+                    {{ 'addTaskForm.priorityLabel' | translate }}<span class="required">*</span>
+                </label>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <mat-select id="edit-task-prio" formControlName="prio">
+                        <mat-option value="urgent">{{ 'addTaskForm.urgent' | translate }}</mat-option>
+                        <mat-option value="medium">{{ 'addTaskForm.medium' | translate }}</mat-option>
+                        <mat-option value="low">{{ 'addTaskForm.low' | translate }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-assignees">
+                    {{ 'addTaskForm.assignedToLabel' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <mat-select id="edit-task-assignees" multiple formControlName="assignedToUser"
+                        [placeholder]="'addTaskForm.assignedToPlaceholder' | translate">
+                        @for (user of projectUsers(); track user.id) {
+                        <mat-option [value]="user.id">
+                            {{ (user.firstName + ' ' + user.lastName).trim() || user.email }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-category">
+                    {{ 'addTaskForm.categoryLabel' | translate }}
+                </label>
+                <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                    <mat-select id="edit-task-category" formControlName="categoryId"
+                        [placeholder]="'addTaskForm.categoryPlaceholder' | translate">
+                        <mat-option value=""></mat-option>
+                        @for (option of categories(); track option.id) {
+                        <mat-option [value]="option.id">{{ option.type }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="task-detail__field-group">
+                <label class="task-detail__label" for="edit-task-new-subtask">
+                    {{ 'addTaskForm.subtasksLabel' | translate }}
+                </label>
+                <div class="task-detail__add-subtask">
+                    <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
+                        <input id="edit-task-new-subtask" matInput [value]="newSubtaskTitle()"
+                            (input)="setNewSubtaskTitle($event)"
+                            (keydown.enter)="$event.preventDefault(); addSubtask()"
+                            [placeholder]="'addTaskForm.subtaskPlaceholder' | translate" />
+                    </mat-form-field>
+                    <button mat-icon-button type="button" (click)="addSubtask()"
+                        [attr.aria-label]="'taskDetail.addSubtask' | translate">
+                        <mat-icon class="material-symbols-outlined">add</mat-icon>
+                    </button>
+                </div>
+                <ul class="task-detail__subtask-editor">
+                    @for (subtask of taskForm.controls.subtasks.value; track $index) {
+                    <li>
+                        <mat-checkbox [checked]="subtask.completed"
+                            (change)="updateSubtaskCompleted($index, $event.checked)"></mat-checkbox>
+                        <input [value]="subtask.title" (input)="updateSubtaskTitle($index, $event)"
+                            [attr.aria-label]="'taskDetail.subtaskTitle' | translate" />
+                        <button mat-icon-button type="button" (click)="removeSubtask($index)"
+                            [attr.aria-label]="'taskDetail.removeSubtask' | translate">
+                            <mat-icon class="material-symbols-outlined">close</mat-icon>
+                        </button>
+                    </li>
+                    } @empty {
+                    <li class="task-detail__empty">{{ 'taskDetail.noSubtasks' | translate }}</li>
+                    }
+                </ul>
+            </div>
+        </form>
+        } @else {
+        <h1 class="task-detail__title">{{ t.title }}</h1>
         <p class="task-detail__description">{{ t.description }}</p>
 
         <dl class="task-detail__meta">
@@ -27,7 +166,6 @@
                     {{ dueDate() | date: 'dd.MM.yyyy' }}
                 </dd>
             </div>
-
             <div class="task-detail__row">
                 <dt>{{ 'taskDetail.priority' | translate }}:</dt>
                 <dd class="task-detail__priority">
@@ -67,34 +205,40 @@
                 }
             </ul>
         </section>
+        }
     </mat-card-content>
 
     <mat-card-actions class="task-detail__actions">
+        @if (isEditing()) {
+        <span class="task-detail__required-note">{{ 'addTaskForm.requiredNote' | translate }}</span>
+        <button mat-button type="button" (click)="cancelEditing()" [disabled]="isSaving()">
+            {{ 'taskDetail.cancel' | translate }}
+        </button>
+        <button mat-flat-button type="submit" form="edit-task-form"
+            [disabled]="taskForm.invalid || taskForm.pending || isSaving()">
+            {{ 'taskDetail.save' | translate }}
+        </button>
+        } @else {
         <button mat-button type="button" (click)="confirmDelete()" [disabled]="isDeleting()">
             <mat-icon class="material-symbols-outlined">delete</mat-icon>
             {{ 'taskDetail.delete' | translate }}
         </button>
         <span class="task-detail__actions-divider"></span>
-        <!-- Platzhalter, Logik folgt -->
-        <button mat-button type="button" disabled>
+        <button mat-button type="button" (click)="startEditing()" [disabled]="isDeleting()">
             <mat-icon class="material-symbols-outlined">edit</mat-icon>
             {{ 'taskDetail.edit' | translate }}
         </button>
+        }
     </mat-card-actions>
 
     } @else if (task() === null && !isDeleting()) {
-
     <div class="task-detail__state">
         <p>{{ 'taskDetail.notFound' | translate }}</p>
         <button mat-button type="button" (click)="close()">{{ 'taskDetail.close' | translate }}</button>
     </div>
-
     } @else {
-
     <div class="task-detail__state">
         <mat-spinner diameter="40"></mat-spinner>
     </div>
-
     }
-
 </mat-card>

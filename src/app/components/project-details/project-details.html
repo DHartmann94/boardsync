@@ -1,93 +1,306 @@
 <mat-card class="project-detail">
-
     @if (project(); as p) {
+        <mat-card-header class="project-detail__header">
+            <button
+                mat-icon-button
+                type="button"
+                class="project-detail__close"
+                (click)="close()"
+                [attr.aria-label]="'projectDetail.close' | translate"
+            >
+                <mat-icon class="material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-card-header>
 
-    <mat-card-header class="project-detail__header">
-        <button mat-icon-button type="button" class="project-detail__close" (click)="close()"
-            [attr.aria-label]="'projectDetail.close' | translate">
-            <mat-icon class="material-symbols-outlined">close</mat-icon>
-        </button>
-    </mat-card-header>
+        <mat-card-content>
+            @if (isEditing()) {
+                <h1 class="project-detail__form-title">
+                    {{ 'projectDetail.editTitle' | translate }}
+                </h1>
 
-    <mat-card-content>
-        <h1 class="project-detail__title">{{ p.title }}</h1>
+                <form
+                    id="edit-project-form"
+                    class="project-detail__form"
+                    [formGroup]="projectForm"
+                    [attr.aria-label]="'addProjectForm.formLabel' | translate"
+                    (ngSubmit)="saveChanges()"
+                >
+                    <div class="project-detail__field-group">
+                        <label class="project-detail__label" for="edit-project-title">
+                            {{ 'addProjectForm.titleLabel' | translate
+                            }}<span class="required">*</span>
+                        </label>
+                        <mat-form-field
+                            appearance="outline"
+                            class="project-detail__field"
+                            subscriptSizing="dynamic"
+                        >
+                            <input
+                                id="edit-project-title"
+                                matInput
+                                formControlName="title"
+                                [placeholder]="'addProjectForm.titlePlaceholder' | translate"
+                                [attr.aria-invalid]="
+                                    projectForm.controls.title.invalid &&
+                                    projectForm.controls.title.touched
+                                "
+                                [attr.aria-describedby]="
+                                    projectForm.controls.title.invalid &&
+                                    projectForm.controls.title.touched
+                                        ? 'edit-project-title-error'
+                                        : null
+                                "
+                            />
+                        </mat-form-field>
+                        @if (
+                            projectForm.controls.title.hasError('required') &&
+                            projectForm.controls.title.touched
+                        ) {
+                            <span
+                                id="edit-project-title-error"
+                                class="validation-error"
+                                role="alert"
+                            >
+                                {{ 'addProjectForm.titleRequired' | translate }}
+                            </span>
+                        } @else if (
+                            projectForm.controls.title.hasError('maxlength') &&
+                            (projectForm.controls.title.touched || projectForm.controls.title.dirty)
+                        ) {
+                            <span
+                                id="edit-project-title-error"
+                                class="validation-error"
+                                role="alert"
+                            >
+                                {{ 'addProjectForm.titleMaxLength' | translate }}
+                            </span>
+                        }
+                    </div>
 
-        @if (p.description) {
-        <p class="project-detail__description">{{ p.description }}</p>
-        } @else {
-        <p class="project-detail__description project-detail__description--empty">
-            {{ 'projectDetail.noDescription' | translate }}
-        </p>
-        }
+                    <div class="project-detail__field-group">
+                        <label class="project-detail__label" for="edit-project-description">
+                            {{ 'addProjectForm.descriptionLabel' | translate }}
+                        </label>
+                        <mat-form-field
+                            appearance="outline"
+                            class="project-detail__field"
+                            subscriptSizing="dynamic"
+                        >
+                            <textarea
+                                id="edit-project-description"
+                                matInput
+                                formControlName="description"
+                                [placeholder]="'addProjectForm.descriptionPlaceholder' | translate"
+                            ></textarea>
+                        </mat-form-field>
+                    </div>
 
-        <dl class="project-detail__meta">
-            <div class="project-detail__row">
-                <dt>{{ 'projectDetail.statusLabel' | translate }}:</dt>
-                <dd>{{ (p.completed ? 'projectDetail.status.completed' : 'projectDetail.status.open') | translate }}
-                </dd>
-            </div>
+                    <div class="project-detail__field-group">
+                        <span id="edit-project-due-date-label" class="project-detail__label">
+                            {{ 'addProjectForm.dueDateLabel' | translate }}<span class="required"
+                                >*</span
+                            >
+                        </span>
+                        <mat-form-field
+                            appearance="outline"
+                            class="project-detail__field"
+                            subscriptSizing="dynamic"
+                        >
+                            <input
+                                id="edit-project-due-date"
+                                matInput
+                                aria-labelledby="edit-project-due-date-label"
+                                [matDatepicker]="dueDatePicker"
+                                [min]="today"
+                                [placeholder]="'addProjectForm.dueDatePlaceholder' | translate"
+                                formControlName="dueDate"
+                                [attr.aria-invalid]="
+                                    projectForm.controls.dueDate.invalid &&
+                                    projectForm.controls.dueDate.touched
+                                "
+                                [attr.aria-describedby]="
+                                    projectForm.controls.dueDate.invalid &&
+                                    projectForm.controls.dueDate.touched
+                                        ? 'edit-project-due-date-error'
+                                        : null
+                                "
+                            />
+                            <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #dueDatePicker></mat-datepicker>
+                        </mat-form-field>
+                        @if (
+                            projectForm.controls.dueDate.invalid &&
+                            projectForm.controls.dueDate.touched
+                        ) {
+                            <span
+                                id="edit-project-due-date-error"
+                                class="validation-error"
+                                role="alert"
+                            >
+                                {{
+                                    (projectForm.controls.dueDate.hasError('pastDate')
+                                        ? 'addProjectForm.dueDatePast'
+                                        : 'addProjectForm.dueDateRequired'
+                                    ) | translate
+                                }}
+                            </span>
+                        }
+                    </div>
 
-            <div class="project-detail__row">
-                <dt>{{ 'projectDetail.dueDate' | translate }}:</dt>
-                <dd [class.project-detail__value--overdue]="isOverdue()">
-                    {{ dueDate() | date: 'dd.MM.yyyy' }}
-                </dd>
-            </div>
+                    <div class="project-detail__field-group">
+                        <label class="project-detail__label" for="edit-project-members">
+                            {{ 'addProjectForm.membersLabel' | translate }}
+                        </label>
+                        <mat-form-field
+                            appearance="outline"
+                            class="project-detail__field"
+                            subscriptSizing="dynamic"
+                        >
+                            <mat-select
+                                id="edit-project-members"
+                                multiple
+                                formControlName="memberIds"
+                                [placeholder]="'addProjectForm.membersPlaceholder' | translate"
+                            >
+                                @for (user of users; track user.id) {
+                                    <mat-option [value]="user.id">{{
+                                        user.displayName
+                                    }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        @if (projectForm.controls.memberIds.value.length > 0) {
+                            <ul class="project-detail__member-list">
+                                @for (
+                                    userId of projectForm.controls.memberIds.value;
+                                    track userId
+                                ) {
+                                    <li>{{ getUserDisplayName(userId) }}</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </form>
+            } @else {
+                <h1 class="project-detail__title">{{ p.title }}</h1>
 
-            <div class="project-detail__row">
-                <dt>{{ 'projectDetail.owner' | translate }}:</dt>
-                <dd>{{ owner()?.fullName }}</dd>
-            </div>
-
-            <div class="project-detail__row">
-                <dt>{{ 'projectDetail.createdAt' | translate }}:</dt>
-                <dd>{{ createdAt() | date: 'dd.MM.yyyy' }}</dd>
-            </div>
-        </dl>
-
-        <section class="project-detail__section">
-            <h2 class="project-detail__label">{{ 'projectDetail.members' | translate }}:</h2>
-            <ul class="project-detail__users">
-                @for (user of members(); track user.id) {
-                <li class="project-detail__user">
-                    <span class="project-detail__avatar" [class.project-detail__avatar--own]="user.isOwn">
-                        {{ user.avatar }}
-                    </span>
-                    <span>{{ user.fullName }}</span>
-                </li>
-                } @empty {
-                <li class="project-detail__empty">{{ 'projectDetail.noMembers' | translate }}</li>
+                @if (p.description) {
+                    <p class="project-detail__description">{{ p.description }}</p>
+                } @else {
+                    <p class="project-detail__description project-detail__description--empty">
+                        {{ 'projectDetail.noDescription' | translate }}
+                    </p>
                 }
-            </ul>
-        </section>
-    </mat-card-content>
 
-    <mat-card-actions class="project-detail__actions">
-        <button mat-button type="button" (click)="confirmDelete()" [disabled]="isDeleting() || !canDelete()">
-            <mat-icon class="material-symbols-outlined">delete</mat-icon>
-            {{ 'projectDetail.delete' | translate }}
-        </button>
-        <span class="project-detail__actions-divider"></span>
-        <!-- Platzhalter, Bearbeiten folgt -->
-        <button mat-button type="button" disabled>
-            <mat-icon class="material-symbols-outlined">edit</mat-icon>
-            {{ 'projectDetail.edit' | translate }}
-        </button>
-    </mat-card-actions>
+                <dl class="project-detail__meta">
+                    <div class="project-detail__row">
+                        <dt>{{ 'projectDetail.statusLabel' | translate }}:</dt>
+                        <dd>
+                            {{
+                                (p.completed
+                                    ? 'projectDetail.status.completed'
+                                    : 'projectDetail.status.open'
+                                ) | translate
+                            }}
+                        </dd>
+                    </div>
 
+                    <div class="project-detail__row">
+                        <dt>{{ 'projectDetail.dueDate' | translate }}:</dt>
+                        <dd [class.project-detail__value--overdue]="isOverdue()">
+                            {{ dueDate() | date: 'dd.MM.yyyy' }}
+                        </dd>
+                    </div>
+
+                    <div class="project-detail__row">
+                        <dt>{{ 'projectDetail.owner' | translate }}:</dt>
+                        <dd>{{ owner()?.fullName }}</dd>
+                    </div>
+
+                    <div class="project-detail__row">
+                        <dt>{{ 'projectDetail.createdAt' | translate }}:</dt>
+                        <dd>{{ createdAt() | date: 'dd.MM.yyyy' }}</dd>
+                    </div>
+                </dl>
+
+                <section class="project-detail__section">
+                    <h2 class="project-detail__label">
+                        {{ 'projectDetail.members' | translate }}:
+                    </h2>
+                    <ul class="project-detail__users">
+                        @for (user of members(); track user.id) {
+                            <li class="project-detail__user">
+                                <span
+                                    class="project-detail__avatar"
+                                    [class.project-detail__avatar--own]="user.isOwn"
+                                >
+                                    {{ user.avatar }}
+                                </span>
+                                <span>{{ user.fullName }}</span>
+                            </li>
+                        } @empty {
+                            <li class="project-detail__empty">
+                                {{ 'projectDetail.noMembers' | translate }}
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+        </mat-card-content>
+
+        <mat-card-actions class="project-detail__actions">
+            @if (isEditing()) {
+                <span class="project-detail__required-note">{{
+                    'addProjectForm.requiredNote' | translate
+                }}</span>
+                <button mat-button type="button" (click)="cancelEditing()" [disabled]="isSaving()">
+                    {{ 'projectDetail.cancel' | translate }}
+                </button>
+                <button
+                    mat-flat-button
+                    type="submit"
+                    form="edit-project-form"
+                    [disabled]="projectForm.invalid || isSaving()"
+                >
+                    {{ 'projectDetail.save' | translate }}
+                </button>
+            } @else {
+                @if (canDelete()) {
+                    <button
+                        mat-button
+                        type="button"
+                        (click)="confirmDelete()"
+                        [disabled]="isDeleting()"
+                    >
+                        <mat-icon class="material-symbols-outlined">delete</mat-icon>
+                        {{ 'projectDetail.delete' | translate }}
+                    </button>
+                }
+                @if (canEdit()) {
+                    <span class="project-detail__actions-divider"></span>
+                    <button
+                        mat-button
+                        type="button"
+                        (click)="startEditing()"
+                        [disabled]="isDeleting()"
+                    >
+                        <mat-icon class="material-symbols-outlined">edit</mat-icon>
+                        {{ 'projectDetail.edit' | translate }}
+                    </button>
+                }
+            }
+        </mat-card-actions>
     } @else if (project() === null && !isDeleting()) {
-
-    <div class="project-detail__state">
-        <p>{{ 'projectDetail.notFound' | translate }}</p>
-        <button mat-button type="button" (click)="close()">{{ 'projectDetail.close' | translate }}</button>
-    </div>
-
+        <div class="project-detail__state">
+            <p>{{ 'projectDetail.notFound' | translate }}</p>
+            <button mat-button type="button" (click)="close()">
+                {{ 'projectDetail.close' | translate }}
+            </button>
+        </div>
     } @else {
-
-    <div class="project-detail__state">
-        <mat-spinner diameter="40"></mat-spinner>
-    </div>
-
+        <div class="project-detail__state">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
     }
-
 </mat-card>

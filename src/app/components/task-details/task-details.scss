@@ -60,6 +60,86 @@
         overflow-wrap: anywhere;
     }
 
+    &__form {
+        display: grid;
+        gap: 16px;
+    }
+
+    &__form-title {
+        margin: 0 0 24px;
+        color: var(--black);
+        font-size: clamp(1.5rem, 6vw, 2rem);
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    &__field-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__field {
+        width: 100%;
+
+        textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+    }
+
+    &__required-note {
+        margin-right: auto;
+        color: var(--error);
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+
+    &__add-subtask {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        .task-detail__field {
+            flex: 1;
+        }
+    }
+
+    &__subtask-editor {
+        display: grid;
+        gap: 4px;
+        margin: 4px 0 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px;
+            border: 1px solid var(--grey);
+            border-radius: 6px;
+            color: var(--black);
+            font: inherit;
+        }
+    }
+
+    .required {
+        margin-left: 4px;
+        color: var(--error);
+    }
+
+    .validation-error {
+        margin-top: 6px;
+        color: var(--error);
+        font-size: 0.875rem;
+    }
+
     &__meta {
         display: flex;
         flex-direction: column;

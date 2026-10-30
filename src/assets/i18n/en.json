@@ -46,6 +46,39 @@
         "taskDeleted": "Task deleted successfully.",
         "taskDeleteError": "Failed to delete task."
     },
+    "taskDetail": {
+        "close": "Close",
+        "dueDate": "Due date",
+        "priority": "Priority",
+        "assignedTo": "Assigned to",
+        "subtasks": "Subtasks",
+        "delete": "Delete",
+        "edit": "Edit",
+        "deleted": "Task deleted.",
+        "noAssignees": "No one assigned",
+        "noSubtasks": "No subtasks",
+        "notFound": "Task not found.",
+        "editTitle": "Edit task",
+        "save": "Save changes",
+        "cancel": "Cancel",
+        "updated": "Task updated.",
+        "addSubtask": "Add subtask",
+        "subtaskTitle": "Subtask",
+        "removeSubtask": "Remove subtask",
+        "prio": {
+            "urgent": "Urgent",
+            "medium": "Medium",
+            "low": "Low"
+        },
+        "deleteDialog": {
+            "title": "Delete task?",
+            "message": "Are you sure you want to delete the task “{{title}}”? This cannot be undone."
+        },
+        "errors": {
+            "deleteFailed": "The task could not be deleted.",
+            "updateFailed": "The task could not be updated."
+        }
+    },
     "addTaskForm": {
         "title": "Add Task",
         "formLabel": "Add task form",
@@ -90,7 +123,39 @@
         "clear": "Clear",
         "createTask": "Create Task",
         "subtaskRequired": "Please enter a valid subtask. If you want to add a subtask, please enter a title.",
-        "titleMaxLength" : "The title must not exceed 50 characters."
+        "titleMaxLength": "The title must not exceed 50 characters."
+    },
+    "projectDetail": {
+        "close": "Close",
+        "delete": "Delete",
+        "edit": "Edit",
+        "editTitle": "Edit project",
+        "save": "Save changes",
+        "cancel": "Cancel",
+        "updated": "Project updated.",
+        "noDescription": "No description available.",
+        "statusLabel": "Status",
+        "status": {
+            "open": "Open",
+            "completed": "Completed"
+        },
+        "dueDate": "Due date",
+        "owner": "Owner",
+        "createdAt": "Created on",
+        "members": "Members",
+        "noMembers": "No members",
+        "notFound": "Project not found.",
+        "deleteDialog": {
+            "title": "Delete project?",
+            "message": "Are you sure you want to delete the project “{{title}}”? This cannot be undone."
+        },
+        "deleted": "Project deleted.",
+        "errors": {
+            "deleteFailed": "The project could not be deleted. Please try again.",
+            "updateFailed": "The project could not be updated. Please try again.",
+            "memberValidationFailed": "The member's tasks could not be checked. Please try again.",
+            "memberHasOpenTasks": "{{member}} cannot be removed while they have unfinished tasks assigned."
+        }
     },
     "addProjectForm": {
         "title": "Add Project",
