@@ -253,11 +253,48 @@
     "header": {
         "notifications": "Benachrichtigungen",
         "profile": "Profil",
-        "logout": "Abmelden"
+        "logout": "Abmelden",
+        "help": "Hilfe"
     },
     "sidebar": {
         "board": "Board",
         "addTasks": "Add Tasks",
         "addProjects": "Add Projects"
+    },
+    "help": {
+        "title": "Hilfe",
+        "back": "Zurück",
+        "welcome": "Willkommen auf der Hilfeseite von BoardSync, deinem Leitfaden zur Nutzung unseres Kanban-Projektmanagement-Tools. Hier erhältst du eine Übersicht, wie du Projekte verwaltest und Aufgaben effizient organisierst.",
+        "what": {
+            "title": "Was ist BoardSync?",
+            "text1": "BoardSync ist ein modernes, Kanban-basiertes Projektmanagement-Tool, mit dem du Arbeitsabläufe visuell darstellen, Aufgaben im Blick behalten und die Zusammenarbeit im Team optimieren kannst.",
+            "text2": "Kanban hilft dir dabei, deine Aufgaben in verschiedene Status zu unterteilen und den Fortschritt in Echtzeit zu verfolgen."
+        },
+        "steps": {
+            "title": "Wie man BoardSync nutzt",
+            "intro": "Hier ist eine Schritt-für-Schritt-Anleitung für die wichtigsten Funktionen:",
+            "projects": {
+                "title": "Projekte anlegen",
+                "text": "Erstelle über das Menü oder Dashboard neue Projekte, um deine Aufgaben thematisch oder nach Teams getrennt zu strukturieren."
+            },
+            "tasks": {
+                "title": "Aufgaben hinzufügen",
+                "text": "Füge deinen Projekten konkrete Tasks hinzu. Bestimme Titel, Beschreibungen, Fälligkeitsdaten und Verantwortliche."
+            },
+            "board": {
+                "title": "Das Board verwenden",
+                "text": "Im Board siehst du alle Aufgaben übersichtlich nach Status sortiert."
+            },
+            "drag": {
+                "title": "Drag & Drop nutzen",
+                "text": "Bearbeite und verschiebe Tasks ganz einfach per Drag & Drop zwischen den verschiedenen Spalten, um den Status blitzschnell zu aktualisieren."
+            }
+        },
+        "tips": {
+            "title": "Nützliche Tipps",
+            "tip1": "Halte Aufgabentitel kurz und prägnant, damit sie im Kanban-Board sofort ins Auge springen.",
+            "tip2": "Weise Aufgaben klaren Zuständigen zu, um Verantwortlichkeiten im Team eindeutig zu klären.",
+            "tip3": "Nutze die Drag-and-Drop-Funktion regelmäßig, um dein Team immer auf dem aktuellen Stand zu halten."
+        }
     }
 }

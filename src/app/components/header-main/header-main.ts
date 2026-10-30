@@ -1,5 +1,5 @@
 import { Component, inject, output } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -20,7 +20,8 @@ import { AuthenticationService } from '../../services/authentication';
     MatToolbarModule,
     MatMenuModule,
     MatDividerModule,
-    TranslatePipe
+    TranslatePipe,
+    RouterLink
   ],
   templateUrl: './header-main.html',
   styleUrl: './header-main.scss',

@@ -1,12 +1,14 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f3f3f2;
-  color: #1f2328;
-  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--light-grey);
+  color: var(--black);
+  box-sizing: border-box;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -22,6 +24,7 @@ h1 {
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.08em;
+  color: var(--black);
 }
 
 .project-form {
@@ -36,7 +39,7 @@ h1 {
 
 .field-label {
   margin-bottom: 12px;
-  color: #2b2f33;
+  color: var(--dark-grey);
   font-size: 1.15rem;
   line-height: 1.3;
   font-weight: 500;
@@ -44,19 +47,19 @@ h1 {
 
 .required {
   margin-left: 4px;
-  color: #d66060;
+  color: var(--error);
 }
 
 .project-input-field {
   width: 100%;
   --mdc-outlined-text-field-container-shape: 14px;
-  --mdc-outlined-text-field-outline-color: rgba(42, 46, 51, 0.4);
-  --mdc-outlined-text-field-hover-outline-color: rgba(42, 46, 51, 0.6);
-  --mdc-outlined-text-field-focus-outline-color: rgba(42, 46, 51, 0.6);
+  --mdc-outlined-text-field-outline-color: rgba(42, 54, 71, 0.4);
+  --mdc-outlined-text-field-hover-outline-color: rgba(42, 54, 71, 0.6);
+  --mdc-outlined-text-field-focus-outline-color: rgba(42, 54, 71, 0.6);
   --mdc-outlined-text-field-outline-width: 2px;
   --mdc-outlined-text-field-focus-outline-width: 2px;
-  --mdc-outlined-text-field-input-text-color: #1e2125;
-  --mdc-outlined-text-field-input-text-placeholder-color: #7f868d;
+  --mdc-outlined-text-field-input-text-color: var(--black);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--text-grey);
   --mdc-outlined-text-field-input-text-size: 1.05rem;
   --mdc-outlined-text-field-input-text-weight: 400;
   --mat-form-field-container-height: 62px;
@@ -84,7 +87,7 @@ h1 {
 
 .validation-error {
   margin-top: 6px;
-  color: #d65a5a;
+  color: var(--error);
   font-size: 0.9rem;
 }
 
@@ -93,7 +96,7 @@ h1 {
   gap: 6px;
   margin: 0 0 0 12px;
   padding: 0 0 0 12px;
-  border-left: 2px solid #c5d1dc;
+  border-left: 2px solid var(--grey);
   list-style: none;
 }
 
@@ -103,9 +106,10 @@ h1 {
   align-items: center;
   padding: 7px 12px;
   border-radius: 8px;
-  background: #e8edf1;
-  color: #313941;
+  background: var(--white);
+  color: var(--dark-grey);
   font-size: 0.95rem;
+  border: 1px solid var(--grey);
 }
 
 .member-list li::before {
@@ -114,7 +118,7 @@ h1 {
   height: 7px;
   margin-right: 10px;
   border-radius: 50%;
-  background: #376fb3;
+  background: var(--light-blue);
   content: '';
 }
 
@@ -150,17 +154,17 @@ h1 {
 }
 
 .clear-btn {
-  border: 2px solid rgba(42, 46, 51, 0.42) !important;
+  border: 2px solid var(--dark-grey) !important;
   background: transparent;
-  color: #2a2d30 !important;
+  color: var(--dark-grey) !important;
 }
 
 .primary-btn {
   min-width: 210px;
-  border: 2px solid #0f1726 !important;
-  background: #1d2430 !important;
-  color: #fff !important;
-  box-shadow: 0 4px 0 rgba(18, 24, 33, 0.16);
+  border: 2px solid var(--dark-grey) !important;
+  background: var(--dark-grey) !important;
+  color: var(--white) !important;
+  box-shadow: 0 4px 0 rgba(42, 54, 71, 0.16);
 }
 
 .primary-btn:disabled {
@@ -170,7 +174,7 @@ h1 {
 
 .required-note {
   margin: 0 0 18px 2px;
-  color: #d65a5a;
+  color: var(--error);
   font-size: 0.95rem;
   font-style: italic;
 }

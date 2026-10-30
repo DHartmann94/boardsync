@@ -1,0 +1,195 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: var(--light-grey);
+    color: var(--black);
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.help {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 46px 48px 28px;
+}
+
+/*------ Header ------*/
+.help__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 42px;
+}
+
+.help__title {
+    margin: 0;
+    color: var(--black);
+    font-size: 4.25rem;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.08em;
+}
+
+.help__back {
+    flex-shrink: 0;
+    color: var(--dark-grey);
+}
+
+/*------ Texte ------*/
+.help__intro {
+    margin: 0 0 40px;
+    color: var(--text-grey);
+    font-size: 1.15rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.help__section {
+    margin-bottom: 40px;
+}
+
+.help__heading {
+    margin: 0 0 16px;
+    color: var(--black);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.help__text {
+    margin: 0 0 16px;
+    color: var(--text-grey);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/*------ Schritte ------*/
+.help__steps {
+    display: grid;
+    gap: 16px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.help__step {
+    border-radius: 16px !important;
+    background-color: var(--white) !important;
+    border: 1px solid var(--grey) !important;
+}
+
+.help__step-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+}
+
+.help__step-number {
+    display: inline-flex;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--dark-grey);
+    color: var(--white);
+    font-weight: 700;
+}
+
+.help__step-text {
+    min-width: 0;
+
+    p {
+        margin: 0;
+        color: var(--text-grey);
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        font-size: 1rem;
+    }
+}
+
+.help__step-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 6px;
+    color: var(--black);
+    font-size: 1.25rem;
+    font-weight: 600;
+
+    mat-icon {
+        flex-shrink: 0;
+        color: var(--light-blue);
+    }
+}
+
+/*------ Tipps ------*/
+.help__tips {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.help__tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background-color: var(--white);
+    border: 1px solid var(--grey);
+    color: var(--text-grey);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+
+    mat-icon {
+        flex-shrink: 0;
+        color: var(--light-blue);
+    }
+}
+
+/*------ Responsive ------*/
+@media (max-width: 700px) {
+    .help {
+        padding: 32px 20px 24px;
+    }
+
+    .help__header {
+        margin-bottom: 28px;
+    }
+
+    .help__title {
+        font-size: 3rem;
+    }
+
+    .help__heading {
+        font-size: 1.5rem;
+    }
+
+    .help__step-content {
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .help__step-number {
+        flex-basis: 32px;
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+
+    .help__step-title {
+        font-size: 1.1rem;
+    }
+}

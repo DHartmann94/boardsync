@@ -1,0 +1,58 @@
+<main class="help">
+
+    <header class="help__header">
+        <h1 class="help__title">{{ 'help.title' | translate }}</h1>
+
+        <button mat-icon-button type="button" class="help__back" (click)="goBack()"
+            [attr.aria-label]="'help.back' | translate">
+            <mat-icon class="material-symbols-outlined">arrow_back</mat-icon>
+        </button>
+    </header>
+
+    <p class="help__intro">{{ 'help.welcome' | translate }}</p>
+
+    <section class="help__section" aria-labelledby="help-what">
+        <h2 id="help-what" class="help__heading">{{ 'help.what.title' | translate }}</h2>
+        <p class="help__text">{{ 'help.what.text1' | translate }}</p>
+        <p class="help__text">{{ 'help.what.text2' | translate }}</p>
+    </section>
+
+    <section class="help__section" aria-labelledby="help-steps">
+        <h2 id="help-steps" class="help__heading">{{ 'help.steps.title' | translate }}</h2>
+        <p class="help__text">{{ 'help.steps.intro' | translate }}</p>
+
+        <ol class="help__steps">
+            @for (step of steps; track step.key; let i = $index) {
+            <li>
+                <mat-card appearance="outlined" class="help__step">
+                    <div class="help__step-content">
+                        <span class="help__step-number" aria-hidden="true">{{ i + 1 }}</span>
+                        <div class="help__step-text">
+                            <h3 class="help__step-title">
+                                <mat-icon class="material-symbols-outlined" aria-hidden="true">{{ step.icon
+                                    }}</mat-icon>
+                                {{ 'help.steps.' + step.key + '.title' | translate }}
+                            </h3>
+                            <p>{{ 'help.steps.' + step.key + '.text' | translate }}</p>
+                        </div>
+                    </div>
+                </mat-card>
+            </li>
+            }
+        </ol>
+    </section>
+
+    <section class="help__section" aria-labelledby="help-tips">
+        <h2 id="help-tips" class="help__heading">{{ 'help.tips.title' | translate }}</h2>
+
+        <ul class="help__tips">
+            @for (tip of tips; track tip.key) {
+            <li class="help__tip">
+                <mat-icon class="material-symbols-outlined" aria-hidden="true">{{ tip.icon }}</mat-icon>
+                <span>{{ 'help.tips.' + tip.key | translate }}</span>
+            </li>
+            }
+        </ul>
+    </section>
+
+</main>

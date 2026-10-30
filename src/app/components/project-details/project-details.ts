@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { DateService } from '../../services/date';
 import { NotificationService } from '../../services/notification';
 import { ProjectService } from '../../services/project';
 import { UserService } from '../../services/user';
@@ -20,14 +21,6 @@ import { ProjectInterface } from '../../models/project';
 
 export interface ProjectDetailsData {
   project: ProjectInterface;
-}
-
-/** Firestore liefert Timestamps, das Modell sagt Date: beides sicher in Date umwandeln. */
-function toDate(value: Date | { toDate(): Date } | null | undefined): Date | null {
-  if (!value) {
-    return null;
-  }
-  return value instanceof Date ? value : value.toDate();
 }
 
 @Component({
@@ -55,6 +48,7 @@ export class ProjectDetails implements OnInit {
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly projectServices = inject(ProjectService);
+  private readonly dateService = inject(DateService);
 
   readonly project = signal<ProjectInterface | null>(this.data.project);
   readonly isDeleting = signal(false);
@@ -65,8 +59,8 @@ export class ProjectDetails implements OnInit {
 
   users: { id: string; displayName: string }[] = [];
 
-  readonly dueDate = computed(() => toDate(this.project()?.dueDate));
-  readonly createdAt = computed(() => toDate(this.project()?.createdAt));
+  readonly dueDate = computed(() => this.toDate(this.project()?.dueDate));
+  readonly createdAt = computed(() => this.toDate(this.project()?.createdAt));
 
   readonly isOverdue = computed(() => {
     const project = this.project();
@@ -116,6 +110,11 @@ export class ProjectDetails implements OnInit {
     });
   }
 
+  // parseDate liefert bei fehlendem Wert das heutige Datum, deshalb vorher auf null prüfen
+  private toDate(value: Date | null | undefined): Date | null {
+    return value ? this.dateService.parseDate(value) : null;
+  }
+
   private async loadUsers(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
     this.users = allUsers.map((user) => ({
@@ -139,7 +138,7 @@ export class ProjectDetails implements OnInit {
       title: project.title,
       description: project.description,
       memberIds: [...project.memberIds],
-      dueDate: toDate(project.dueDate),
+      dueDate: this.toDate(project.dueDate),
     });
     this.isEditing.set(true);
   }

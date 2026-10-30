@@ -10,6 +10,7 @@ import { Main } from './components/main/main';
 import { AddTasks } from './components/add-tasks/add-tasks';
 import { Board } from './components/board/board';
 import { AddProjects } from './components/add-projects/add-projects';
+import { Help } from './components/help/help';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -24,10 +25,11 @@ export const routes: Routes = [
     component: Main,
     //canActivate: [authGuard], //Todo: für Entwicklung deaktiviert
     children: [
-      { path: 'add-tasks', component: AddTasks },
-      //{ path: '', redirectTo: 'add-tasks', pathMatch: 'full' },
+      { path: '', redirectTo: 'board', pathMatch: 'full' },
       { path: 'board', component: Board },
+      { path: 'add-tasks', component: AddTasks },
       { path: 'add-projects', component: AddProjects },
+      { path: 'help', component: Help },
     ],
   },
 
