@@ -61,7 +61,10 @@ export class AddProjects {
   isSubmitting = false;
 
   readonly projectForm = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [nonWhitespaceValidator] }),
+    title: new FormControl('', {
+      nonNullable: true,
+      validators: [nonWhitespaceValidator, Validators.maxLength(50)],
+    }),
     description: new FormControl('', { nonNullable: true }),
     memberIds: new FormControl<string[]>([], { nonNullable: true }),
     dueDate: new FormControl<Date | null>(null, {
@@ -95,6 +98,9 @@ export class AddProjects {
     }
 
     const { title, description, memberIds, dueDate } = this.projectForm.getRawValue();
+    if (!memberIds.includes(currentUser.id)) {
+      memberIds.push(currentUser.id);
+    }
     if (!dueDate) {
       this.projectForm.controls.dueDate.markAsTouched();
       return;
@@ -105,7 +111,7 @@ export class AddProjects {
       title: title.trim(),
       description: description.trim(),
       ownerId: currentUser.id,
-      memberIds: [...new Set([...memberIds, currentUser.id])],
+      memberIds: [...new Set([...memberIds])],
       dueDate,
       completed: false,
     };

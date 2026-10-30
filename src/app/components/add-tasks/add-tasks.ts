@@ -2,9 +2,11 @@ import { ChangeDetectorRef, Component, inject, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Firestore,
+  Timestamp,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -93,6 +95,8 @@ export class AddTasks {
   '#2196F3'  // Blau
   ];
   projectOptions: ProjectOption[] = [];
+  private selectedProjectDueDate: Date | null = null;
+  private lastDueDateWarningKey: string | null = null;
 
   async ngOnInit(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
@@ -140,7 +144,7 @@ export class AddTasks {
 
   readonly taskForm = new FormGroup({
     projectId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
     description: new FormControl('', { nonNullable: true }),
     prio: new FormControl('medium', { nonNullable: true, validators: [Validators.required] }),
     categoryId: new FormControl('', { nonNullable: true }),
@@ -150,14 +154,55 @@ export class AddTasks {
     }),
   });
 
-  
+  async onProjectSelectionChange(projectId: string): Promise<void> {
+    this.notificationService.dismiss();
+    this.selectedProjectDueDate = null;
+    this.lastDueDateWarningKey = null;
+
+    if (!projectId) {
+      return;
+    }
+
+    try {
+      const projectSnapshot = await getDoc(doc(this.firestore, 'projects', projectId));
+      if (this.taskForm.controls.projectId.value !== projectId) {
+        return;
+      }
+      if (!projectSnapshot.exists()) {
+        throw new Error(`Project ${projectId} does not exist.`);
+      }
+
+      const dueDate = this.parseProjectDueDate(projectSnapshot.data()['dueDate']);
+      if (!dueDate) {
+        throw new Error(`Project ${projectId} has no valid due date.`);
+      }
+
+      this.selectedProjectDueDate = dueDate;
+      this.checkDueDateAgainstProjectEnd();
+    } catch (error) {
+      console.error('Error loading selected project due date: ', error);
+      if (this.taskForm.controls.projectId.value === projectId) {
+        this.notificationService.showError('addTaskForm.projectDueDateLoadError', 3000);
+      }
+    }
+  }
+
+  onDueDateChange(): void {
+    this.notificationService.dismiss();
+    this.lastDueDateWarningKey = null;
+    this.checkDueDateAgainstProjectEnd();
+  }
+
   async onSubmit(): Promise<void> {
-    if (this.taskForm.controls.projectId.invalid) {
+    if (this.taskForm.invalid) {
       this.taskForm.controls.projectId.markAsTouched();
+      this.taskForm.controls.title.markAsTouched();
+      this.taskForm.controls.dueDate.markAsTouched();
       return;
     }
 
     let Data = this.taskForm.value;
+
     const taskRef = doc(collection(this.firestore, 'tasks'));
     const newTask: TaskInterface = {
       id: taskRef.id,
@@ -186,6 +231,9 @@ export class AddTasks {
 
   }
   onClear(): void {
+    this.notificationService.dismiss();
+    this.selectedProjectDueDate = null;
+    this.lastDueDateWarningKey = null;
     this.taskForm.reset({
       projectId: '',
       title: '',
@@ -196,6 +244,49 @@ export class AddTasks {
       subtasks: [],
       dueDate: null,
     });
+  }
+
+  private checkDueDateAgainstProjectEnd(): void {
+    const projectId = this.taskForm.controls.projectId.value;
+    const taskDueDate = this.taskForm.controls.dueDate.value;
+    const projectDueDate = this.selectedProjectDueDate;
+
+    if (!projectId || !taskDueDate || !projectDueDate) {
+      this.lastDueDateWarningKey = null;
+      return;
+    }
+
+    const taskDueDay = this.getCalendarDay(taskDueDate);
+    const projectDueDay = this.getCalendarDay(projectDueDate);
+    if (Number.isNaN(taskDueDay) || Number.isNaN(projectDueDay)) {
+      this.lastDueDateWarningKey = null;
+      return;
+    }
+
+    if (taskDueDay > projectDueDay) {
+      const warningKey = `${projectId}:${taskDueDay}:${projectDueDay}`;
+      if (this.lastDueDateWarningKey !== warningKey) {
+        this.notificationService.showError('addTaskForm.dueDateAfterProjectEnd');
+      }
+      this.lastDueDateWarningKey = warningKey;
+      return;
+    }
+
+    this.lastDueDateWarningKey = null;
+  }
+
+  private parseProjectDueDate(value: unknown): Date | null {
+    const date = value instanceof Timestamp
+      ? value.toDate()
+      : value instanceof Date
+        ? value
+        : null;
+
+    return date && !Number.isNaN(date.getTime()) ? date : null;
+  }
+
+  private getCalendarDay(date: Date): number {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
   }
   async deleteCategory(categoryId: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();

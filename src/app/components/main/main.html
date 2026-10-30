@@ -1,41 +1,27 @@
 <div class="app-container">
-   <!-- Sidebar --> <mat-sidenav-container class="sidenav-container" autosize>
-<mat-sidenav
-  class="sidebar"
-  [class.sidebar-collapsed]="sidebarCollapsed()"
-  mode="side"
-  opened>
+  <mat-sidenav-container class="sidenav-container" autosize>
+    <mat-sidenav
+      class="sidebar"
+      [class.sidebar-collapsed]="!isMobile() && sidebarCollapsed()"
+      [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="!isMobile() || mobileSidebarOpened()"
+      (openedChange)="onSidebarOpenedChange($event)">
+      <app-sidebar-main
+        [collapsed]="!isMobile() && sidebarCollapsed()"
+        (toggleSidebar)="toggleSidebar()">
+      </app-sidebar-main>
+    </mat-sidenav>
 
- <app-sidebar-main
-  [collapsed]="sidebarCollapsed()"
-  (toggleSidebar)="toggleSidebar()">
-</app-sidebar-main>
+    <mat-sidenav-content class="content-container">
+      <header class="app-header">
+        <app-header-main (toggleSidebar)="toggleSidebar()"></app-header-main>
+      </header>
 
-</mat-sidenav>
-
-
-<!-- Rechter Bereich -->
-<mat-sidenav-content class="content-container">
-
-  <!-- Header -->
-  <header class="app-header">
-
-    <app-header-main (toggleSidebar)="toggleSidebar()"></app-header-main>
-
-  </header>
-
-
-  <!-- Body -->
-  <main class="app-body">
-
-    <div class="content-wrapper">
-
-      <router-outlet></router-outlet>
-
-    </div>
-
-  </main>
-
-</mat-sidenav-content>
-
-</mat-sidenav-container> </div>
+      <main class="app-body">
+        <div class="content-wrapper">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

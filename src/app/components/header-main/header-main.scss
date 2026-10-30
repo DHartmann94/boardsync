@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+.mobile-menu-button {
+    display: none;
+}
+
 .app-title {
     font-size: 1rem;
     font-weight: 500;
@@ -66,6 +70,10 @@
 }
 
 @media(max-width: 768px) {
+    .mobile-menu-button {
+        display: inline-flex;
+    }
+
     .app-title {
         display: none;
     }

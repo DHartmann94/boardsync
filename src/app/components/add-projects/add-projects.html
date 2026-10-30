@@ -9,19 +9,24 @@
     (ngSubmit)="onSubmit()"
   >
     <div class="field-group">
-      <label class="field-label" for="project-title">
+      <span id="project-title-label" class="field-label">
         {{ 'addProjectForm.titleLabel' | translate }}<span class="required">*</span>
-      </label>
+      </span>
       <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
         <input
           id="project-title"
           matInput
+          aria-labelledby="project-title-label"
           type="text"
           [placeholder]="'addProjectForm.titlePlaceholder' | translate"
           formControlName="title"
-          [attr.aria-invalid]="projectForm.controls.title.invalid && projectForm.controls.title.touched"
+          [attr.aria-invalid]="
+            projectForm.controls.title.invalid &&
+            (projectForm.controls.title.touched || projectForm.controls.title.dirty)
+          "
           [attr.aria-describedby]="
-            projectForm.controls.title.invalid && projectForm.controls.title.touched
+            projectForm.controls.title.invalid &&
+            (projectForm.controls.title.touched || projectForm.controls.title.dirty)
               ? 'project-title-error'
               : null
           "
@@ -32,12 +37,20 @@
           {{ 'addProjectForm.titleRequired' | translate }}
         </span>
       }
+      @else if (
+        projectForm.controls.title.hasError('maxlength') &&
+        (projectForm.controls.title.touched || projectForm.controls.title.dirty)
+      ) {
+        <span id="project-title-error" class="validation-error" role="alert">
+          {{ 'addProjectForm.titleMaxLength' | translate }}
+        </span>
+      }
     </div>
 
     <div class="field-group">
-      <label class="field-label" for="project-description">
+      <span id="project-description-label" class="field-label">
         {{ 'addProjectForm.descriptionLabel' | translate }}
-      </label>
+      </span>
       <mat-form-field
         appearance="outline"
         class="project-input-field description-field"
@@ -46,6 +59,7 @@
         <textarea
           id="project-description"
           matInput
+          aria-labelledby="project-description-label"
           [placeholder]="'addProjectForm.descriptionPlaceholder' | translate"
           formControlName="description"
         ></textarea>
@@ -53,13 +67,14 @@
     </div>
 
     <div class="field-group">
-      <label class="field-label" for="project-due-date">
+      <span id="project-due-date-label" class="field-label">
         {{ 'addProjectForm.dueDateLabel' | translate }}<span class="required">*</span>
-      </label>
+      </span>
       <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
         <input
           id="project-due-date"
           matInput
+          aria-labelledby="project-due-date-label"
           [matDatepicker]="dueDatePicker"
           [min]="today"
           [placeholder]="'addProjectForm.dueDatePlaceholder' | translate"
@@ -86,13 +101,13 @@
     </div>
 
     <div class="field-group">
-      <label class="field-label" for="project-members">
+      <span id="project-members-label" class="field-label">
         {{ 'addProjectForm.membersLabel' | translate }}
-      </label>
+      </span>
       <mat-form-field appearance="outline" class="project-input-field" subscriptSizing="dynamic">
         <mat-select
           id="project-members"
-          [attr.aria-label]="'addProjectForm.membersLabel' | translate"
+          aria-labelledby="project-members-label"
           [placeholder]="'addProjectForm.membersPlaceholder' | translate"
           multiple
           formControlName="memberIds"
@@ -128,7 +143,7 @@
         type="submit"
         form="add-project-form"
         class="primary-btn"
-        [disabled]="isSubmitting"
+        [disabled]="projectForm.invalid || isSubmitting"
       >
         {{ 'addProjectForm.createProject' | translate }}
         <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>

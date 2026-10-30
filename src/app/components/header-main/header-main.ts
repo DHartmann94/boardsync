@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +31,7 @@ export class HeaderMain {
   private readonly router = inject(Router);
 
   readonly currentUser = this.userService.currentUser;
+  readonly toggleSidebar = output<void>();
 
   async logout(): Promise<void> {
     try {

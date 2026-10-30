@@ -10,15 +10,16 @@
   >
     <div class="left-column">
       <div class="field-group">
-        <label class="field-label" for="task-project">
-          {{ 'addTaskForm.projectLabel' | translate }}
-        </label>
+        <span id="task-project-label" class="field-label">
+          {{ 'addTaskForm.projectLabel' | translate }}<span class="required">*</span>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <mat-select
             id="task-project"
-            [attr.aria-label]="'addTaskForm.projectLabel' | translate"
+            aria-labelledby="task-project-label"
             [placeholder]="'addTaskForm.projectPlaceholder' | translate"
             formControlName="projectId"
+            (selectionChange)="onProjectSelectionChange($event.value)"
           >
             @for (project of projectOptions; track project.id) {
               <mat-option [value]="project.id">{{ project.title }}</mat-option>
@@ -36,19 +37,24 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="task-title">
+        <span id="task-title-label" class="field-label">
           {{ 'addTaskForm.titleLabel' | translate }}<span class="required">*</span>
-        </label>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <input
             id="task-title"
             matInput
+            aria-labelledby="task-title-label"
             type="text"
             [placeholder]="'addTaskForm.titlePlaceholder' | translate"
             formControlName="title"
-            [attr.aria-invalid]="taskForm.controls.title.invalid && taskForm.controls.title.touched"
+            [attr.aria-invalid]="
+              taskForm.controls.title.invalid &&
+              (taskForm.controls.title.touched || taskForm.controls.title.dirty)
+            "
             [attr.aria-describedby]="
-              taskForm.controls.title.invalid && taskForm.controls.title.touched
+              taskForm.controls.title.invalid &&
+              (taskForm.controls.title.touched || taskForm.controls.title.dirty)
                 ? 'task-title-error'
                 : null
             "
@@ -59,12 +65,20 @@
             {{ 'addTaskForm.titleRequired' | translate }}
           </span>
         }
+        @else if (
+          taskForm.controls.title.hasError('maxlength') &&
+          (taskForm.controls.title.touched || taskForm.controls.title.dirty)
+        ) {
+          <span id="task-title-error" class="validation-error" role="alert">
+            {{ 'addTaskForm.titleMaxLength' | translate }}
+          </span>
+        }
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="task-description">
+        <span id="task-description-label" class="field-label">
           {{ 'addTaskForm.descriptionLabel' | translate }}
-        </label>
+        </span>
         <mat-form-field
           appearance="outline"
           class="task-input-field description-field"
@@ -73,6 +87,7 @@
           <textarea
             id="task-description"
             matInput
+            aria-labelledby="task-description-label"
             [placeholder]="'addTaskForm.descriptionPlaceholder' | translate"
             formControlName="description"
           ></textarea>
@@ -80,17 +95,19 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="task-due-date">
+        <span id="task-due-date-label" class="field-label">
           {{ 'addTaskForm.dueDateLabel' | translate }}<span class="required">*</span>
-        </label>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <input
             id="task-due-date"
             matInput
+            aria-labelledby="task-due-date-label"
             [matDatepicker]="dueDatePicker"
             [min]="today"
             [placeholder]="'addTaskForm.dueDatePlaceholder' | translate"
             formControlName="dueDate"
+            (dateChange)="onDueDateChange()"
             [attr.aria-invalid]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched"
             [attr.aria-describedby]="
               taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched
@@ -115,12 +132,13 @@
 
     <div class="right-column">
       <div class="field-group">
-        <label class="field-label">
+        <span id="task-prio-label" class="field-label">
           {{ 'addTaskForm.priorityLabel' | translate }}<span class="required">*</span>
-        </label>
+        </span>
         <mat-radio-group
+          id="task-prio"
           class="priority-options"
-          [attr.aria-label]="'addTaskForm.priorityLabel' | translate"
+          aria-labelledby="task-prio-label"
           formControlName="prio"
         >
           <mat-radio-button
@@ -176,15 +194,14 @@
           </mat-radio-button>
         </mat-radio-group>
       </div>
-
       <div class="field-group">
-        <label class="field-label" for="assigned-to">
+        <span id="assigned-to-label" class="field-label">
           {{ 'addTaskForm.assignedToLabel' | translate }}
-        </label>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <mat-select
             id="assigned-to"
-            [attr.aria-label]="'addTaskForm.assignedToLabel' | translate"
+            aria-labelledby="assigned-to-label"
             [placeholder]="'addTaskForm.assignedToPlaceholder' | translate"
             multiple
             formControlName="assignedToUser"
@@ -205,16 +222,15 @@
           </ul>
         }
       </div>
-
       <div class="field-group">
-        <label class="field-label" for="task-category">
+        <span id="task-category-label" class="field-label">
           {{ 'addTaskForm.categoryLabel' | translate }}
-        </label>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <mat-icon matPrefix class="material-symbols-outlined" aria-hidden="true">category</mat-icon>
           <mat-select
             id="task-category"
-            [attr.aria-label]="'addTaskForm.categoryLabel' | translate"
+            aria-labelledby="task-category-label"
             [placeholder]="'addTaskForm.categoryPlaceholder' | translate"
             formControlName="categoryId"
           >
@@ -244,11 +260,12 @@
               >
                 <h2 class="category-add-heading">Kategorie hinzufügen</h2>
                 <div class="category-type-row">
-                  <label class="category-type-label" for="new-category-type">
+                  <span id="new-category-type-label" class="category-type-label">
                     Typ
-                  </label>
+                  </span>
                   <input
                     id="new-category-type"
+                    aria-labelledby="new-category-type-label"
                     class="category-type-input"
                     placeholder="Typ hinzufügen"
                     [ngModelOptions]="{ standalone: true }"
@@ -282,13 +299,14 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="task-subtasks">
+        <span id="task-subtasks-label" class="field-label">
           {{ 'addTaskForm.subtasksLabel' | translate }}
-        </label>
+        </span>
         <mat-form-field appearance="outline" class="task-input-field" subscriptSizing="dynamic">
           <input
             id="task-subtasks"
             matInput
+            aria-labelledby="task-subtasks-label"
             [placeholder]="'addTaskForm.subtaskPlaceholder' | translate"
             type="text"
             [ngModelOptions]="{ standalone: true }"
@@ -341,7 +359,7 @@
         {{ 'addTaskForm.clear' | translate }}
         <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
       </button>
-      <button mat-flat-button type="submit" form="add-task-form" class="primary-btn">
+      <button mat-flat-button type="submit" [disabled]="taskForm.invalid" form="add-task-form" class="primary-btn">
         {{ 'addTaskForm.createTask' | translate }}
         <mat-icon class="material-symbols-outlined" aria-hidden="true">check</mat-icon>
       </button>

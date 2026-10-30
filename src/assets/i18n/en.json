@@ -61,6 +61,8 @@
         "dueDatePlaceholder": "dd/mm/yyyy",
         "dueDateRequired": "Please enter a due date.",
         "dueDatePast": "The due date cannot be in the past.",
+        "dueDateAfterProjectEnd": "The task due date is after the project end date.",
+        "projectDueDateLoadError": "The project end date could not be loaded.",
         "priorityLabel": "Priority",
         "urgent": "Urgent",
         "medium": "Medium",
@@ -87,7 +89,8 @@
         "requiredNote": "This field is required",
         "clear": "Clear",
         "createTask": "Create Task",
-        "subtaskRequired": "Please enter a valid subtask. If you want to add a subtask, please enter a title."
+        "subtaskRequired": "Please enter a valid subtask. If you want to add a subtask, please enter a title.",
+        "titleMaxLength" : "The title must not exceed 50 characters."
     },
     "addProjectForm": {
         "title": "Add Project",
@@ -95,6 +98,7 @@
         "titleLabel": "Title",
         "titlePlaceholder": "Enter a project title",
         "titleRequired": "Please enter a project title.",
+        "titleMaxLength": "The project title must not exceed 50 characters.",
         "descriptionLabel": "Description",
         "descriptionPlaceholder": "Enter a project description",
         "dueDateLabel": "Due date",

@@ -156,6 +156,8 @@
         "dueDatePlaceholder": "TT.MM.JJJJ",
         "dueDateRequired": "Bitte ein Fälligkeitsdatum eingeben.",
         "dueDatePast": "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen.",
+        "dueDateAfterProjectEnd": "Das Fälligkeitsdatum der Aufgabe liegt nach dem Projektende.",
+        "projectDueDateLoadError": "Das Projektende konnte nicht geladen werden.",
         "priorityLabel": "Priorität",
         "urgent": "Dringend",
         "medium": "Mittel",
@@ -182,7 +184,8 @@
         "requiredNote": "* Dieses Feld ist ein Pflichtfeld",
         "clear": "Leeren",
         "createTask": "Aufgabe erstellen",
-        "subtaskRequired": "Bitte eine richtige Unteraufgabe eingeben. falls sie eine Unteraufgabe hinzuufügen möchten, geben Sie bitte einen Titel ein."
+        "subtaskRequired": "Bitte eine richtige Unteraufgabe eingeben. falls sie eine Unteraufgabe hinzuufügen möchten, geben Sie bitte einen Titel ein.",
+        "titleMaxLength": "Der Titel darf nicht länger als 50 Zeichen sein."
     },
     "addProjectForm": {
         "title": "Projekt hinzufügen",
@@ -190,6 +193,7 @@
         "titleLabel": "Titel",
         "titlePlaceholder": "Projekttitel eingeben",
         "titleRequired": "Bitte einen Projekttitel eingeben.",
+        "titleMaxLength": "Der Projekttitel darf nicht länger als 50 Zeichen sein.",
         "descriptionLabel": "Beschreibung",
         "descriptionPlaceholder": "Projektbeschreibung eingeben",
         "dueDateLabel": "Fälligkeitsdatum",

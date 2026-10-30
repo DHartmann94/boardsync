@@ -414,3 +414,7 @@ h1 {
 :host ::ng-deep .color-radio-button .mdc-label {
   padding: 0;
 }
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

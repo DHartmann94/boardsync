@@ -48,6 +48,10 @@ export class NotificationService {
     this.show(key, duration, 'notification-success', params);
   }
 
+  dismiss(): void {
+    this.snackBar.dismiss();
+  }
+
   // Dialog
   /**
    * Öffnet einen Bestätigungsdialog mit übersetzten Texten und optionalen Aktionen.
