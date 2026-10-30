@@ -95,7 +95,9 @@
         "loading": "Tasks werden geladen",
         "project": {
             "placeholder": "Projekt auswählen",
-            "noResults": "Keine Projekte gefunden"
+            "noResults": "Keine Projekte gefunden",
+            "details": "Projektdetails anzeigen",
+            "settings": "Projekt bearbeiten"
         },
         "search": {
             "placeholder": "Aufgabe suchen"
@@ -139,6 +141,31 @@
         },
         "errors": {
             "deleteFailed": "Aufgabe konnte nicht gelöscht werden."
+        }
+    },
+    "projectDetail": {
+        "close": "Schließen",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "noDescription": "Keine Beschreibung vorhanden.",
+        "statusLabel": "Status",
+        "status": {
+            "open": "Offen",
+            "completed": "Abgeschlossen"
+        },
+        "dueDate": "Fällig am",
+        "owner": "Besitzer",
+        "createdAt": "Erstellt am",
+        "members": "Mitglieder",
+        "noMembers": "Keine Mitglieder",
+        "notFound": "Projekt nicht gefunden.",
+        "deleteDialog": {
+            "title": "Projekt löschen?",
+            "message": "Möchtest du das Projekt „{{title}}“ wirklich löschen? Das lässt sich nicht rückgängig machen."
+        },
+        "deleted": "Projekt gelöscht",
+        "errors": {
+            "deleteFailed": "Das Projekt konnte nicht gelöscht werden. Bitte versuche es erneut."
         }
     },
     "addTaskForm": {

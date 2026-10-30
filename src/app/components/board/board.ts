@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, debounceTime, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, filter, take, tap } from 'rxjs';
@@ -21,6 +22,7 @@ import { ProjectInterface } from '../../models/project';
 import { TaskInterface } from '../../models/task';
 import { Task } from '../task/task';
 import { TaskDetails } from '../task-details/task-details';
+import { ProjectDetails } from '../project-details/project-details';
 
 interface BoardColumn {
   id: string;
@@ -42,6 +44,7 @@ const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
     MatButtonModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     CdkDropListGroup,
     CdkDropList,
     CdkDrag,
@@ -169,6 +172,49 @@ export class Board implements OnInit {
     try {
       localStorage.setItem(LAST_PROJECT_STORAGE_KEY, project.id);
     } catch { }
+  }
+
+  // --- Projekt-Details ---
+  openProjectDetails(): void {
+    const project = this.selectedProject();
+    if (!project) return;
+
+    this.dialog
+      .open(ProjectDetails, {
+        data: { project },
+        panelClass: 'task-detail-dialog',
+        width: '525px',
+        maxWidth: '95vw',
+        autoFocus: false,
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deleted) => {
+        if (deleted === true) {
+          this.onProjectDeleted(project.id);
+        }
+      });
+  }
+
+  // Nach dem Löschen ein anderes Projekt wählen oder das Board leeren
+  private onProjectDeleted(deletedId: string): void {
+    this.projects$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe((projects) => {
+      const remaining = projects.filter((p) => p.id !== deletedId);
+
+      if (remaining.length > 0) {
+        this.onProjectSelected(remaining[0]);
+        this.projectSearchControl.setValue(remaining[0]);
+        return;
+      }
+
+      this.selectedProject.set(null);
+      this.projectSearchControl.setValue('');
+      this.columns.update((cols) => cols.map((col) => ({ ...col, tasks: [] })));
+      this.isLoadingTasks.set(false);
+      try {
+        localStorage.removeItem(LAST_PROJECT_STORAGE_KEY);
+      } catch { }
+    });
   }
 
   // --- Task-Logik & Echtzeit-Synchronisation ---

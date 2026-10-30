@@ -5,28 +5,37 @@
         <div class="board__header-left">
             <h1 class="board__title">{{ 'board.title' | translate }}</h1>
 
-            <!-- Project select mit Suche -->
-            <mat-form-field appearance="outline" class="board__project-select" subscriptSizing="dynamic">
-                <mat-label>{{ 'board.project.placeholder' | translate }}</mat-label>
-                <input id="projectSearch" matInput type="text" [formControl]="projectSearchControl"
-                    [matAutocomplete]="projectAuto" [placeholder]="'board.project.placeholder' | translate"
-                    [attr.aria-label]="'board.project.placeholder' | translate" autocomplete="off"
-                    #projectTrigger="matAutocompleteTrigger" (focus)="projectTrigger.openPanel()"
-                    (click)="projectTrigger.openPanel()" />
-                <mat-icon matSuffix class="material-symbols-outlined board__project-select-arrow"
-                    [class.board__project-select-arrow--open]="projectTrigger.panelOpen">expand_more</mat-icon>
+            <div class="board__project">
+                <!-- Project select mit Suche -->
+                <mat-form-field appearance="outline" class="board__project-select" subscriptSizing="dynamic">
+                    <mat-label>{{ 'board.project.placeholder' | translate }}</mat-label>
+                    <input id="projectSearch" matInput type="text" [formControl]="projectSearchControl"
+                        [matAutocomplete]="projectAuto" [placeholder]="'board.project.placeholder' | translate"
+                        [attr.aria-label]="'board.project.placeholder' | translate" autocomplete="off"
+                        #projectTrigger="matAutocompleteTrigger" (focus)="projectTrigger.openPanel()"
+                        (click)="projectTrigger.openPanel()" />
+                    <mat-icon matSuffix class="material-symbols-outlined board__project-select-arrow"
+                        [class.board__project-select-arrow--open]="projectTrigger.panelOpen">expand_more</mat-icon>
 
-                <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProject"
-                    (optionSelected)="onProjectSelected($event.option.value)">
-                    @for (project of filteredProjects | async; track project.id) {
-                    <mat-option [value]="project">{{ project.title }}</mat-option>
-                    }
+                    <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProject"
+                        (optionSelected)="onProjectSelected($event.option.value)">
+                        @for (project of filteredProjects | async; track project.id) {
+                        <mat-option [value]="project">{{ project.title }}</mat-option>
+                        }
 
-                    @if ((filteredProjects | async)?.length === 0) {
-                    <mat-option disabled>{{ 'board.project.noResults' | translate }}</mat-option>
-                    }
-                </mat-autocomplete>
-            </mat-form-field>
+                        @if ((filteredProjects | async)?.length === 0) {
+                        <mat-option disabled>{{ 'board.project.noResults' | translate }}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <!-- Projekt-Details öffnen -->
+                <button mat-icon-button type="button" class="board__project-details-btn" [disabled]="!selectedProject()"
+                    (click)="openProjectDetails()" [matTooltip]="'board.project.settings' | translate"
+                    [attr.aria-label]="'board.project.settings' | translate">
+                    <mat-icon class="material-symbols-outlined">settings</mat-icon>
+                </button>
+            </div>
         </div>
 
         <div class="board__actions">
@@ -70,12 +79,11 @@
                 }
 
                 @for (task of column.tasks; track task.id) {
-                <div class="column__task" cdkDrag tabindex="0" role="button" (click)="openTask(task)"
-                    (keydown.enter)="openTask(task)">
+                <button type="button" class="column__task" cdkDrag (click)="openTask(task)">
                     <div class="column__task-drag-placeholder" *cdkDragPlaceholder></div>
                     <!-- Hier wird die Task-Komponente geladen -->
                     <app-task [task]="task"></app-task>
-                </div>
+                </button>
                 }
             </div>
         </section>
