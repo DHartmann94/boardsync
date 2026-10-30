@@ -311,12 +311,12 @@ export class TaskService {
     }
 
     const value: unknown = projectSnapshot.data()['dueDate'];
-    const date =
-      value instanceof Timestamp
-        ? value.toDate()
-        : value instanceof Date
-          ? value
-          : null;
+    let date: Date | null = null;
+    if (value instanceof Timestamp) {
+      date = value.toDate();
+    } else if (value instanceof Date) {
+      date = value;
+    }
     if (!date || Number.isNaN(date.getTime())) {
       throw new Error(`Project ${projectId} has no valid due date.`);
     }

@@ -16,6 +16,60 @@
   padding: 46px 48px 28px;
 }
 
+:host-context(.add-task-dialog) {
+  width: 100%;
+  min-width: 0;
+  max-height: 90vh;
+  min-height: auto;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+:host-context(.add-task-dialog) .task-page {
+  width: 100%;
+  min-width: 0;
+  padding: 24px;
+}
+
+.task-page__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+:host-context(.add-task-dialog) h1 {
+  margin-bottom: 24px;
+  font-size: 2.25rem;
+}
+
+:host-context(.add-task-dialog) .task-form {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+}
+
+:host-context(.add-task-dialog) .left-column,
+:host-context(.add-task-dialog) .right-column,
+:host-context(.add-task-dialog) .field-group {
+  min-width: 0;
+}
+
+:host-context(.add-task-dialog) .priority-options {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.task-page__close {
+  display: none;
+  flex: 0 0 auto;
+  margin: -8px -8px 0 0;
+}
+
+:host-context(.add-task-dialog) .task-page__close {
+  display: inline-flex;
+}
+
 h1 {
   margin: 0 0 42px;
   font-size: 4.25rem;
@@ -417,4 +471,37 @@ h1 {
 button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  :host-context(.add-task-dialog) .task-page {
+    padding: 20px;
+  }
+
+  :host-context(.add-task-dialog) h1 {
+    font-size: 1.8rem;
+  }
+
+  :host-context(.add-task-dialog) .form-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  :host-context(.add-task-dialog) .required-note {
+    margin: 0;
+  }
+
+  :host-context(.add-task-dialog) .form-actions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  :host-context(.add-task-dialog) .clear-btn,
+  :host-context(.add-task-dialog) .primary-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 8px !important;
+    font-size: 0.9rem !important;
+  }
 }

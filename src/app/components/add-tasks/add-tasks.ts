@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { afterNextRender, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Firestore,
@@ -15,11 +15,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../services/user';
 import { NotificationService } from '../../services/notification';
 import { TaskProjectDueDateError, TaskService } from '../../services/task';
@@ -29,6 +30,10 @@ import { SubtaskInterface } from '../../models/task';
 interface ProjectOption {
   id: string;
   title: string;
+}
+
+export interface AddTasksDialogData {
+  projectId: string;
 }
 
 @Component({
@@ -41,17 +46,19 @@ interface ProjectOption {
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatNativeDateModule,
     MatSelectModule,
     MatRadioModule,
     MatButtonModule,
     MatIconModule,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './add-tasks.html',
   styleUrl: './add-tasks.scss',
 })
 
 export class AddTasks {
+  private readonly dialogData = inject<AddTasksDialogData | null>(MAT_DIALOG_DATA, { optional: true });
+  private readonly dialogRef = inject<MatDialogRef<AddTasks> | null>(MatDialogRef, { optional: true });
   readonly today = new Date(new Date().setHours(0, 0, 0, 0));
   private readonly firestore = inject(Firestore);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -78,51 +85,47 @@ export class AddTasks {
   ];
   projectOptions: ProjectOption[] = [];
 
-  async ngOnInit(): Promise<void> {
-    const allUsers = await this.userService.getallUsers();
-    const potentialUsers = allUsers.map((user) => ({
+  constructor() {
+    afterNextRender(() => {
+      void this.loadInitialOptions().catch((error: unknown) => {
+        console.error('Failed to load add-task form options:', error);
+      });
+    });
+  }
+
+  private async loadInitialOptions(): Promise<void> {
+    const [allUsers, categoriesSnapshot, projectsSnapshot] = await Promise.all([
+      this.userService.getallUsers(),
+      getDocs(collection(this.firestore, 'categories')),
+      getDocs(collection(this.firestore, 'projects')),
+    ]);
+
+    this.users = allUsers.map((user) => ({
       id: user.id,
       displayName: `${user.firstName} ${user.lastName}`,
     }));
-    this.users = potentialUsers;
-    this.loadCategories();
-    this.loadProjects();
-  }
-
-  async loadCategories(): Promise<void> {
-    const Categories = getDocs(collection(this.firestore, 'categories'));
-    const categoriesSnapshot = await Categories;
     this.categories = categoriesSnapshot.docs.map((doc) => ({
       id: doc.id,
       type: doc.data()['type'] as string,
       color: doc.data()['color'] as string,
     }));
-    this.cdr.markForCheck();
-  }
-  async loadProjects(): Promise<void> {
-    const Projects = getDocs(collection(this.firestore, 'projects'));
-    const projectsSnapshot = await Projects;
     const projectOptions = projectsSnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data()['title'],
       memberIds: doc.data()['memberIds'] as string[],
     }));
     const currentUser = this.userService.currentUser();
-    if (currentUser) {
-      this.projectOptions = projectOptions.filter((project) => {
-        console.log('Projekt:', project);
-        console.log('Member IDs:', project.memberIds);
-        console.log('Current User ID:', currentUser.id);
-
-        const includesUser = project.memberIds.includes(currentUser.id);
-        console.log('Enthält User:', includesUser);
-
-        return includesUser;
-      });
-    }
+    this.projectOptions = currentUser
+      ? projectOptions.filter((project) => project.memberIds.includes(currentUser.id))
+      : [];
+    this.cdr.detectChanges();
   }
 
-  readonly taskForm = this.taskService.createTaskForm();
+  readonly taskForm = this.taskService.createTaskForm({ projectId: this.dialogData?.projectId ?? '' });
+
+  closeDialog(): void {
+    this.dialogRef?.close();
+  }
 
   async onSubmit(): Promise<void> {
     if (this.taskForm.invalid || this.taskForm.pending) {
@@ -135,15 +138,22 @@ export class AddTasks {
     try {
       await this.taskService.createTask(this.taskForm.getRawValue());
       this.notificationService.showSuccess('task.taskCreated');
-      this.onClear();
+      if (this.dialogRef) {
+        this.dialogRef.close(true);
+      } else {
+        this.onClear();
+      }
     } catch (error) {
       console.error('Error adding task: ', error);
-      this.notificationService.showError(
-        error instanceof TaskProjectDueDateError
-          ? `addTaskForm.${error.code === 'afterProjectEnd' ? 'dueDateAfterProjectEnd' : 'projectDueDateLoadError'}`
-          : 'task.taskCreateError',
-        3000,
-      );
+      let errorMessage = 'task.taskCreateError';
+      if (error instanceof TaskProjectDueDateError) {
+        if (error.code === 'afterProjectEnd') {
+          errorMessage = 'addTaskForm.dueDateAfterProjectEnd';
+        } else {
+          errorMessage = 'addTaskForm.projectDueDateLoadError';
+        }
+      }
+      this.notificationService.showError(errorMessage, 3000);
     }
 
   }
@@ -250,5 +260,9 @@ export class AddTasks {
 
   getUserDisplayName(userId: string): string {
     return this.users.find((user) => user.id === userId)?.displayName ?? userId;
+  }
+
+  getCategoryType(categoryId: string): string {
+    return this.categories.find((category) => category.id === categoryId)?.type ?? '';
   }
 }

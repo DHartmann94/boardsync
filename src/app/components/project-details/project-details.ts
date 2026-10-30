@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,7 +49,7 @@ function toDate(value: Date | { toDate(): Date } | null | undefined): Date | nul
   templateUrl: './project-details.html',
   styleUrl: './project-details.scss',
 })
-export class ProjectDetails {
+export class ProjectDetails implements OnInit {
   private readonly data = inject<ProjectDetailsData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<ProjectDetails>);
   private readonly userService = inject(UserService);
@@ -110,7 +110,13 @@ export class ProjectDetails {
     return this.members().find((user) => user.id === ownerId) ?? null;
   });
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
+    this.loadUsers().catch((error: unknown) => {
+      console.error('Failed to load project users:', error);
+    });
+  }
+
+  private async loadUsers(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
     this.users = allUsers.map((user) => ({
       id: user.id,

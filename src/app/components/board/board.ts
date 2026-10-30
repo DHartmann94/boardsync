@@ -21,6 +21,7 @@ import { NotificationService } from '../../services/notification';
 import { ProjectInterface } from '../../models/project';
 import { TaskInterface } from '../../models/task';
 import { Task } from '../task/task';
+import { AddTasks } from '../add-tasks/add-tasks';
 import { TaskDetails } from '../task-details/task-details';
 import { ProjectDetails } from '../project-details/project-details';
 
@@ -49,7 +50,7 @@ const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
     CdkDropList,
     CdkDrag,
     CdkDragPlaceholder,
-    Task
+    Task,
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -194,6 +195,20 @@ export class Board implements OnInit {
           this.onProjectDeleted(project.id);
         }
       });
+  }
+
+  openAddTaskDialog(): void {
+    const project = this.selectedProject();
+    if (!project) return;
+
+    this.dialog.open(AddTasks, {
+      data: { projectId: project.id },
+      panelClass: 'add-task-dialog',
+      width: '760px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
+      autoFocus: false,
+    });
   }
 
   // Nach dem Löschen ein anderes Projekt wählen oder das Board leeren

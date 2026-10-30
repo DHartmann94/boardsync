@@ -1,5 +1,16 @@
 <main class="task-page">
-  <h1>{{ 'addTaskForm.title' | translate }}</h1>
+  <div class="task-page__heading">
+    <h1>{{ 'addTaskForm.title' | translate }}</h1>
+    <button
+      mat-icon-button
+      type="button"
+      class="task-page__close"
+      (click)="closeDialog()"
+      [attr.aria-label]="'general.close' | translate"
+    >
+      <mat-icon class="material-symbols-outlined" aria-hidden="true">close</mat-icon>
+    </button>
+  </div>
 
   <form
     id="add-task-form"
@@ -236,6 +247,9 @@
             [placeholder]="'addTaskForm.categoryPlaceholder' | translate"
             formControlName="categoryId"
           >
+            <mat-select-trigger>
+              {{ getCategoryType(taskForm.controls.categoryId.value) }}
+            </mat-select-trigger>
             <mat-option
               *ngFor="let category of categories"
               [value]="category.id"

@@ -156,11 +156,15 @@ export class TaskDetails {
       this.notificationService.showSuccess('taskDetail.updated');
     } catch (error) {
       console.error('Failed to update task', error);
-      this.notificationService.showError(
-        error instanceof TaskProjectDueDateError
-          ? `addTaskForm.${error.code === 'afterProjectEnd' ? 'dueDateAfterProjectEnd' : 'projectDueDateLoadError'}`
-          : 'taskDetail.errors.updateFailed',
-      );
+      let errorMessage = 'taskDetail.errors.updateFailed';
+      if (error instanceof TaskProjectDueDateError) {
+        if (error.code === 'afterProjectEnd') {
+          errorMessage = 'addTaskForm.dueDateAfterProjectEnd';
+        } else {
+          errorMessage = 'addTaskForm.projectDueDateLoadError';
+        }
+      }
+      this.notificationService.showError(errorMessage);
     } finally {
       this.isSaving.set(false);
     }

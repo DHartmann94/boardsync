@@ -47,7 +47,8 @@
                 <mat-icon matSuffix class="material-symbols-outlined">search</mat-icon>
             </mat-form-field>
 
-            <button mat-flat-button color="primary" class="btn-dark" type="button">
+            <button mat-flat-button color="primary" class="btn-dark" type="button"
+                [disabled]="!selectedProject()" (click)="openAddTaskDialog()">
                 <mat-icon class="material-symbols-outlined">add</mat-icon>
                 {{ 'board.addTask' | translate }}
             </button>
