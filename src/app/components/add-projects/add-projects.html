@@ -117,7 +117,7 @@
           }
         </mat-select>
       </mat-form-field>
-      @if (projectForm.controls.memberIds.value.length > 0) {
+      @if (projectForm.controls.memberIds.value.length > 0 && users.length > 0) {
         <ul
           class="member-list"
           [attr.aria-label]="'addProjectForm.membersLabel' | translate"

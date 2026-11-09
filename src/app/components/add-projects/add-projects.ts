@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, afterNextRender } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,28 +28,27 @@ import { UserService } from '../../services/user';
     MatIconModule,
     MatSelectModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './add-projects.html',
   styleUrl: './add-projects.scss',
 })
-export class AddProjects implements OnInit {
+export class AddProjects {
   readonly today = new Date(new Date().setHours(0, 0, 0, 0));
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly projectServices = inject(ProjectService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   users: { id: string; displayName: string }[] = [];
   isSubmitting = false;
 
   readonly projectForm = this.projectServices.createProjectForm();
 
-  /**
-   * Initialisierungs-Lifecycle-Hook der Komponente. 
-   * Lädt alle verfügbaren Benutzer und setzt standardmäßig den aktuell 
-   * angemeldeten Benutzer als Mitglied im Projektformular.
-   */
-  ngOnInit(): void {
-    void this.loadUsers().catch((error: unknown) => {
-      console.error('Failed to load initial users:', error);
+  constructor() {
+    afterNextRender(() => {
+      void this.loadUsers().catch((error: unknown) => {
+        console.error('Failed to load initial users:', error);
+      });
     });
   }
 
@@ -67,6 +66,7 @@ export class AddProjects implements OnInit {
     if (currentUser) {
       this.projectForm.controls.memberIds.setValue([currentUser.id]);
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -106,7 +106,7 @@ export class AddProjects implements OnInit {
   }
 
   getUserDisplayName(userId: string): string {
-    return this.users.find((user) => user.id === userId)?.displayName ?? userId;
+    return UserService.getUserDisplayName(userId, this.users);
   }
 
   onClear(): void {

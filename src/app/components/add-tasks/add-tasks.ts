@@ -1,6 +1,6 @@
-import { afterNextRender, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { afterNextRender, ChangeDetectorRef, Component, Injector, inject, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, deleteDoc, doc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,7 +15,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../services/user';
 import { NotificationService } from '../../services/notification';
 import { TaskProjectDueDateError, TaskService } from '../../services/task';
-import type { CategoryInterface, CreateategoryPayload } from '../../models/category';
+import { CategoryService } from '../../services/category';
+import type { CategoryInterface } from '../../models/category';
 import { SubtaskInterface } from '../../models/task';
 
 interface ProjectOption {
@@ -52,10 +53,13 @@ export class AddTasks {
   private readonly dialogRef = inject<MatDialogRef<AddTasks> | null>(MatDialogRef, { optional: true });
   readonly today = new Date(new Date().setHours(0, 0, 0, 0));
   private readonly firestore = inject(Firestore);
+  private readonly injector = inject(Injector);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly taskService = inject(TaskService);
+  private readonly categoryService = inject(CategoryService);
+
   newSubtask: {
     Subtask: SubtaskInterface;
     valid: boolean;
@@ -93,21 +97,21 @@ export class AddTasks {
    * und filtert die Projekte basierend auf den Mitgliedschaften des aktuellen Benutzers.
    */
   private async loadInitialOptions(): Promise<void> {
-    const [allUsers, categoriesSnapshot, projectsSnapshot] = await Promise.all([
+    const [allUsers, projectsSnapshot] = await Promise.all([
       this.userService.getallUsers(),
-      getDocs(collection(this.firestore, 'categories')),
-      getDocs(collection(this.firestore, 'projects')),
+      runInInjectionContext(this.injector, () => getDocs(collection(this.firestore, 'projects'))),
     ]);
 
     this.users = allUsers.map((user) => ({
       id: user.id,
       displayName: `${user.firstName} ${user.lastName}`,
     }));
-    this.categories = categoriesSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      type: doc.data()['type'] as string,
-      color: doc.data()['color'] as string,
-    }));
+    
+    // Kategorien werden jetzt über den CategoryService geladen (Signal)
+    // Warte kurz, damit das Signal initialisiert wird
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    this.categories = this.categoryService.categories();
+    
     const projectOptions = projectsSnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data()['title'],
@@ -190,18 +194,11 @@ export class AddTasks {
   async deleteCategory(categoryId: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();
     try {
-      const tasksQuery = query(
-        collection(this.firestore, 'tasks'),
-        where('categoryId', '==', categoryId),
-      );
-      const tasksSnapshot = await getDocs(tasksQuery);
-
-      if (!tasksSnapshot.empty) {
+      const success = await this.categoryService.deleteCategory(categoryId);
+      if (!success) {
         this.notificationService.showError('addTaskForm.categoryInUse', 3000);
         return;
       }
-
-      await deleteDoc(doc(this.firestore, 'categories', categoryId));
       this.categories = this.categories.filter((category) => category.id !== categoryId);
       if (this.taskForm.controls.categoryId.value === categoryId) {
         this.taskForm.controls.categoryId.setValue('');
@@ -224,33 +221,18 @@ export class AddTasks {
     event.stopPropagation();
     const color = this.potentialCategory.color;
     const type = this.potentialCategory.type.trim();
-    const categoryRef = doc(collection(this.firestore, 'categories'));
-    const newCategory: CreateategoryPayload = {
-      type,
-      color,
-    };
 
     try {
-      const categoriesQuery = query(
-        collection(this.firestore, 'categories'),
-        where('type', '==', type),
-      );
-      const categoriesSnapshot = await getDocs(categoriesQuery);
-
-      if (!categoriesSnapshot.empty) {
+      const newCategory = await this.categoryService.addCategory({ type, color });
+      if (!newCategory) {
         this.notificationService.showError('addTaskForm.categoryAlreadyExists', 3000);
         return;
       }
-
-      await setDoc(categoryRef, newCategory);
       this.categories = [
         ...this.categories,
-        {
-          id: categoryRef.id,
-          ...newCategory,
-        },
+        newCategory,
       ];
-      this.taskForm.controls.categoryId.setValue(categoryRef.id);
+      this.taskForm.controls.categoryId.setValue(newCategory.id);
       this.potentialCategory = { type: '', color: '' };
       this.cdr.markForCheck();
     } catch (error) {
@@ -280,15 +262,16 @@ export class AddTasks {
 
     this.clearInput();
   }
+  
   clearInput(): void {
     this.newSubtask.Subtask.title = '';
   }
 
   getUserDisplayName(userId: string): string {
-    return this.users.find((user) => user.id === userId)?.displayName ?? userId;
+    return UserService.getUserDisplayName(userId, this.users);
   }
 
   getCategoryType(categoryId: string): string {
-    return this.categories.find((category) => category.id === categoryId)?.type ?? '';
+    return this.categoryService.getCategoryType(categoryId);
   }
 }

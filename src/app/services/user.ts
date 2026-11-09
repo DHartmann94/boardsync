@@ -353,4 +353,14 @@ export class UserService {
       this.suppressAutoLoad.set(false);
     }
   }
+
+  /**
+   * Sucht den Anzeigenamen eines Benutzers anhand seiner ID in einer Liste.
+   * @param userId Die Benutzer-ID
+   * @param users Array von Benutzern mit id und displayName
+   * @returns Der Anzeigename oder die userId als Fallback
+   */
+  static getUserDisplayName(userId: string, users: { id: string; displayName: string }[]): string {
+    return users.find((user) => user.id === userId)?.displayName ?? userId;
+  }
 }

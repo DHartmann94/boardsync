@@ -221,7 +221,7 @@ export class ProjectDetails implements OnInit {
    * @returns Den Anzeigenamen oder die ID als Fallback, falls der Benutzer nicht gefunden wurde.
    */
   getUserDisplayName(userId: string): string {
-    return this.users.find((user) => user.id === userId)?.displayName ?? userId;
+    return UserService.getUserDisplayName(userId, this.users);
   }
 
   /**
