@@ -1,21 +1,6 @@
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from '@angular/fire/firestore';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Firestore, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from '@angular/fire/firestore';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import type { CreateProjectPayload, ProjectInterface } from '../models/project';
 
@@ -56,6 +41,12 @@ export class ProjectService {
   private readonly firestore = inject(Firestore);
   private readonly injector = inject(Injector);
 
+  /**
+   * Erstellt und initialisiert ein neues reaktives Formular für Projekte 
+   * inklusive Validierungen für Titel, Mitglieder und Fälligkeitsdatum.
+   * @param value Optionale Startwerte zur Vorbefüllung des Formulars.
+   * @returns Das konfigurierte ProjectForm-Objekt.
+   */
   createProjectForm(value: Partial<ProjectFormValue> = {}): ProjectForm {
     return new FormGroup({
       title: new FormControl(value.title ?? '', {
@@ -70,6 +61,13 @@ export class ProjectService {
     });
   }
 
+  /**
+   * Speichert ein neues Projekt asynchron in der Firestore-Datenbank 
+   * und fügt Server-Timestamps für Erstellung und Aktualisierung hinzu.
+   * @param value Die Formulardaten des Projekts.
+   * @param ownerId Die ID des Benutzers, der das Projekt erstellt.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async createProject(value: ProjectFormValue, ownerId: string): Promise<void> {
     const payload = this.toPayload(value, ownerId);
 
@@ -84,6 +82,13 @@ export class ProjectService {
     });
   }
 
+  /**
+   * Aktualisiert ein bestehendes Projekt in der Firestore-Datenbank 
+   * und setzt einen neuen Aktualisierungs-Timestamp.
+   * @param project Das zu aktualisierende Projekt-Interface.
+   * @param value Die neuen Formulardaten.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async updateProject(project: ProjectInterface, value: ProjectFormValue): Promise<void> {
     const payload = this.toPayload(value, project.ownerId, project.completed);
 
@@ -95,12 +100,25 @@ export class ProjectService {
     );
   }
 
+  /**
+   * Löscht ein Projekt anhand seiner ID aus der Firestore-Datenbank.
+   * @param projectId Die eindeutige ID des zu löschenden Projekts.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async deleteProject(projectId: string): Promise<void> {
     await runInInjectionContext(this.injector, () =>
       deleteDoc(doc(this.firestore, 'projects', projectId)),
     );
   }
 
+  /**
+   * Konvertiert die Rohdaten des Formulars in ein valides Payload-Objekt 
+   * für die Datenbankoperationen, inklusive Bereinigung von Leerzeichen und Mitgliedern.
+   * @param value Die Formulardaten des Projekts.
+   * @param ownerId Die ID des Projektbesitzers.
+   * @param completed Der Abschlussstatus des Projekts.
+   * @returns Das aufbereitete CreateProjectPayload-Objekt.
+   */
   private toPayload(
     value: ProjectFormValue,
     ownerId: string,

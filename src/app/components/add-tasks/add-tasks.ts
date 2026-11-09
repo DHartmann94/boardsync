@@ -1,15 +1,6 @@
 import { afterNextRender, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  Firestore,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from '@angular/fire/firestore';
+import { Firestore, collection, deleteDoc, doc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -86,6 +77,10 @@ export class AddTasks {
   projectOptions: ProjectOption[] = [];
 
   constructor() {
+    /**
+     * Konstruktor der Komponente. Verwendet `afterNextRender`,
+     * um initiale Optionen nach dem Rendern zu laden.
+     */
     afterNextRender(() => {
       void this.loadInitialOptions().catch((error: unknown) => {
         console.error('Failed to load add-task form options:', error);
@@ -93,6 +88,10 @@ export class AddTasks {
     });
   }
 
+  /**
+   * Lädt initiale Optionen wie Benutzer, Kategorien und Projekte asynchron aus Firestore 
+   * und filtert die Projekte basierend auf den Mitgliedschaften des aktuellen Benutzers.
+   */
   private async loadInitialOptions(): Promise<void> {
     const [allUsers, categoriesSnapshot, projectsSnapshot] = await Promise.all([
       this.userService.getallUsers(),
@@ -127,6 +126,11 @@ export class AddTasks {
     this.dialogRef?.close();
   }
 
+  /**
+   * Verarbeitet das Absenden des Task-Formulars, validiert die Eingaben
+   * und speichert die neue Aufgabe in Firestore.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async onSubmit(): Promise<void> {
     if (this.taskForm.invalid || this.taskForm.pending) {
       this.taskForm.controls.projectId.markAsTouched();
@@ -157,6 +161,11 @@ export class AddTasks {
     }
 
   }
+
+  /**
+   * Setzt das Aufgabenformular auf seine Standardwerte zurück 
+   * und verwirft eventuelle Benachrichtigungen.
+   */
   onClear(): void {
     this.notificationService.dismiss();
     this.taskForm.reset({
@@ -171,6 +180,13 @@ export class AddTasks {
     });
   }
 
+  /**
+   * Löscht eine spezifische Kategorie aus Firestore, sofern sie 
+   * nicht mehr von aktiven Aufgaben verwendet wird.
+   * @param categoryId Die eindeutige ID der zu löschenden Kategorie.
+   * @param event Das Mausereignis, um die Event-Propagation zu stoppen.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async deleteCategory(categoryId: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();
     try {
@@ -198,6 +214,12 @@ export class AddTasks {
     }
   }
 
+  /**
+   * Fügt eine neue Kategorie zu Firestore hinzu, falls diese 
+   * noch nicht existiert.
+   * @param event Das Mausereignis, um die Event-Propagation zu stoppen.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async addCategory(event: MouseEvent): Promise<void> {
     event.stopPropagation();
     const color = this.potentialCategory.color;
@@ -236,6 +258,10 @@ export class AddTasks {
       this.notificationService.showError('addTaskForm.categoryCreateError', 3000);
     }
   }
+
+  /**
+   * Fügt eine neue Unteraufgabe zur Liste der Unteraufgaben im Task-Formular hinzu.
+   */
   addSubtask(): void {
     const title = this.newSubtask.Subtask.title.trim();
     if (!title) 

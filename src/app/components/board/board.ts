@@ -84,6 +84,10 @@ export class Board implements OnInit {
   ]);
 
   // Projekte laden basierend auf User-ID
+  /**
+   * Ein RxJS-Stream zur Überwachung des Benutzerstatus und zum Laden
+   * der zugehörigen Projekte aus Firestore, an denen der Benutzer beteiligt ist.
+   */
   private readonly projects$ = toObservable(this.userService.state).pipe(
     map((state) => (state.status === 'ready' ? state.user.id : null)),
     distinctUntilChanged(),
@@ -92,6 +96,10 @@ export class Board implements OnInit {
   );
 
   // Für das Autocomplete im Template
+  /**
+   * Ein Observable, das die Liste der verfügbaren Projekte basierend auf 
+   * dem Suchfeld filtert und für das Autocomplete-Dropdown im Template bereitstellt.
+   */
   readonly filteredProjects = this.projectSearchControl.valueChanges.pipe(
     startWith(''),
     switchMap((value) =>
@@ -104,6 +112,11 @@ export class Board implements OnInit {
     )
   );
 
+  /**
+   * Initialisierungs-Lifecycle-Hook der Komponente. 
+   * Prüft den Bereitschaftsstatus des Benutzers und startet die Projektinitialisierung 
+   * sowie die Echtzeit-Task-Synchronisation.
+   */
   ngOnInit() {
     this.userService.isReady()
       .then((state) => {
@@ -121,6 +134,12 @@ export class Board implements OnInit {
   }
 
   // --- Projekt-Logik ---
+  /**
+   * Lädt alle Projekte aus Firestore, bei denen die gegebene Benutzer-ID 
+   * in den Mitgliedern enthalten ist.
+   * @param uid Die eindeutige ID des Benutzers.
+   * @returns Ein Observable mit einer Liste von Projekten.
+   */
   private loadProjects(uid: string) {
     return runInInjectionContext(this.injector, () => {
       const projectsRef = collection(this.firestore, 'projects');
@@ -145,6 +164,10 @@ export class Board implements OnInit {
     });
   }
 
+  /**
+   * Initialisiert die Projekte und wählt automatisch das zuletzt verwendete 
+   * oder das erste verfügbare Projekt aus.
+   */
   private initProjectsAndAutoSelect(): void {
     this.projects$.pipe(
       filter((projects) => projects.length > 0), // leere Zwischenwerte überspringen
@@ -168,6 +191,11 @@ export class Board implements OnInit {
     return typeof project === 'string' ? project : (project?.title ?? '');
   }
 
+  /**
+   * Setzt das aktuell ausgewählte Projekt im State und speichert dessen ID 
+   * im lokalen Speicher des Browsers.
+   * @param project Das auszuwählende Projekt.
+   */
   onProjectSelected(project: ProjectInterface): void {
     this.selectedProject.set(project);
     try {
@@ -176,6 +204,9 @@ export class Board implements OnInit {
   }
 
   // --- Projekt-Details ---
+  /**
+   * Öffnet den Dialog zur Ansicht und Bearbeitung der Projektdetails.
+   */
   openProjectDetails(): void {
     const project = this.selectedProject();
     if (!project) return;
@@ -197,6 +228,9 @@ export class Board implements OnInit {
       });
   }
 
+  /**
+   * Öffnet den Dialog zum Hinzufügen einer neuen Aufgabe im aktuellen Projekt.
+   */
   openAddTaskDialog(): void {
     const project = this.selectedProject();
     if (!project) return;
@@ -212,6 +246,11 @@ export class Board implements OnInit {
   }
 
   // Nach dem Löschen ein anderes Projekt wählen oder das Board leeren
+  /**
+   * Verarbeitet das Löschen eines Projekts, wählt ein alternatives Projekt aus 
+   * oder leert das Board, falls keine Projekte mehr vorhanden sind.
+   * @param deletedId Die ID des gelöschten Projekts.
+   */
   private onProjectDeleted(deletedId: string): void {
     this.projects$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe((projects) => {
       const remaining = projects.filter((p) => p.id !== deletedId);
@@ -233,6 +272,10 @@ export class Board implements OnInit {
   }
 
   // --- Task-Logik & Echtzeit-Synchronisation ---
+  /**
+   * Initialisiert die Echtzeit-Synchronisation für Aufgaben des aktuell ausgewählten Projekts
+   * und verarbeitet Änderungen im Suchfilter.
+   */
   private initTaskSync(): void {
     runInInjectionContext(this.injector, () => {
       toObservable(this.selectedProject).pipe(
@@ -265,6 +308,12 @@ export class Board implements OnInit {
     });
   }
 
+  /**
+   * Filtert und sortiert die Aufgaben anhand des Suchbegriffs und teilt sie 
+   * den entsprechenden Spalten des Kanban-Boards zu.
+   * @param tasks Die Liste aller Aufgaben des Projekts.
+   * @param term Der aktuelle Suchbegriff zum Filtern.
+   */
   private updateColumnsWithTasks(tasks: TaskInterface[], term: string): void {
     const filtered = tasks.filter((task) => {
       if (!term) return true;
@@ -291,6 +340,10 @@ export class Board implements OnInit {
   }
 
   // --- Task-Details ---
+  /**
+   * Öffnet den Detail-Dialog für eine spezifische Aufgabe.
+   * @param task Die anzuzeigende Aufgabe.
+   */
   openTask(task: TaskInterface): void {
     this.dialog.open(TaskDetails, {
       data: { taskId: task.id },
@@ -302,6 +355,12 @@ export class Board implements OnInit {
   }
 
   // --- Drag & Drop ---
+  /**
+   * Verarbeitet das Verschieben einer Aufgabe per Drag & Drop zwischen Kanban-Spalten 
+   * und aktualisiert den Status in der Datenbank.
+   * @param event Das Drag-and-Drop-Ereignis von Angular CDK.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async onTaskDropped(event: CdkDragDrop<TaskInterface[]>): Promise<void> {
     if (event.previousContainer === event.container) {
       return;

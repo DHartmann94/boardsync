@@ -1,28 +1,6 @@
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
-import {
-  Firestore,
-  Timestamp,
-  collection,
-  collectionData,
-  deleteDoc,
-  docData,
-  query,
-  where,
-  doc,
-  updateDoc,
-  serverTimestamp,
-  getDocs,
-  getDoc,
-  setDoc,
-} from '@angular/fire/firestore';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Firestore, Timestamp, collection, collectionData, deleteDoc, docData, query, where, doc, updateDoc, serverTimestamp, getDocs, getDoc, setDoc } from '@angular/fire/firestore';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, catchError, from, map, of } from 'rxjs';
 import { SubtaskInterface, TaskInterface } from '../models/task';
 
@@ -85,6 +63,11 @@ export class TaskService {
   private readonly firestore = inject(Firestore);
   private readonly injector = inject(Injector);
 
+  /**
+   * Erstellt ein neues Angular Reactive Form für eine Aufgabe (Task) mit entsprechenden Validatoren.
+   * @param value Optionaler Initialwert oder Teilwerte für das Task-Formular.
+   * @returns Ein konfiguriertes `TaskForm`-Formularobjekt.
+   */
   createTaskForm(value: Partial<TaskFormValue> = {}): TaskForm {
     const form = new FormGroup({
       projectId: new FormControl(value.projectId ?? '', {
@@ -115,6 +98,11 @@ export class TaskService {
     return form;
   }
 
+  /**
+   * Erstellt eine neue Aufgabe in Firestore mit Standardwerten ('todo', Zeitstempel) nach Validierung des Fälligkeitsdatums.
+   * @param value Die Formulardaten der zu erstellenden Aufgabe.
+   * @returns Ein Promise, das bei erfolgreichem Speichern aufgelöst wird.
+   */
   async createTask(value: TaskFormValue): Promise<void> {
     const payload = this.toPayload(value);
     await this.assertTaskDueDateWithinProject(value);
@@ -131,6 +119,12 @@ export class TaskService {
     });
   }
 
+  /**
+   * Aktualisiert eine bestehende Aufgabe in Firestore mit neuen Werten und setzt den Aktualisierungszeitstempel.
+   * @param taskId Die eindeutige ID der zu aktualisierenden Aufgabe.
+   * @param value Die neuen Formulardaten für die Aufgabe.
+   * @returns Ein Promise, das bei erfolgreichem Update aufgelöst wird.
+   */
   async updateTask(taskId: string, value: TaskFormValue): Promise<void> {
     const payload = this.toPayload(value);
     await this.assertTaskDueDateWithinProject(value);
@@ -144,6 +138,11 @@ export class TaskService {
   }
 
   /*------ Firestore ------*/
+  /**
+   * Ruft alle Aufgaben für ein bestimmtes Projekt als Live-Datenstrom (Observable) ab.
+   * @param projectId Die ID des Projekts, dessen Aufgaben geladen werden sollen.
+   * @returns Ein Observable, das ein Array von Aufgaben (`TaskInterface[]`) liefert.
+   */
   getTasksForProject(projectId: string): Observable<TaskInterface[]> {
     return runInInjectionContext(this.injector, () => {
       const tasksRef = collection(this.firestore, 'tasks');
@@ -159,6 +158,12 @@ export class TaskService {
     });
   }
 
+  /**
+   * Ermittelt alle Benutzer, die noch Aufgaben zugewiesen haben, die in einem Projekt noch nicht abgeschlossen sind.
+   * @param projectId Die ID des Projekts.
+   * @param userIds Liste der zu prüfenden Benutzer-IDs.
+   * @returns Ein Promise, das eine Menge (`Set<string>`) der beteiligten offenen Benutzer-IDs enthält.
+   */
   async getUnfinishedTaskAssignees(projectId: string, userIds: string[]): Promise<Set<string>> {
     if (userIds.length === 0) {
       return new Set();
@@ -180,7 +185,11 @@ export class TaskService {
     });
   }
 
-  // Ein einzelner Task als Live-Stream, null wenn nicht gefunden oder Fehler
+  /**
+   * Ein einzelner Task als Live-Stream, null wenn nicht gefunden oder Fehler
+   * @param taskId Die ID der gesuchten Aufgabe.
+   * @returns Ein Observable mit der Aufgabe (`TaskInterface`) oder `null`, falls nicht gefunden oder ein Fehler auftrat.
+   */
   getTaskById(taskId: string): Observable<TaskInterface | null> {
     return runInInjectionContext(this.injector, () => {
       const taskRef = doc(this.firestore, 'tasks', taskId);
@@ -195,6 +204,12 @@ export class TaskService {
     });
   }
 
+  /**
+   * Aktualisiert den Status (Step) einer Aufgabe (z. B. 'todo', 'in-progress', 'done').
+   * @param taskId Die ID der Aufgabe.
+   * @param newStep Der neue Status bzw. Schritt der Aufgabe.
+   * @returns Ein Promise, das bei erfolgreicher Aktualisierung aufgelöst wird.
+   */
   async updateTaskStep(taskId: string, newStep: string): Promise<void> {
     await runInInjectionContext(this.injector, () => {
       const taskRef = doc(this.firestore, 'tasks', taskId);
@@ -205,6 +220,11 @@ export class TaskService {
     });
   }
 
+  /**
+   * Löscht eine Aufgabe unwiderruflich aus Firestore.
+   * @param taskId Die ID der zu löschenden Aufgabe.
+   * @returns Ein Promise, das nach dem Löschen aufgelöst wird.
+   */
   async deleteTask(taskId: string): Promise<void> {
     await runInInjectionContext(this.injector, () => {
       const taskRef = doc(this.firestore, 'tasks', taskId);
@@ -213,11 +233,21 @@ export class TaskService {
   }
 
   /*------ Helper ------*/
+  /**
+   * Gibt den Dateipfad zum passenden Prioritäts-Icon basierend auf dem Prioritätswert zurück.
+   * @param prio Die Priorität als String ('low', 'medium', 'urgent').
+   * @returns Der Pfad zur SVG-Icon-Datei.
+   */
   getPrioIcon(prio: string): string {
     return PRIO_ICONS[prio] ?? PRIO_ICONS['medium'];
   }
 
   // Firestore liefert Timestamps, das Interface behauptet Date
+  /**
+   * Konvertiert einen Firestore-Timestamp oder ein Date-Objekt in Millisekunden (Timestamp als Zahl).
+   * @param value Das zu konvertierende Datum (Timestamp, Date oder unbekannter Typ).
+   * @returns Die Zeit in Millisekunden seit der Epoch oder 0 bei ungültigen Werten.
+   */
   toMillis(value: unknown): number {
     if (value instanceof Timestamp) return value.toMillis();
     if (value instanceof Date) return value.getTime();
@@ -225,6 +255,11 @@ export class TaskService {
   }
 
   // Überfällig erst nach Ablauf des Fälligkeitstages, erledigte Tasks zählen nicht
+  /**
+   * Prüft, ob eine Aufgabe überfällig ist (der Fälligkeitstag ist überschritten und der Status ist nicht 'done').
+   * @param task Das zu prüfende Task-Objekt.
+   * @returns `true`, wenn die Aufgabe überfällig ist, sonst `false`.
+   */
   isTaskOverdue(task: TaskInterface): boolean {
     if (task.step === 'done') {
       return false;
@@ -240,6 +275,11 @@ export class TaskService {
     return endOfDueDay.getTime() < Date.now();
   }
 
+  /**
+   * Bereitet die Formulardaten für das Speichern in Firestore vor, indem Strings getrimmt und Validierungen durchgeführt werden.
+   * @param value Die rohen Formulardaten der Aufgabe.
+   * @returns Ein bereinigtes Payload-Objekt ohne IDs und System-Zeitstempel.
+   */
   private toPayload(
     value: TaskFormValue,
   ): Omit<TaskInterface, 'id' | 'createdAt' | 'updatedAt' | 'step'> {
@@ -268,6 +308,11 @@ export class TaskService {
     };
   }
 
+  /**
+   * Asynchroner Validator, der prüft, ob das Fälligkeitsdatum der Aufgabe nach dem Enddatum des zugehörigen Projekts liegt.
+   * @param control Das Formular-Control für das Fälligkeitsdatum.
+   * @returns Ein Observable mit Validierungsfehlern oder `null`, wenn alles gültig ist.
+   */
   private validateProjectDueDate(
     control: AbstractControl<Date | null>,
   ): Observable<ValidationErrors | null> {
@@ -288,6 +333,11 @@ export class TaskService {
     );
   }
 
+  /**
+   * Stellt sicher, dass das Fälligkeitsdatum der Aufgabe innerhalb des Projektzeitraums liegt, und wirft bei Überschreitung einen Fehler.
+   * @param value Die zu prüfenden Task-Formulardaten.
+   * @returns Ein Promise, das aufgelöst wird, wenn das Datum gültig ist.
+   */
   private async assertTaskDueDateWithinProject(value: TaskFormValue): Promise<void> {
     let projectDueDate: Date;
     try {
@@ -302,6 +352,11 @@ export class TaskService {
     }
   }
 
+  /**
+   * Lädt das Fälligkeitsdatum (Enddatum) eines bestimmten Projekts aus Firestore.
+   * @param projectId Die ID des Projekts.
+   * @returns Ein Promise mit dem Fälligkeitsdatum als `Date`-Objekt.
+   */
   private async getProjectDueDate(projectId: string): Promise<Date> {
     const projectSnapshot = await runInInjectionContext(this.injector, () =>
       getDoc(doc(this.firestore, 'projects', projectId)),
@@ -323,6 +378,12 @@ export class TaskService {
     return date;
   }
 
+  /**
+   * Vergleicht zwei Datumsangaben auf Kalendertag-Ebene, um zu prüfen, ob das erste Datum nach dem zweiten liegt.
+   * @param date Das zu prüfende Datum (z. B. Task-Fälligkeitsdatum).
+   * @param projectDueDate Das Referenzdatum (z. B. Projekt-Fälligkeitsdatum).
+   * @returns `true`, wenn das erste Datum nach dem Projekt-Fälligkeitsdatum liegt, sonst `false`.
+   */
   private isAfterCalendarDay(date: Date, projectDueDate: Date): boolean {
     const taskDay = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     const projectDay = new Date(

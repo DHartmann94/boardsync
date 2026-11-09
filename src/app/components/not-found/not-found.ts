@@ -27,6 +27,6 @@ export class NotFound {
   private readonly router = inject(Router);
 
   navigateBack(): void {
-    this.router.navigate(['/main']);
+    void this.router.navigate(['/main']);
   }
 }

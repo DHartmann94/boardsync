@@ -104,6 +104,10 @@ export class ProjectDetails implements OnInit {
     return this.members().find((user) => user.id === ownerId) ?? null;
   });
 
+  /**
+   * Initialisierungs-Lifecycle-Hook der Komponente. 
+   * Lädt die Benutzer beim Start und fängt eventuelle Fehler ab.
+   */
   ngOnInit(): void {
     this.loadUsers().catch((error: unknown) => {
       console.error('Failed to load project users:', error);
@@ -111,10 +115,18 @@ export class ProjectDetails implements OnInit {
   }
 
   // parseDate liefert bei fehlendem Wert das heutige Datum, deshalb vorher auf null prüfen
+  /**
+   * Wandelt einen optionalen Datumswert mithilfe des DateServices in ein Date-Objekt um.
+   * @param value Der zu konvertierende Datumswert oder null/undefined.
+   * @returns Das konvertierte Date-Objekt oder `null`.
+   */
   private toDate(value: Date | null | undefined): Date | null {
     return value ? this.dateService.parseDate(value) : null;
   }
 
+  /**
+   * Lädt alle Benutzer asynchron vom User-Service und bereitet die Anzeigedaten auf.
+   */
   private async loadUsers(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
     this.users = allUsers.map((user) => ({
@@ -124,10 +136,16 @@ export class ProjectDetails implements OnInit {
     this.projectForm.markAllAsTouched();
   }
 
+  /**
+   * Schließt den aktuellen Dialog.
+   */
   close(): void {
     this.dialogRef.close();
   }
 
+  /**
+   * Schaltet in den Bearbeitungsmodus um, falls das Projekt vorhanden ist, der Benutzer Bearbeitungsrechte hat und nicht gespeichert wird.
+   */
   startEditing(): void {
     const project = this.project();
     if (!project || !this.canEdit() || this.isSaving()) {
@@ -143,6 +161,9 @@ export class ProjectDetails implements OnInit {
     this.isEditing.set(true);
   }
 
+  /**
+   * Bricht den Bearbeitungsmodus ab, setzt das Formular zurück und verlässt den Modus.
+   */
   cancelEditing(): void {
     if (this.isSaving()) {
       return;
@@ -151,6 +172,10 @@ export class ProjectDetails implements OnInit {
     this.projectForm.reset();
   }
 
+  /**
+   * Speichert die Änderungen am Projekt, validiert das Formular und aktualisiert die Daten in Firestore sowie den lokalen State.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async saveChanges(): Promise<void> {
     const project = this.project();
     if (!project || !this.canEdit() || this.isSaving()) {
@@ -190,10 +215,18 @@ export class ProjectDetails implements OnInit {
     }
   }
 
+  /**
+   * Ermittelt den Anzeigenamen (Display Name) eines Benutzers anhand seiner ID.
+   * @param userId Die ID des Benutzers.
+   * @returns Den Anzeigenamen oder die ID als Fallback, falls der Benutzer nicht gefunden wurde.
+   */
   getUserDisplayName(userId: string): string {
     return this.users.find((user) => user.id === userId)?.displayName ?? userId;
   }
 
+  /**
+   * Öffnet einen Bestätigungsdialog für das Löschen des Projekts und löscht es bei Bestätigung.
+   */
   confirmDelete(): void {
     const project = this.project();
     if (!project || !this.canDelete() || this.isDeleting()) {
@@ -215,6 +248,11 @@ export class ProjectDetails implements OnInit {
       });
   }
 
+  /**
+   * Löscht das Projekt anhand seiner ID über den ProjectService und schließt den Dialog bei Erfolg.
+   * @param projectId Die ID des zu löschenden Projekts.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   private async deleteProject(projectId: string): Promise<void> {
     this.isDeleting.set(true);
     try {

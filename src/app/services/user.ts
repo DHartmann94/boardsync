@@ -211,6 +211,10 @@ export class UserService {
     }
   }
 
+  /**
+    * Ruft alle Benutzer aus der Firestore-Datenbank ab und konvertiert sie in das entsprechende UserInterface-Format.
+    * @returns Ein Promise, das ein Array aller Benutzer (`UserInterface[]`) oder bei einem Fehler ein leeres Array zurückgibt.
+    */
   async getallUsers(): Promise<UserInterface[]> {
     try {
       const usersCollection = await runInInjectionContext(this.injector, () =>
@@ -223,6 +227,11 @@ export class UserService {
     }
   }
 
+  /**
+   * Überprüft, ob ein angemeldeter Firebase-Benutzer sich über den Google-Anbieter (Google Provider) authentifiziert hat.
+   * @param authUser Das zu prüfende Firebase-Auth-Benutzerobjekt (`User`).
+   * @returns `true`, wenn mindestens ein Anmeldeanbieter 'google.com' ist, sonst `false`.
+   */
   private isGoogleProvider(authUser: User): boolean {
     return authUser.providerData.some((p) => p.providerId === 'google.com');
   }

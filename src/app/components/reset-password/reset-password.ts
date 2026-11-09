@@ -84,7 +84,7 @@ export class ResetPassword {
 
       this.notificationService.showSuccess('resetPassword.success', 0);
       this.resetForm();
-      this.router.navigateByUrl('/sign-in');
+      void this.router.navigateByUrl('/sign-in');
 
     } catch (error: any) {
       console.error('Error during password reset process:', error);

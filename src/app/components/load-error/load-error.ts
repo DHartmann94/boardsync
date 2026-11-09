@@ -47,7 +47,7 @@ export class LoadError {
       await this.userService.refresh();
 
       if (this.userService.state().status === 'ready') {
-        this.router.navigateByUrl('/main');
+        void this.router.navigateByUrl('/main/board');
       } else {
         this.notificationService.showError('loadError.stillFailing');
       }

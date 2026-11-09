@@ -10,6 +10,11 @@ import { CategoryInterface } from '../models/category';
 export class CategoryService {
   private readonly firestore = inject(Firestore);
 
+  /**
+    * Ein Signal, das alle Kategorien in Echtzeit aus Firestore lädt, 
+    * in das entsprechende Interface konvertiert und Fehler abfängt, 
+    * indem es standardmäßig ein leeres Array zurückgibt.
+    */
   readonly categories = toSignal(
     collectionData(collection(this.firestore, 'categories'), { idField: 'id' }).pipe(
       map((res) => res as CategoryInterface[]),

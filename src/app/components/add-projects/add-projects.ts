@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { ProjectService } from '../../services/project';
 import { UserService } from '../../services/user';
 
 @Component({
-  selector: 'app-add-projects',
+  selector: 'app-app-add-projects',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -31,7 +31,7 @@ import { UserService } from '../../services/user';
   templateUrl: './add-projects.html',
   styleUrl: './add-projects.scss',
 })
-export class AddProjects {
+export class AddProjects implements OnInit {
   readonly today = new Date(new Date().setHours(0, 0, 0, 0));
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
@@ -42,7 +42,21 @@ export class AddProjects {
 
   readonly projectForm = this.projectServices.createProjectForm();
 
-  async ngOnInit(): Promise<void> {
+  /**
+   * Initialisierungs-Lifecycle-Hook der Komponente. 
+   * Lädt alle verfügbaren Benutzer und setzt standardmäßig den aktuell 
+   * angemeldeten Benutzer als Mitglied im Projektformular.
+   */
+  ngOnInit(): void {
+    void this.loadUsers().catch((error: unknown) => {
+      console.error('Failed to load initial users:', error);
+    });
+  }
+
+  /**
+   * Hilfsmethode zum asynchronen Laden der Benutzerdaten.
+   */
+  private async loadUsers(): Promise<void> {
     const allUsers = await this.userService.getallUsers();
     this.users = allUsers.map((user) => ({
       id: user.id,
@@ -55,6 +69,11 @@ export class AddProjects {
     }
   }
 
+  /**
+   * Verarbeitet das Absenden des Projekt-Formulars, validiert die Eingaben,
+   * prüft den aktuellen Benutzer und speichert das neue Projekt über den Projektservice.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async onSubmit(): Promise<void> {
     if (this.projectForm.invalid || this.isSubmitting) {
       this.projectForm.markAllAsTouched();

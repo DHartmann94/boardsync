@@ -64,6 +64,10 @@ export class TaskDetails {
   readonly isSaving = signal(false);
   readonly newSubtaskTitle = signal('');
 
+  /**
+   * Berechnet die zugehörige Kategorie der Aufgabe anhand der Kategorie-ID 
+   * oder liefert einen Standard-Fallback-Wert zurück, falls keine gefunden wird.
+   */
   readonly category = computed(() => {
     const task = this.task();
     const categories = this.categoryService.categoryMap();
@@ -85,6 +89,10 @@ export class TaskDetails {
 
   readonly prioIcon = computed(() => this.taskService.getPrioIcon(this.task()?.prio ?? 'medium'));
 
+  /**
+   * Filtert und sortiert die Benutzer, die der Aufgabe zugewiesen sind, 
+   * wobei der aktuell angemeldeten Benutzer in der Liste an erster Stelle steht.
+   */
   readonly assignedUsers = computed(() => {
     const assignedIds = this.task()?.assignedToUser ?? [];
     const state = this.userService.state();
@@ -109,6 +117,10 @@ export class TaskDetails {
     this.dialogRef.close();
   }
 
+  /**
+   * Aktiviert den Bearbeitungsmodus für die Aufgabe und initialisiert 
+   * das Formular mit den bestehenden Aufgabenwerten.
+   */
   startEditing(): void {
     const task = this.task();
     if (!task || this.isSaving()) {
@@ -130,6 +142,10 @@ export class TaskDetails {
     this.isEditing.set(true);
   }
 
+  /**
+   * Bricht den Bearbeitungsmodus ab, setzt das Formular zurück 
+   * und verwirft alle nicht gespeicherten Änderungen.
+   */
   cancelEditing(): void {
     if (this.isSaving()) {
       return;
@@ -139,6 +155,11 @@ export class TaskDetails {
     this.taskForm.reset();
   }
 
+  /**
+   * Validiert und speichert die geänderten Aufgabendaten in der Datenbank 
+   * und behandelt projektspezifische Fälligkeitsdatum-Fehler.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   async saveChanges(): Promise<void> {
     const task = this.task();
     if (!task || this.isSaving()) {
@@ -170,6 +191,11 @@ export class TaskDetails {
     }
   }
 
+  /**
+   * Aktualisiert den Titel einer bestimmten Unteraufgabe im Formular.
+   * @param index Der Index der Unteraufgabe im Array.
+   * @param event Das Eingabeereignis des HTML-Inputs.
+   */
   updateSubtaskTitle(index: number, event: Event): void {
     const input = event.target;
     if (!(input instanceof HTMLInputElement)) {
@@ -182,6 +208,10 @@ export class TaskDetails {
     this.taskForm.controls.subtasks.setValue(subtasks);
   }
 
+  /**
+   * Aktualisiert den temporären Titel für eine neu hinzuzufügende Unteraufgabe.
+   * @param event Das Eingabeereignis des HTML-Inputs.
+   */
   setNewSubtaskTitle(event: Event): void {
     const input = event.target;
     if (input instanceof HTMLInputElement) {
@@ -189,6 +219,11 @@ export class TaskDetails {
     }
   }
 
+  /**
+   * Aktualisiert den Erledigungsstatus (completed) einer bestimmten Unteraufgabe.
+   * @param index Der Index der Unteraufgabe im Array.
+   * @param completed Der neue Erledigungsstatus.
+   */
   updateSubtaskCompleted(index: number, completed: boolean): void {
     const subtasks = this.taskForm.controls.subtasks.value.map((subtask, subtaskIndex) =>
       subtaskIndex === index ? { ...subtask, completed } : subtask,
@@ -196,6 +231,9 @@ export class TaskDetails {
     this.taskForm.controls.subtasks.setValue(subtasks);
   }
 
+  /**
+   * Fügt eine neue Unteraufgabe zur Liste im Formular hinzu.
+   */
   addSubtask(): void {
     const title = this.newSubtaskTitle().trim();
     if (!title) {
@@ -210,12 +248,19 @@ export class TaskDetails {
     this.newSubtaskTitle.set('');
   }
 
+  /**
+   * Entfernt eine Unteraufgabe anhand ihres Indexes aus dem Formular.
+   * @param index Der Index der zu löschenden Unteraufgabe.
+   */
   removeSubtask(index: number): void {
     this.taskForm.controls.subtasks.setValue(
       this.taskForm.controls.subtasks.value.filter((_, subtaskIndex) => subtaskIndex !== index),
     );
   }
 
+  /**
+   * Öffnet einen Bestätigungsdialog vor dem endgültigen Löschen der Aufgabe.
+   */
   confirmDelete(): void {
     const task = this.task();
     if (!task || this.isDeleting() || this.isSaving()) {
@@ -237,6 +282,11 @@ export class TaskDetails {
       });
   }
 
+  /**
+   * Löscht die Aufgabe anhand ihrer ID aus der Datenbank und schließt den Dialog.
+   * @param taskId Die eindeutige ID der zu löschenden Aufgabe.
+   * @returns Ein Promise, das bei Abschluss aufgelöst wird.
+   */
   private async deleteTask(taskId: string): Promise<void> {
     this.isDeleting.set(true);
     try {
