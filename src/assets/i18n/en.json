@@ -2,7 +2,13 @@
     "general": {
         "imprint": "Legal Notice",
         "privacy": "Privacy Policy",
-        "close": "Close"
+        "back": "Back",
+        "close": "Close",
+        "cancel": "Cancel",
+        "errors": {
+            "failure": "An unknown error occurred",
+            "tooManyRequests": "Too many attempts. Please wait a moment before trying again."
+        }
     },
     "signIn": {
         "title": "Log In",
@@ -17,12 +23,95 @@
         "googleLogin": "Sign in with Google",
         "submit": "Log In",
         "guestLogin": "Guest Log-In",
+        "verificationSent": "A new verification email has been sent",
+        "emailNotVerifiedTitle": "Email not verified",
+        "emailNotVerifiedMessage": "Your email has not been verified yet. Would you like to receive a new verification email?",
+        "resendEmail": "Resend",
         "errors": {
             "emailRequired": "Please enter your email address.",
             "emailPattern": "Please enter a valid email address.",
-            "emailNotVerified": "Please confirm your email address.",
+            "emailNotVerified": "Please confirm your email.",
             "passwordRequired": "Please enter your password.",
             "userNotFound": "Email or password is incorrect."
+        }
+    },
+    "signUp": {
+        "title": "Create",
+        "title02": "account",
+        "firstNameLabel": "First name",
+        "lastNameLabel": "Last name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "example@email.com",
+        "phoneLabel": "Phone no. (optional)",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm password",
+        "acceptPrivacyStart": "I accept the ",
+        "privacyPolicyLink": "Privacy Policy",
+        "acceptPrivacyEnd": ".",
+        "submit": "Register",
+        "success": "Account successfully created. Verification email has been sent.",
+        "errors": {
+            "required": "This field is required",
+            "emailInvalid": "Please enter a valid email address",
+            "emailExists": "Email address is already in use",
+            "phoneInvalid": "Please enter a valid phone number",
+            "minlength": "The password is too short",
+            "passwordComplex": "Uppercase/lowercase letter, number & special character",
+            "passwordsDontMatch": "The passwords do not match",
+            "privacyRequired": "Please accept the privacy policy"
+        }
+    },
+    "resetPassword": {
+        "title": "Reset password",
+        "emailLabel": "Email",
+        "emailPlaceholder": "example@email.com",
+        "submit": "Send email",
+        "success": "If your email address is registered with us, we will send you an email shortly.",
+        "subtitle": "Please enter your email address.",
+        "helperText": "We will send you an email allowing you to change your password.",
+        "errors": {
+            "required": "Email is required",
+            "emailInvalid": "Please enter a valid email address.",
+            "userNotFound": "No user found with this email address."
+        }
+    },
+    "guard": {
+        "loadUserDataError": "Your data could not be loaded. Please check your connection and try again.",
+        "noPermission": "You do not have permission to access this page."
+    },
+    "404": {
+        "notFound": "Page not found",
+        "oops": "Oops! The page you are looking for does not exist or has been moved."
+    },
+    "loadError": {
+        "title": "Error :(",
+        "headline": "Could not load data",
+        "description": "An error occurred while loading. Please try again.",
+        "retry": "Try again",
+        "stillFailing": "The error persists. Please check your internet connection."
+    },
+    "board": {
+        "title": "Board",
+        "loading": "Loading tasks",
+        "project": {
+            "placeholder": "Select project",
+            "noResults": "No projects found",
+            "details": "View project details",
+            "settings": "Edit project"
+        },
+        "search": {
+            "placeholder": "Search task"
+        },
+        "addTask": "Add Task",
+        "column": {
+            "empty": "No tasks in {{column}}",
+            "addAria": "Add task to {{column}}"
+        },
+        "errors": {
+            "moveFailed": "Could not move task",
+            "loadProjectsFailed": "Could not load projects",
+            "loadTasksFailed": "Could not load tasks",
+            "subtasksNotCompleted": "Task not finished yet: There are open subtasks."
         }
     },
     "task": {
@@ -79,6 +168,38 @@
             "updateFailed": "The task could not be updated."
         }
     },
+    "projectDetail": {
+        "close": "Close",
+        "delete": "Delete",
+        "edit": "Edit",
+        "noDescription": "No description available.",
+        "editTitle": "Edit project",
+        "save": "Save changes",
+        "cancel": "Cancel",
+        "updated": "Project updated.",
+        "statusLabel": "Status",
+        "status": {
+            "open": "Open",
+            "completed": "Completed"
+        },
+        "dueDate": "Due date",
+        "owner": "Owner",
+        "createdAt": "Created on",
+        "members": "Members",
+        "noMembers": "No members",
+        "notFound": "Project not found.",
+        "deleteDialog": {
+            "title": "Delete project?",
+            "message": "Are you sure you want to delete the project “{{title}}”? This cannot be undone."
+        },
+        "deleted": "Project deleted.",
+        "errors": {
+            "deleteFailed": "The project could not be deleted. Please try again.",
+            "updateFailed": "The project could not be updated. Please try again.",
+            "memberValidationFailed": "The member's tasks could not be checked. Please try again.",
+            "memberHasOpenTasks": "{{member}} cannot be removed while they have unfinished tasks assigned."
+        }
+    },
     "addTaskForm": {
         "title": "Add Task",
         "formLabel": "Add task form",
@@ -125,38 +246,6 @@
         "subtaskRequired": "Please enter a valid subtask. If you want to add a subtask, please enter a title.",
         "titleMaxLength": "The title must not exceed 50 characters."
     },
-    "projectDetail": {
-        "close": "Close",
-        "delete": "Delete",
-        "edit": "Edit",
-        "editTitle": "Edit project",
-        "save": "Save changes",
-        "cancel": "Cancel",
-        "updated": "Project updated.",
-        "noDescription": "No description available.",
-        "statusLabel": "Status",
-        "status": {
-            "open": "Open",
-            "completed": "Completed"
-        },
-        "dueDate": "Due date",
-        "owner": "Owner",
-        "createdAt": "Created on",
-        "members": "Members",
-        "noMembers": "No members",
-        "notFound": "Project not found.",
-        "deleteDialog": {
-            "title": "Delete project?",
-            "message": "Are you sure you want to delete the project “{{title}}”? This cannot be undone."
-        },
-        "deleted": "Project deleted.",
-        "errors": {
-            "deleteFailed": "The project could not be deleted. Please try again.",
-            "updateFailed": "The project could not be updated. Please try again.",
-            "memberValidationFailed": "The member's tasks could not be checked. Please try again.",
-            "memberHasOpenTasks": "{{member}} cannot be removed while they have unfinished tasks assigned."
-        }
-    },
     "addProjectForm": {
         "title": "Add Project",
         "formLabel": "Add project form",
@@ -178,8 +267,51 @@
         "projectCreated": "Project created successfully.",
         "projectCreateError": "Failed to create project."
     },
-    "guard": {
-        "loadUserDataError": "Your data could not be loaded. Please check your connection and try again.",
-        "noPermission": "You do not have permission to access this page."
+    "header": {
+        "notifications": "Notifications",
+        "profile": "Profile",
+        "logout": "Logout",
+        "help": "Help"
+    },
+    "sidebar": {
+        "board": "Board",
+        "addTasks": "Add Tasks",
+        "addProjects": "Add Projects"
+    },
+    "help": {
+        "title": "Help",
+        "back": "Back",
+        "welcome": "Welcome to the BoardSync help page, your guide to using our Kanban project management tool. Here you will find an overview of how to manage projects and organize tasks efficiently.",
+        "what": {
+            "title": "What is BoardSync?",
+            "text1": "BoardSync is a modern, Kanban-based project management tool that allows you to visually represent workflows, keep track of tasks, and optimize team collaboration.",
+            "text2": "Kanban helps you divide your tasks into different statuses and track progress in real-time."
+        },
+        "steps": {
+            "title": "How to use BoardSync",
+            "intro": "Here is a step-by-step guide for the most important features:",
+            "projects": {
+                "title": "Creating Projects",
+                "text": "Create new projects via the menu or dashboard to structure your tasks by topic or team."
+            },
+            "tasks": {
+                "title": "Adding Tasks",
+                "text": "Add specific tasks to your projects. Define titles, descriptions, due dates, and assignees."
+            },
+            "board": {
+                "title": "Using the Board",
+                "text": "In the board, you can clearly see all tasks sorted by status."
+            },
+            "drag": {
+                "title": "Using Drag & Drop",
+                "text": "Easily edit and move tasks between different columns via drag & drop to update their status in a flash."
+            }
+        },
+        "tips": {
+            "title": "Useful Tips",
+            "tip1": "Keep task titles short and concise so they immediately catch the eye on the Kanban board.",
+            "tip2": "Assign tasks to clear owners to unambiguously define team responsibilities.",
+            "tip3": "Regularly use the drag-and-drop feature to keep your team always up to date."
+        }
     }
 }
