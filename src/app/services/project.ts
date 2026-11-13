@@ -1,5 +1,16 @@
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from '@angular/fire/firestore';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import type { CreateProjectPayload, ProjectInterface } from '../models/project';
@@ -101,11 +112,24 @@ export class ProjectService {
   }
 
   /**
-   * Löscht ein Projekt anhand seiner ID aus der Firestore-Datenbank.
+   * Löscht zuerst alle Aufgaben des Projekts und anschließend das Projekt aus Firestore.
    * @param projectId Die eindeutige ID des zu löschenden Projekts.
    * @returns Ein Promise, das bei Abschluss aufgelöst wird.
    */
   async deleteProject(projectId: string): Promise<void> {
+    const tasksSnapshot = await runInInjectionContext(this.injector, () => {
+      const tasksQuery = query(
+        collection(this.firestore, 'tasks'),
+        where('projectId', '==', projectId),
+      );
+      return getDocs(tasksQuery);
+    });
+
+    await Promise.all(
+      tasksSnapshot.docs.map((task) =>
+        runInInjectionContext(this.injector, () => deleteDoc(task.ref)),
+      ),
+    );
     await runInInjectionContext(this.injector, () =>
       deleteDoc(doc(this.firestore, 'projects', projectId)),
     );
