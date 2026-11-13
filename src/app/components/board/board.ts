@@ -33,6 +33,10 @@ interface BoardColumn {
 
 const LAST_PROJECT_STORAGE_KEY = 'board.lastProjectId';
 
+/**
+ * Zeigt das Aufgabenboard und ermöglicht die Interaktion mit seinen Spalten.
+ * @class
+ */
 @Component({
   selector: 'app-board',
   imports: [

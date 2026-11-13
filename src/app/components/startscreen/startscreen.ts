@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Output, ViewChild, ElementRef, OnInit, AfterViewInit, OnDestroy, signal } from '@angular/core';
 
+/**
+ * Animierter Startbildschirm der Anwendung.
+ * @class
+ */
 @Component({
   selector: 'app-startscreen',
   imports: [],

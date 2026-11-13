@@ -9,6 +9,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
+/**
+ * Layout-Komponente für den angemeldeten Hauptbereich.
+ * @class
+ */
 @Component({
   selector: 'app-main',
   imports: [RouterOutlet, SidebarMain, HeaderMain, MatSidenavModule, MatToolbarModule, MatButtonModule, MatIconModule, MatListModule],

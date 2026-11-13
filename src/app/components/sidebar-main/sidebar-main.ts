@@ -5,6 +5,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
+/**
+ * Seitennavigation des angemeldeten Anwendungsbereichs.
+ * @class
+ */
 @Component({
   selector: 'app-sidebar-main',
   imports: [

@@ -12,6 +12,10 @@ import { FooterPublic } from '../../components/footer-public/footer-public';
 import { UserService } from '../../services/user';
 import { NotificationService } from '../../services/notification';
 
+/**
+ * Zeigt einen Fehler beim Laden von Anwendungsdaten mit Wiederholungsmöglichkeit.
+ * @class
+ */
 @Component({
   selector: 'app-load-error',
   imports: [

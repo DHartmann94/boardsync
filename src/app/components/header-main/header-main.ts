@@ -11,6 +11,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { UserService } from '../../services/user';
 import { AuthenticationService } from '../../services/authentication';
 
+/**
+ * Kopfzeile des angemeldeten Anwendungsbereichs.
+ * @class
+ */
 @Component({
   selector: 'app-header-main',
   imports: [

@@ -23,6 +23,10 @@ export interface ProjectDetailsData {
   project: ProjectInterface;
 }
 
+/**
+ * Dialog zum Anzeigen und Bearbeiten von Projektdetails.
+ * @class
+ */
 @Component({
   selector: 'app-project-details',
   imports: [

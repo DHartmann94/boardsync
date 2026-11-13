@@ -17,6 +17,10 @@ import { FooterPublic } from '../../components/footer-public/footer-public';
 import { AuthenticationService } from '../../services/authentication';
 import { NotificationService } from '../../services/notification';
 
+/**
+ * Seite zum Zurücksetzen des Passworts.
+ * @class
+ */
 @Component({
   selector: 'app-reset-password',
   imports: [

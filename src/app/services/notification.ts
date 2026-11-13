@@ -6,6 +6,10 @@ import { Observable } from 'rxjs';
 
 import { ConfirmDialog } from '../components/confirm-dialog/confirm-dialog';
 
+/**
+ * Zeigt Benachrichtigungen und Bestätigungsdialoge an.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

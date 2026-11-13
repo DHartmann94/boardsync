@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 
+/**
+ * Kopfzeile der öffentlichen Seiten.
+ * @class
+ */
 @Component({
   selector: 'app-header-public',
   standalone: true,

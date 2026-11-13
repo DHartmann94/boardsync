@@ -19,6 +19,10 @@ import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
 import { Startscreen } from '../../components/startscreen/startscreen';
 
+/**
+ * Seite zur Anmeldung eines Benutzers.
+ * @class
+ */
 @Component({
   selector: 'app-sign-in',
   imports: [

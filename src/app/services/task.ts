@@ -26,6 +26,10 @@ export type TaskForm = FormGroup<{
   dueDate: FormControl<Date | null>;
 }>;
 
+/**
+ * Kennzeichnet eine Aufgabe mit einem unzulässigen Fälligkeitsdatum für das Projekt.
+ * @class
+ */
 export class TaskProjectDueDateError extends Error {
   constructor(readonly code: 'afterProjectEnd' | 'projectDueDateLoadFailed') {
     super(code);
@@ -56,6 +60,10 @@ const PRIO_ICONS: Record<string, string> = {
   urgent: 'assets/img/icons/add-task-urgent.svg',
 };
 
+/**
+ * Verwaltet alle Aufgaben (Tasks) und deren Kommunikation mit Firestore.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

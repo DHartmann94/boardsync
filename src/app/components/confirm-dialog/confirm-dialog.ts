@@ -12,6 +12,10 @@ export interface ConfirmDialogData {
   onConfirmAction?: () => Promise<boolean>;
 }
 
+/**
+ * Generischer Bestätigungsdialog für Aktionen in der Anwendung.
+ * @class
+ */
 @Component({
   selector: 'app-confirm-dialog',
   imports: [

@@ -21,6 +21,10 @@ import { NotificationService } from '../../services/notification';
 import { UserService } from '../../services/user';
 
 
+/**
+ * Seite zur Registrierung eines neuen Benutzers.
+ * @class
+ */
 @Component({
   selector: 'app-sign-up',
   imports: [

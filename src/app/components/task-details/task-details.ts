@@ -24,6 +24,10 @@ export interface TaskDetailsData {
   taskId: string;
 }
 
+/**
+ * Dialog zum Anzeigen und Bearbeiten von Aufgabendetails.
+ * @class
+ */
 @Component({
   selector: 'app-task-details',
   imports: [

@@ -47,6 +47,10 @@ const dateNotInPastValidator: ValidatorFn = (
 const nonWhitespaceValidator: ValidatorFn = (control): ValidationErrors | null =>
   typeof control.value === 'string' && control.value.trim() ? null : { required: true };
 
+/**
+ * Verwaltet Projekte und deren Kommunikation mit Firestore.
+ * @class
+ */
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private readonly firestore = inject(Firestore);

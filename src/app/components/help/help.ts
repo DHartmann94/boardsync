@@ -5,6 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { TranslatePipe } from '@ngx-translate/core';
 
+/**
+ * Stellt die Hilfeinformationen der Anwendung dar.
+ * @class
+ */
 @Component({
   selector: 'app-help',
   standalone: true,

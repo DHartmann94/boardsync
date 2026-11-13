@@ -9,6 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
 
+/**
+ * Stellt die Impressumsseite dar.
+ * @class
+ */
 @Component({
   selector: 'app-imprint',
   standalone: true,

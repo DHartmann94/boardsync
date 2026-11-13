@@ -10,6 +10,10 @@ import { TaskService } from '../../services/task';
 
 const MAX_VISIBLE_AVATARS = 4;
 
+/**
+ * Stellt eine einzelne Aufgabe in einer Board-Spalte dar.
+ * @class
+ */
 @Component({
   selector: 'app-task',
   imports: [

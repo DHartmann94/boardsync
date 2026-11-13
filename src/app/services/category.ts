@@ -5,6 +5,10 @@ import { catchError, map, of } from 'rxjs';
 
 import type { CategoryInterface, CreateategoryPayload } from '../models/category';
 
+/**
+ * Verwaltet Kategorien und deren Speicherung in Firestore.
+ * @class
+ */
 @Injectable({ providedIn: 'root' })
 
 export class CategoryService {

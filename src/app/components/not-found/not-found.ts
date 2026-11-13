@@ -9,6 +9,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { HeaderPublic } from '../../components/header-public/header-public';
 import { FooterPublic } from '../../components/footer-public/footer-public';
 
+/**
+ * Stellt die Seite für nicht gefundene Routen dar.
+ * @class
+ */
 @Component({
   selector: 'app-not-found',
   standalone: true,

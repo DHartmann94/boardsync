@@ -18,6 +18,10 @@ export type UserState =
 
 const DEFAULT_AVATAR = '/assets/profile-pictures/unknown-user.png';
 
+/**
+ * Verwaltet Benutzerprofile, Benutzerstatus und projektbezogene Benutzer in Firestore.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

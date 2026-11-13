@@ -14,6 +14,10 @@ import { NotificationService } from '../../services/notification';
 import { ProjectService } from '../../services/project';
 import { UserService } from '../../services/user';
 
+/**
+ * Dialog zum Erstellen eines Projekts.
+ * @class
+ */
 @Component({
   selector: 'app-app-add-projects',
   imports: [

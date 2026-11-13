@@ -1,6 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+/**
+ * Einstiegskomponente der BoardSync-Anwendung.
+ * @class
+ */
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],

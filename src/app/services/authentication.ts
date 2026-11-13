@@ -2,6 +2,10 @@ import { Injectable, inject, Injector, Signal, runInInjectionContext } from '@an
 import { Auth, user, User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendEmailVerification, deleteUser, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { toSignal } from '@angular/core/rxjs-interop';
 
+/**
+ * Kapselt die Authentifizierung und den Anmeldestatus des Benutzers.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

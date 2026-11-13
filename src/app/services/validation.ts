@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+/**
+ * Stellt gemeinsame Formular- und Eingabevalidierungen bereit.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

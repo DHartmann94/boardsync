@@ -28,6 +28,10 @@ export interface AddTasksDialogData {
   projectId: string;
 }
 
+/**
+ * Dialog zum Erstellen einer Aufgabe.
+ * @class
+ */
 @Component({
   selector: 'app-add-tasks',
   imports: [

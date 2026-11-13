@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 
+/**
+ * Stellt Hilfsfunktionen für Datumswerte und Firestore-Zeitstempel bereit.
+ * @class
+ */
 @Injectable({
   providedIn: 'root',
 })

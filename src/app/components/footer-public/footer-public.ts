@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+/**
+ * Öffentlicher Fußbereich mit allgemeinen Navigationslinks.
+ * @class
+ */
 @Component({
   selector: 'app-footer-public',
   imports: [
