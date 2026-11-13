@@ -59,8 +59,8 @@ export class ProjectDetails implements OnInit {
 
   users: { id: string; displayName: string }[] = [];
 
-  readonly dueDate = computed(() => this.toDate(this.project()?.dueDate));
-  readonly createdAt = computed(() => this.toDate(this.project()?.createdAt));
+  readonly dueDate = computed(() => this.dateService.parseOptionalDate(this.project()?.dueDate));
+  readonly createdAt = computed(() => this.dateService.parseOptionalDate(this.project()?.createdAt));
 
   readonly isOverdue = computed(() => {
     const project = this.project();
@@ -114,16 +114,6 @@ export class ProjectDetails implements OnInit {
     });
   }
 
-  // parseDate liefert bei fehlendem Wert das heutige Datum, deshalb vorher auf null prüfen
-  /**
-   * Wandelt einen optionalen Datumswert mithilfe des DateServices in ein Date-Objekt um.
-   * @param value Der zu konvertierende Datumswert oder null/undefined.
-   * @returns Das konvertierte Date-Objekt oder `null`.
-   */
-  private toDate(value: Date | null | undefined): Date | null {
-    return value ? this.dateService.parseDate(value) : null;
-  }
-
   /**
    * Lädt alle Benutzer asynchron vom User-Service und bereitet die Anzeigedaten auf.
    */
@@ -156,7 +146,7 @@ export class ProjectDetails implements OnInit {
       title: project.title,
       description: project.description,
       memberIds: [...project.memberIds],
-      dueDate: this.toDate(project.dueDate),
+      dueDate: this.dateService.parseOptionalDate(project.dueDate),
     });
     this.isEditing.set(true);
   }

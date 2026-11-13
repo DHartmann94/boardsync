@@ -68,7 +68,10 @@ export class TaskService {
    * @param value Optionaler Initialwert oder Teilwerte für das Task-Formular.
    * @returns Ein konfiguriertes `TaskForm`-Formularobjekt.
    */
-  createTaskForm(value: Partial<TaskFormValue> = {}): TaskForm {
+  createTaskForm(
+    value: Partial<TaskFormValue> = {},
+    options: { allowPastDueDate?: boolean } = {},
+  ): TaskForm {
     const form = new FormGroup({
       projectId: new FormControl(value.projectId ?? '', {
         nonNullable: true,
@@ -87,7 +90,9 @@ export class TaskService {
       assignedToUser: new FormControl(value.assignedToUser ?? [], { nonNullable: true }),
       subtasks: new FormControl(value.subtasks ?? [], { nonNullable: true }),
       dueDate: new FormControl<Date | null>(value.dueDate ?? null, {
-        validators: [Validators.required, dateNotInPastValidator],
+        validators: options.allowPastDueDate
+          ? [Validators.required]
+          : [Validators.required, dateNotInPastValidator],
         asyncValidators: [(control) => this.validateProjectDueDate(control)],
       }),
     });

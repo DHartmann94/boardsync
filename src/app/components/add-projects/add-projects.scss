@@ -94,9 +94,8 @@ h1 {
 .member-list {
   display: grid;
   gap: 6px;
-  margin: 0 0 0 12px;
-  padding: 0 0 0 12px;
-  border-left: 2px solid var(--grey);
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 

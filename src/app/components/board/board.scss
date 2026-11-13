@@ -138,7 +138,7 @@ $radius-m: 8px;
 }
 
 .column__task-drag-placeholder {
-  min-height: 64px;
+  min-height: 150px;
   border-radius: $radius-m;
   background: rgba(0, 0, 0, 0.04);
   border: 1px dashed var(--grey);

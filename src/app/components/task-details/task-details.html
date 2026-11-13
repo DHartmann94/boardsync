@@ -1,4 +1,10 @@
 <mat-card class="task-detail">
+    @if (isSaving()) {
+    <output class="task-detail__loading-overlay" aria-live="polite">
+        <mat-spinner diameter="40"></mat-spinner>
+    </output>
+    }
+
     @if (task(); as t) {
     <mat-card-header class="task-detail__header">
         @if (category(); as cat) {
@@ -14,7 +20,7 @@
     </mat-card-header>
 
     <mat-card-content>
-        @if (isEditing()) {
+        @if (isEditing() && t.step !== 'done') {
         <h1 class="task-detail__form-title">{{ 'taskDetail.editTitle' | translate }}</h1>
         <form id="edit-task-form" class="task-detail__form" [formGroup]="taskForm"
             [attr.aria-label]="'taskDetail.editTitle' | translate" (ngSubmit)="saveChanges()">
@@ -56,7 +62,7 @@
                 </span>
                 <mat-form-field appearance="outline" class="task-detail__field" subscriptSizing="dynamic">
                     <input id="edit-task-due-date" matInput aria-labelledby="edit-task-due-date-label"
-                        [matDatepicker]="dueDatePicker" [min]="today"
+                        [matDatepicker]="dueDatePicker"
                         [placeholder]="'addTaskForm.dueDatePlaceholder' | translate"
                         formControlName="dueDate"
                         [attr.aria-invalid]="taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched"
@@ -66,9 +72,7 @@
                 </mat-form-field>
                 @if (taskForm.controls.dueDate.invalid && taskForm.controls.dueDate.touched) {
                 <span id="edit-task-due-date-error" class="validation-error" role="alert">
-                    {{ (taskForm.controls.dueDate.hasError('pastDate')
-                        ? 'addTaskForm.dueDatePast'
-                        : taskForm.controls.dueDate.hasError('afterProjectEnd')
+                    {{ (taskForm.controls.dueDate.hasError('afterProjectEnd')
                           ? 'addTaskForm.dueDateAfterProjectEnd'
                           : taskForm.controls.dueDate.hasError('projectDueDateLoadFailed')
                             ? 'addTaskForm.projectDueDateLoadError'
@@ -209,7 +213,7 @@
     </mat-card-content>
 
     <mat-card-actions class="task-detail__actions">
-        @if (isEditing()) {
+        @if (isEditing() && t.step !== 'done') {
         <span class="task-detail__required-note">{{ 'addTaskForm.requiredNote' | translate }}</span>
         <button mat-button type="button" (click)="cancelEditing()" [disabled]="isSaving()">
             {{ 'taskDetail.cancel' | translate }}
@@ -223,11 +227,13 @@
             <mat-icon class="material-symbols-outlined">delete</mat-icon>
             {{ 'taskDetail.delete' | translate }}
         </button>
+        @if (t.step !== 'done') {
         <span class="task-detail__actions-divider"></span>
         <button mat-button type="button" (click)="startEditing()" [disabled]="isDeleting()">
             <mat-icon class="material-symbols-outlined">edit</mat-icon>
             {{ 'taskDetail.edit' | translate }}
         </button>
+        }
         }
     </mat-card-actions>
 

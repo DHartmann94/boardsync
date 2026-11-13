@@ -111,6 +111,7 @@
             "moveFailed": "Could not move task",
             "loadProjectsFailed": "Could not load projects",
             "loadTasksFailed": "Could not load tasks",
+            "doneRequiresFeedback": "A task can only be moved to Done after Await feedback.",
             "subtasksNotCompleted": "Task not finished yet: There are open subtasks."
         }
     },

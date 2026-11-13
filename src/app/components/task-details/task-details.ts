@@ -57,8 +57,7 @@ export class TaskDetails {
   });
   readonly categories = this.categoryService.categories;
   readonly projectUsers = this.userService.projectUsers;
-  readonly taskForm = this.taskService.createTaskForm();
-  readonly today = new Date(new Date().setHours(0, 0, 0, 0));
+  readonly taskForm = this.taskService.createTaskForm({}, { allowPastDueDate: true });
   readonly isDeleting = signal(false);
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
@@ -123,7 +122,7 @@ export class TaskDetails {
    */
   startEditing(): void {
     const task = this.task();
-    if (!task || this.isSaving()) {
+    if (!task || task.step === 'done' || this.isSaving()) {
       return;
     }
 
@@ -163,6 +162,11 @@ export class TaskDetails {
   async saveChanges(): Promise<void> {
     const task = this.task();
     if (!task || this.isSaving()) {
+      return;
+    }
+    if (task.step === 'done') {
+      this.isEditing.set(false);
+      this.taskForm.reset();
       return;
     }
     if (this.taskForm.invalid || this.taskForm.pending) {

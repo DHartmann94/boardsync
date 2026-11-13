@@ -23,4 +23,13 @@ export class DateService {
     if (value instanceof Date) return value;
     return new Date();
   }
+
+  /**
+   * Konvertiert einen optionalen Datumswert, ohne bei fehlendem Wert ein Datum einzusetzen.
+   * @param value Der zu konvertierende Wert oder null/undefined.
+   * @returns Das konvertierte Datum oder null.
+   */
+  parseOptionalDate(value: Date | string | number | Timestamp | null | undefined): Date | null {
+    return value == null ? null : this.parseDate(value);
+  }
 }

@@ -111,6 +111,7 @@
             "moveFailed": "Aufgabe konnte nicht verschoben werden",
             "loadProjectsFailed": "Projekte konnten nicht geladen werden",
             "loadTasksFailed": "Aufgaben konnten nicht geladen werden",
+            "doneRequiresFeedback": "Eine Aufgabe kann erst nach „Await feedback“ auf „Done“ gesetzt werden.",
             "subtasksNotCompleted": "Task noch nicht beendet: Es gibt offene Subtasks."
         }
     },

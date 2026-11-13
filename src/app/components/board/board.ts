@@ -369,6 +369,11 @@ export class Board implements OnInit {
     const task = event.previousContainer.data[event.previousIndex];
     const newStep = event.container.id;
 
+    if (newStep === 'done' && task.step !== 'awaitFeedback') {
+      this.notificationService.showError('board.errors.doneRequiresFeedback');
+      return;
+    }
+
     if (newStep === 'done' && this.hasOpenSubtasks(task)) {
       this.notificationService.showError('board.errors.subtasksNotCompleted');
       return;

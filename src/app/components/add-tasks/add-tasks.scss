@@ -15,6 +15,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 46px 48px 28px;
+  container-type: inline-size;
 }
 
 :host-context(.add-task-dialog) {
@@ -430,9 +431,9 @@ h1 {
   font-size: 0.95rem;
 }
 
-@media (max-width: 980px) {
+@container (max-width: 1000px) {
   .task-form {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
   }
 
@@ -440,9 +441,48 @@ h1 {
     flex-wrap: wrap;
   }
 
+  .priority-btn {
+    flex: 1 1 140px;
+    min-width: 0;
+  }
+
   .form-actions {
     justify-content: center;
     flex-wrap: wrap;
+  }
+}
+
+@container (max-width: 700px) {
+  h1,
+  :host-context(.add-task-dialog) h1 {
+    font-size: 3rem;
+  }
+
+  .form-footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .required-note {
+    margin: 0 0 0 2px;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+    margin-left: 0;
+  }
+
+  .form-actions button {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .task-page,
+  :host-context(.add-task-dialog) .task-page {
+    padding: 32px 20px 24px;
   }
 }
 
@@ -497,37 +537,4 @@ h1 {
 button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-}
-
-@media (max-width: 520px) {
-  :host-context(.add-task-dialog) .task-page {
-    padding: 20px;
-  }
-
-  :host-context(.add-task-dialog) h1 {
-    font-size: 1.8rem;
-  }
-
-  :host-context(.add-task-dialog) .form-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  :host-context(.add-task-dialog) .required-note {
-    margin: 0;
-  }
-
-  :host-context(.add-task-dialog) .form-actions {
-    width: 100%;
-    gap: 8px;
-  }
-
-  :host-context(.add-task-dialog) .clear-btn,
-  :host-context(.add-task-dialog) .primary-btn {
-    flex: 1 1 0;
-    min-width: 0;
-    padding: 0 8px !important;
-    font-size: 0.9rem !important;
-  }
 }
