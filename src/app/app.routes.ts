@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'main',
     component: Main,
-    //canActivate: [authGuard], //Todo: für Entwicklung deaktiviert
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'board', pathMatch: 'full' },
       { path: 'board', component: Board },

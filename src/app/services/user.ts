@@ -81,7 +81,6 @@ export class UserService {
   readonly loadError = computed(() => this.state().status === 'error');
 
   constructor() {
-    effect(() => console.log('[currentUser]', this.currentUser())); //Todo delete
     /**
      * Der Effect hat nur eine Aufgabe: Firestore-Daten laden, sobald sich der Auth-User ändert.
      * Der Zustand selbst kommt aus dem computed `state`.
@@ -172,7 +171,6 @@ export class UserService {
     // Race-Guard: authUser kann sich während des awaits geändert haben
     if (this.authenticationService.authUser()?.uid === authUser.uid) {
       this.profileLoad.set({ uid: authUser.uid, user });
-      console.log('[load] profileLoad gesetzt:', user);
     }
   }
 
